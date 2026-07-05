@@ -9,8 +9,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            min-height: 100vh; padding: 20px;
         }
         .container { max-width: 1200px; margin: 0 auto; }
         .header { text-align: center; color: white; margin-bottom: 40px; }
@@ -22,16 +21,12 @@
             font-size: 1.1rem; border-radius: 50px; cursor: pointer; margin: 5px;
             transition: all 0.3s ease; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .add-item-btn:hover, .admin-login-btn:hover, .sync-btn:hover {
-            transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
         .sync-btn { background: #4CAF50; color: white; }
         .admin-section { display: none; text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; }
         .admin-section.active { display: block; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
-        .modal-content h2 { margin-bottom: 20px; color: #333; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
         .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; }
@@ -61,13 +56,8 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Наш Прайс-лист</h1>
-            <p>Лучшие товары по доступным ценам</p>
-        </div>
-        <div class="admin-controls">
-            <button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button>
-        </div>
+        <div class="header"><h1>🚀 Наш Прайс-лист</h1><p>Лучшие товары по доступным ценам</p></div>
+        <div class="admin-controls"><button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button></div>
         <div class="admin-section" id="adminSection">
             <button class="add-item-btn" onclick="openModal()">✨ Добавить товар</button>
             <button class="sync-btn" onclick="loadData()">🔄 Обновить из облака</button>
@@ -77,13 +67,13 @@
     </div>
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2>Добавить новый товар</h2>
-            <div class="form-group"><label>📛 Название</label><input type="text" id="itemName" placeholder="Например: MARS Pod"></div>
+            <h2>Добавить товар</h2>
+            <div class="form-group"><label>📛 Название</label><input type="text" id="itemName" placeholder="Название товара"></div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg" placeholder="20мг, 50мг"></div>
-            <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors" placeholder="Арбуз, Клубника, Манго"></textarea></div>
+            <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors" placeholder="Арбуз, Клубника"></textarea></div>
             <div class="form-group"><label>📦 Количество</label><input type="text" id="itemQuantity" placeholder="1шт, 2шт"></div>
             <div class="form-group"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" placeholder="Цена"></div>
-            <div class="form-group"><label>📸 Изображение</label><div class="image-preview" id="imagePreview"><span>Нажмите для загрузки фото</span></div><input type="file" id="imageInput" accept="image/*" style="display: none;"></div>
+            <div class="form-group"><label>📸 Фото</label><div class="image-preview" id="imagePreview"><span>Нажмите для загрузки</span></div><input type="file" id="imageInput" accept="image/*" style="display:none;"></div>
             <div class="modal-buttons"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="addItem()">Добавить</button></div>
         </div>
     </div>
@@ -101,7 +91,24 @@
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = (ev) => { currentImage = ev.target.result; const p = document.getElementById('imagePreview'); p.style.backgroundImage = `url(${currentImage})`; p.classList.add('has-image'); p.innerHTML = ''; };
+                    reader.onload = (ev) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const maxSize = 400;
+                            let w = img.width, h = img.height;
+                            if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+                            else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                            canvas.width = w; canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                            currentImage = canvas.toDataURL('image/jpeg', 0.5);
+                            const p = document.getElementById('imagePreview');
+                            p.style.backgroundImage = `url(${currentImage})`;
+                            p.classList.add('has-image');
+                            p.innerHTML = '';
+                        };
+                        img.src = ev.target.result;
+                    };
                     reader.readAsDataURL(file);
                 }
             });
@@ -111,7 +118,7 @@
             try {
                 const r = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, { headers: { 'X-Master-Key': JSONBIN_API_KEY } });
                 if (r.ok) { const d = await r.json(); items = d.record.items || []; }
-            } catch (e) { showStatus('Нет связи с облаком', 'error'); }
+            } catch (e) {}
             renderItems();
         }
 
@@ -121,15 +128,14 @@
                     method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
                     body: JSON.stringify({ items: items })
                 });
-                showStatus('✅ Автосохранение!', 'success');
-            } catch (e) { showStatus('❌ Ошибка сохранения', 'error'); }
+                showStatus('✅ Сохранено!', 'success');
+            } catch (e) { showStatus('❌ Ошибка', 'error'); }
         }
 
         function toggleAdmin() {
             isAdmin = !isAdmin;
             if (isAdmin) {
-                const p = prompt('Пароль:');
-                if (p === 'admin123') {
+                if (prompt('Пароль:') === 'admin123') {
                     document.getElementById('adminSection').classList.add('active');
                     document.querySelector('.admin-login-btn').textContent = '🔒 Выйти';
                     document.body.classList.add('admin-mode');
@@ -152,19 +158,19 @@
             document.getElementById('modal').classList.add('active');
             ['itemName','itemMg','itemFlavors','itemQuantity','itemPrice'].forEach(id => document.getElementById(id).value = '');
             currentImage = null;
-            const p = document.getElementById('imagePreview'); p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки фото</span>';
+            const p = document.getElementById('imagePreview'); p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки</span>';
         }
 
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
         async function addItem() {
-            const name = document.getElementById('itemName').value.trim();
-            const mg = document.getElementById('itemMg').value.trim();
-            const flavors = document.getElementById('itemFlavors').value.trim();
-            const quantity = document.getElementById('itemQuantity').value.trim();
-            const price = document.getElementById('itemPrice').value.trim();
-            if (!name || !mg || !flavors || !quantity || !price || !currentImage) { alert('Заполните все поля!'); return; }
-            items.push({ id: Date.now(), name, mg, flavors, quantity, price, image: currentImage });
+            const n = document.getElementById('itemName').value.trim();
+            const m = document.getElementById('itemMg').value.trim();
+            const f = document.getElementById('itemFlavors').value.trim();
+            const q = document.getElementById('itemQuantity').value.trim();
+            const p = document.getElementById('itemPrice').value.trim();
+            if (!n || !m || !f || !q || !p || !currentImage) { alert('Заполните все поля!'); return; }
+            items.push({ id: Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage });
             await saveData();
             renderItems();
             closeModal();
