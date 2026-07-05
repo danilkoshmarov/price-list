@@ -6,107 +6,261 @@
     <title>Прайс-лист | ТГК</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @keyframes petalFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes numberChange {
+            0% { transform: translateY(-10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes confirmPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); background: #4CAF50; }
+            100% { transform: scale(1); }
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh; padding: 20px;
+            background: linear-gradient(135deg, #ffd1dc 0%, #f8e8ff 30%, #ffe4e1 60%, #fff0f5 100%);
+            min-height: 100vh; padding: 20px; position: relative; overflow-x: hidden;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; color: white; margin-bottom: 40px; }
-        .header h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .header p { font-size: 1.2rem; opacity: 0.9; }
+        
+        .petal {
+            position: fixed; pointer-events: none; z-index: 0;
+            font-size: 20px; animation: petalFall 10s linear infinite;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { 
+            font-size: 3rem; margin-bottom: 10px; 
+            background: linear-gradient(135deg, #e91e63, #9c27b0, #e91e63);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200% auto; animation: shimmer 3s linear infinite;
+        }
+        .header p { font-size: 1.2rem; color: #9c27b0; opacity: 0.8; }
+        
+        .stats-panel { display: none; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .admin-mode .stats-panel { display: flex; }
+        .stat-card {
+            background: rgba(255,255,255,0.25); backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 20px 25px; color: #5c2d91; text-align: center;
+            min-width: 150px; flex: 1; border: 1px solid rgba(255,182,193,0.4);
+            box-shadow: 0 8px 32px rgba(156,39,176,0.1);
+        }
+        .stat-value { 
+            font-size: 2rem; font-weight: bold; 
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 0.85rem; opacity: 0.7; margin-top: 5px; }
+
         .admin-controls { text-align: center; margin-bottom: 20px; }
-        .add-item-btn, .admin-login-btn, .sync-btn {
-            background: white; color: #667eea; border: none; padding: 15px 30px;
-            font-size: 1.1rem; border-radius: 50px; cursor: pointer; margin: 5px;
-            transition: all 0.3s ease; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .admin-login-btn { 
+            border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s ease; font-weight: bold;
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+            color: #9c27b0; border: 1px solid rgba(156,39,176,0.3);
         }
-        .sync-btn { background: #4CAF50; color: white; }
-        .admin-section { display: none; text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; }
+        
+        .admin-section { display: none; text-align: center; margin-bottom: 30px; padding: 20px; 
+            background: rgba(255,255,255,0.2); border-radius: 20px; backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,182,193,0.3); }
         .admin-section.active { display: block; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .add-item-btn, .sync-btn, .reset-btn {
+            border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 50px;
+            cursor: pointer; margin: 5px; transition: all 0.3s ease; font-weight: bold;
+        }
+        .add-item-btn { background: white; color: #e91e63; box-shadow: 0 5px 15px rgba(233,30,99,0.2); }
+        .sync-btn { background: rgba(76,175,80,0.2); color: #2e7d32; border: 1px solid rgba(76,175,80,0.3); }
+        .reset-btn { background: rgba(244,67,54,0.2); color: #c62828; border: 1px solid rgba(244,67,54,0.3); }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+        .modal-content { 
+            background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 500px;
+            box-shadow: 0 20px 60px rgba(156,39,176,0.2); max-height: 90vh; overflow-y: auto;
+        }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; font-family: inherit; }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .image-preview { width: 100%; height: 200px; border: 2px dashed #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-size: cover; background-position: center; }
+        .form-group label { display: block; margin-bottom: 5px; color: #5c2d91; font-weight: 500; }
+        .form-group input, .form-group textarea { 
+            width: 100%; padding: 12px; border: 2px solid #f8e8ff; border-radius: 12px;
+            font-size: 1rem; font-family: inherit; }
+        .image-preview { width: 100%; height: 200px; border: 2px dashed #ffd1dc; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            background-size: cover; background-position: center; }
         .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-size: 1rem; cursor: pointer; font-weight: 500; flex: 1; transition: all 0.3s ease; }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-secondary { background: #e0e0e0; color: #333; }
+        .btn { padding: 12px 24px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; 
+            font-weight: 500; flex: 1; transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; }
+        .btn-secondary { background: #f8e8ff; color: #5c2d91; }
+        
         .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
-        .price-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        .price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .price-card { 
+            background: rgba(255,255,255,0.3); backdrop-filter: blur(20px);
+            border-radius: 25px; overflow: hidden; border: 1px solid rgba(255,182,193,0.3);
+            box-shadow: 0 8px 32px rgba(156,39,176,0.08); transition: all 0.3s ease;
+        }
+        .price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(156,39,176,0.15); }
         .card-image { width: 100%; height: 250px; object-fit: cover; }
         .card-content { padding: 20px; }
-        .card-title { font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 10px; }
+        .card-title { font-size: 1.5rem; font-weight: bold; color: #5c2d91; margin-bottom: 10px; }
         .card-details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
         .card-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; color: white; }
-        .card-badge.mg { background: #ff6b6b; }
-        .card-badge.quantity { background: #4ecdc4; }
-        .card-flavors { color: #666; margin-bottom: 10px; font-size: 0.95rem; }
-        .card-price { font-size: 1.8rem; font-weight: bold; color: #667eea; margin-bottom: 15px; }
+        .card-badge.mg { background: linear-gradient(135deg, #e91e63, #ad1457); }
+        .card-badge.quantity { background: linear-gradient(135deg, #7b1fa2, #4a148c); }
+        .card-flavors { color: #6a1b9a; margin-bottom: 10px; font-size: 0.95rem; }
+        .card-price { 
+            font-size: 1.8rem; font-weight: bold; 
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .card-sales-info {
+            display: none; background: rgba(255,182,193,0.2); border-radius: 10px;
+            padding: 8px 12px; margin-bottom: 10px; font-size: 0.9rem; color: #5c2d91;
+        }
+        .admin-mode .card-sales-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px; }
+        
         .buy-btn {
-            display: block; width: 100%; padding: 12px; background: linear-gradient(135deg, #0088cc, #00a8e8);
-            color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold;
+            display: block; width: 100%; padding: 12px; 
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold;
             cursor: pointer; transition: all 0.3s ease; text-align: center;
         }
-        .buy-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,136,204,0.4); }
+        .buy-btn:hover { transform: scale(1.02); }
+        
+        .confirm-btn {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32); color: white;
+            border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 0.8rem; font-weight: bold; transition: all 0.3s ease;
+        }
+        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
         .card-buttons { display: none; gap: 8px; margin-top: 8px; }
         .admin-mode .card-buttons { display: flex; }
         .admin-mode .buy-btn { display: none; }
-        .edit-btn, .delete-btn { 
-            border: none; padding: 10px; border-radius: 10px; cursor: pointer; 
-            font-size: 0.9rem; transition: all 0.3s ease; color: white; flex: 1; 
+        .edit-btn, .delete-btn, .history-btn { 
+            border: none; padding: 10px; border-radius: 12px; cursor: pointer; 
+            font-size: 0.85rem; color: white; flex: 1; 
         }
-        .edit-btn { background: #ffa502; }
-        .delete-btn { background: #ff6b6b; }
-        .status-message { text-align: center; color: white; margin-top: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.2); display: none; }
+        .edit-btn { background: linear-gradient(135deg, #ff9800, #f57c00); }
+        .delete-btn { background: linear-gradient(135deg, #f44336, #c62828); }
+        .history-btn { background: linear-gradient(135deg, #2196F3, #1565C0); }
+        
+        .status-message { text-align: center; color: #5c2d91; margin-top: 10px; padding: 10px; 
+            border-radius: 10px; background: rgba(255,255,255,0.3); display: none; }
         .status-message.show { display: block; }
+        
         .tg-setup {
-            background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-bottom: 20px;
-            color: white; text-align: center; backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.2); border-radius: 20px; padding: 15px; margin-bottom: 20px;
+            color: #5c2d91; text-align: center;
         }
-        .tg-setup input {
-            padding: 10px 15px; border-radius: 10px; border: none; font-size: 1rem;
-            width: 250px; text-align: center; margin: 10px 5px;
+        .tg-setup input { padding: 10px 15px; border-radius: 10px; border: 1px solid rgba(156,39,176,0.3); 
+            font-size: 1rem; width: 250px; text-align: center; margin: 10px 5px; }
+        .tg-setup button { padding: 10px 20px; border-radius: 10px; border: none; 
+            background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; 
+            font-size: 1rem; cursor: pointer; font-weight: bold; }
+        
+        .history-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000;
         }
-        .tg-setup button {
-            padding: 10px 20px; border-radius: 10px; border: none; background: #0088cc;
-            color: white; font-size: 1rem; cursor: pointer; font-weight: bold;
+        .history-modal.active { display: flex; }
+        .history-content {
+            background: white; padding: 25px; border-radius: 25px; width: 90%; max-width: 450px;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .history-item {
+            padding: 10px; border-bottom: 1px solid #f8e8ff; color: #5c2d91;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .loading-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 60px 20px; color: #9c27b0; text-align: center;
+        }
+        .loading-spinner {
+            width: 50px; height: 50px; border: 3px solid rgba(156,39,176,0.2);
+            border-top: 3px solid #e91e63; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .price-grid { grid-template-columns: 1fr; }
+            .stats-panel { flex-direction: column; }
         }
     </style>
 </head>
 <body>
+    <div id="petalsContainer"></div>
+    
     <div class="container">
-        <div class="header"><h1>🚀 Наш Прайс-лист</h1><p>Нажми на "Купить" чтобы оформить заказ</p></div>
-        <div class="admin-controls"><button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button></div>
+        <div class="header">
+            <h1>🌸 Наш Прайс-лист</h1>
+            <p>Нажми на "Купить" чтобы оформить заказ</p>
+        </div>
+        
+        <div class="stats-panel" id="statsPanel">
+            <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Товаров</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalValue">0₽</div><div class="stat-label">💰 Стоимость</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalSold">0</div><div class="stat-label">🛒 Продано</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalRevenue">0₽</div><div class="stat-label">💵 Прибыль</div></div>
+        </div>
+        
+        <div class="admin-controls">
+            <button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button>
+        </div>
+        
         <div class="admin-section" id="adminSection">
             <div class="tg-setup">
-                <label>🔗 Ваш Telegram username:</label><br>
-                <input type="text" id="tgUsername" placeholder="danil_cooldown" value="danil_cooldown">
+                <label>🔗 Telegram username:</label><br>
+                <input type="text" id="tgUsername" value="danil_cooldown">
                 <button onclick="saveTgUsername()">💾 Сохранить</button>
             </div>
             <button class="add-item-btn" onclick="openModal()">✨ Добавить товар</button>
-            <button class="sync-btn" onclick="loadData()">🔄 Обновить из облака</button>
+            <button class="sync-btn" onclick="loadData()">🔄 Обновить</button>
+            <button class="reset-btn" onclick="resetAllStats()">🗑️ Сброс статистики</button>
             <div class="status-message" id="statusMessage"></div>
         </div>
-        <div class="price-grid" id="priceGrid"></div>
+        
+        <div class="price-grid" id="priceGrid">
+            <div class="loading-container" style="grid-column:1/-1;">
+                <div class="loading-spinner"></div>
+                <div>Загружаем товары...</div>
+            </div>
+        </div>
     </div>
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modalTitle">Добавить товар</h2>
+            <h2 id="modalTitle" style="color:#5c2d91;">Добавить товар</h2>
             <input type="hidden" id="editId">
-            <div class="form-group"><label>📛 Название</label><input type="text" id="itemName" placeholder="Название товара"></div>
-            <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg" placeholder="20мг, 50мг"></div>
-            <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors" placeholder="Арбуз, Клубника"></textarea></div>
-            <div class="form-group"><label>📦 Количество</label><input type="text" id="itemQuantity" placeholder="1шт, 2шт"></div>
-            <div class="form-group"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" placeholder="Цена"></div>
+            <div class="form-group"><label>📛 Название</label><input type="text" id="itemName"></div>
+            <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg"></div>
+            <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors"></textarea></div>
+            <div class="form-group"><label>📦 Количество</label><input type="number" id="itemQuantity" min="0"></div>
+            <div class="form-group"><label>💰 Цена (₽)</label><input type="number" id="itemPrice"></div>
             <div class="form-group"><label>📸 Фото</label><div class="image-preview" id="imagePreview"><span>Нажмите для загрузки</span></div><input type="file" id="imageInput" accept="image/*" style="display:none;"></div>
             <div class="modal-buttons"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="saveItem()">Сохранить</button></div>
+        </div>
+    </div>
+    
+    <div class="history-modal" id="historyModal">
+        <div class="history-content">
+            <h3 style="color:#5c2d91;text-align:center;">📋 История продаж</h3>
+            <div id="historyList"></div>
+            <div id="historySummary" style="text-align:center;margin-top:15px;font-weight:bold;color:#9c27b0;"></div>
+            <button class="btn btn-secondary" onclick="closeHistory()" style="margin-top:15px;width:100%;">Закрыть</button>
         </div>
     </div>
 
@@ -117,11 +271,27 @@
         let currentImage = null;
         let isAdmin = false;
         let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
+        let salesData = JSON.parse(localStorage.getItem('salesData') || '{}');
+        let salesHistory = JSON.parse(localStorage.getItem('salesHistory') || '[]');
+
+        function createPetals() {
+            const container = document.getElementById('petalsContainer');
+            const petals = ['🌸', '💮', '🏵️', '🌺'];
+            for (let i = 0; i < 15; i++) {
+                const petal = document.createElement('span');
+                petal.className = 'petal';
+                petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.animationDelay = Math.random() * 10 + 's';
+                petal.style.animationDuration = (8 + Math.random() * 8) + 's';
+                petal.style.fontSize = (15 + Math.random() * 20) + 'px';
+                container.appendChild(petal);
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadData();
+            createPetals();
             document.getElementById('tgUsername').value = tgUsername;
-            
             document.getElementById('imagePreview').addEventListener('click', () => document.getElementById('imageInput').click());
             document.getElementById('imageInput').addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -148,27 +318,93 @@
                     reader.readAsDataURL(file);
                 }
             });
+            await loadData();
         });
 
         function saveTgUsername() {
             const input = document.getElementById('tgUsername').value.trim().replace('@', '');
-            if (input) {
-                tgUsername = input;
-                localStorage.setItem('tgUsername', input);
-                showStatus('✅ Telegram сохранён!', 'success');
-            }
+            if (input) { tgUsername = input; localStorage.setItem('tgUsername', input); showStatus('✅ Сохранено!', 'success'); }
         }
 
         function buyItem(item) {
-            const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg}, ${item.quantity} за ${item.price}₽`);
+            const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
         }
+
+        function confirmSale(itemId) {
+            const item = items.find(i => i.id === itemId);
+            if (!item) return;
+            if (item.quantity <= 0) { alert('Товар закончился!'); return; }
+            
+            item.quantity--;
+            if (!salesData[itemId]) salesData[itemId] = { count: 0, revenue: 0, name: item.name };
+            salesData[itemId].count++;
+            salesData[itemId].revenue += parseInt(item.price);
+            salesData[itemId].name = item.name;
+            
+            salesHistory.unshift({
+                date: new Date().toLocaleString('ru-RU'),
+                name: item.name,
+                price: parseInt(item.price),
+                itemId: itemId
+            });
+            if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
+            
+            localStorage.setItem('salesData', JSON.stringify(salesData));
+            localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+            
+            saveData();
+            updateStats();
+            renderItems();
+            showStatus(`✅ Продажа! +${item.price}₽`, 'success');
+        }
+
+        function updateStats() {
+            const totalItems = items.reduce((sum, i) => sum + (i.quantity || 0), 0);
+            const totalValue = items.reduce((sum, i) => sum + (parseInt(i.price) * (i.quantity || 0)), 0);
+            const totalSold = Object.values(salesData).reduce((sum, s) => sum + s.count, 0);
+            const totalRevenue = Object.values(salesData).reduce((sum, s) => sum + s.revenue, 0);
+            
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalValue').textContent = totalValue + '₽';
+            document.getElementById('totalSold').textContent = totalSold;
+            document.getElementById('totalRevenue').textContent = totalRevenue + '₽';
+        }
+
+        function resetAllStats() {
+            if (confirm('Сбросить ВСЮ статистику?')) {
+                salesData = {}; salesHistory = [];
+                localStorage.setItem('salesData', '{}'); localStorage.setItem('salesHistory', '[]');
+                updateStats(); renderItems();
+                showStatus('🗑️ Сброшено', 'success');
+            }
+        }
+
+        function showHistory() {
+            const modal = document.getElementById('historyModal');
+            const list = document.getElementById('historyList');
+            const summary = document.getElementById('historySummary');
+            
+            if (salesHistory.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#999;">Нет истории</p>';
+                summary.textContent = '';
+            } else {
+                list.innerHTML = salesHistory.slice(0, 20).map(h => `
+                    <div class="history-item"><span>${h.name}</span><span style="font-size:0.8rem;opacity:0.7;">${h.date}</span><span style="font-weight:bold;">${h.price}₽</span></div>
+                `).join('');
+                summary.textContent = `Продаж: ${salesHistory.length} | Сумма: ${salesHistory.reduce((s, h) => s + h.price, 0)}₽`;
+            }
+            modal.classList.add('active');
+        }
+
+        function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
 
         async function loadData() {
             try {
                 const r = await fetch(API_URL);
                 if (r.ok) { const d = await r.json(); items = d.items || []; }
             } catch (e) {}
+            updateStats();
             renderItems();
         }
 
@@ -190,6 +426,7 @@
                     document.getElementById('adminSection').classList.add('active');
                     document.querySelector('.admin-login-btn').textContent = '🔒 Выйти';
                     document.body.classList.add('admin-mode');
+                    updateStats();
                 } else { alert('Неверно!'); isAdmin = false; }
             } else {
                 document.getElementById('adminSection').classList.remove('active');
@@ -201,13 +438,12 @@
         function showStatus(msg, type) {
             const el = document.getElementById('statusMessage');
             el.textContent = msg; el.className = 'status-message show';
-            el.style.background = type === 'success' ? 'rgba(76,175,80,0.3)' : 'rgba(244,67,54,0.3)';
+            el.style.background = type === 'success' ? 'rgba(76,175,80,0.2)' : 'rgba(244,67,54,0.2)';
             setTimeout(() => el.classList.remove('show'), 2000);
         }
 
         function openModal(editItem = null) {
             document.getElementById('modal').classList.add('active');
-            
             if (editItem) {
                 document.getElementById('modalTitle').textContent = 'Редактировать товар';
                 document.getElementById('editId').value = editItem.id;
@@ -238,27 +474,26 @@
             const n = document.getElementById('itemName').value.trim();
             const m = document.getElementById('itemMg').value.trim();
             const f = document.getElementById('itemFlavors').value.trim();
-            const q = document.getElementById('itemQuantity').value.trim();
+            const q = parseInt(document.getElementById('itemQuantity').value) || 0;
             const p = document.getElementById('itemPrice').value.trim();
-
-            if (!n || !m || !f || !q || !p || !currentImage) { alert('Заполните все поля!'); return; }
-
+            if (!n || !m || !f || p === '' || !currentImage) { alert('Заполните все поля!'); return; }
+            
+            const itemData = { id: editId ? parseInt(editId) : Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage };
+            
             if (editId) {
                 const index = items.findIndex(i => i.id == editId);
-                if (index !== -1) {
-                    items[index] = { ...items[index], name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage };
-                }
+                if (index !== -1) items[index] = itemData;
             } else {
-                items.push({ id: Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage });
+                items.push(itemData);
             }
-
             await saveData();
+            updateStats();
             renderItems();
             closeModal();
         }
 
         async function deleteItem(id) {
-            if (confirm('Удалить товар?')) { items = items.filter(i => i.id !== id); await saveData(); renderItems(); }
+            if (confirm('Удалить?')) { items = items.filter(i => i.id !== id); await saveData(); updateStats(); renderItems(); }
         }
 
         function editItem(id) {
@@ -268,24 +503,35 @@
 
         function renderItems() {
             const grid = document.getElementById('priceGrid');
+            if (items.length === 0) {
+                grid.innerHTML = `<div class="loading-container" style="grid-column:1/-1;"><div style="font-size:4rem;">🌸</div><div>Товары не добавлены</div></div>`;
+                return;
+            }
             grid.innerHTML = '';
             items.forEach(item => {
+                const sold = salesData[item.id] || { count: 0, revenue: 0 };
                 const card = document.createElement('div');
                 card.className = 'price-card';
                 card.innerHTML = `
-                    <img src="${item.image}" class="card-image" alt="${item.name}">
+                    <img src="${item.image}" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">${item.name}</h3>
                         <div class="card-details">
                             <span class="card-badge mg">⚡ ${item.mg}</span>
-                            <span class="card-badge quantity">📦 ${item.quantity}</span>
+                            <span class="card-badge quantity">📦 ${item.quantity} шт</span>
                         </div>
                         <div class="card-flavors">🍓 ${item.flavors}</div>
                         <div class="card-price">${item.price} ₽</div>
+                        <div class="card-sales-info">
+                            <span>📊 Продано: ${sold.count}</span>
+                            <span>💵 ${sold.revenue}₽</span>
+                            <button class="confirm-btn" onclick="confirmSale(${item.id})" ${item.quantity <= 0 ? 'disabled' : ''}>✅</button>
+                        </div>
                         <button class="buy-btn" onclick="buyItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">💬 Купить</button>
                         <div class="card-buttons">
-                            <button class="edit-btn" onclick="editItem(${item.id})">✏️ Изменить</button>
-                            <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️ Удалить</button>
+                            <button class="edit-btn" onclick="editItem(${item.id})">✏️</button>
+                            <button class="history-btn" onclick="showHistory()">📊</button>
+                            <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
                         </div>
                     </div>
                 `;
