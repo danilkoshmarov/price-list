@@ -111,7 +111,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://api.npoint.io/5a29c0f8eaf291939ddf';
+        const API_URL = 'https://api.npoint.io/55674e9c91b4698843d7';
         const DEFAULT_TG = 'danil_cooldown';
         let items = [];
         let currentImage = null;
@@ -128,11 +128,22 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        currentImage = ev.target.result;
-                        const p = document.getElementById('imagePreview');
-                        p.style.backgroundImage = `url(${currentImage})`;
-                        p.classList.add('has-image');
-                        p.innerHTML = '';
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const maxSize = 800;
+                            let w = img.width, h = img.height;
+                            if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+                            else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                            canvas.width = w; canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                            currentImage = canvas.toDataURL('image/jpeg', 0.8);
+                            const p = document.getElementById('imagePreview');
+                            p.style.backgroundImage = `url(${currentImage})`;
+                            p.classList.add('has-image');
+                            p.innerHTML = '';
+                        };
+                        img.src = ev.target.result;
                     };
                     reader.readAsDataURL(file);
                 }
