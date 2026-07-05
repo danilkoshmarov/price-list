@@ -85,8 +85,8 @@
         <div class="admin-controls"><button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button></div>
         <div class="admin-section" id="adminSection">
             <div class="tg-setup">
-                <label>🔗 Ваш Telegram username (без @):</label><br>
-                <input type="text" id="tgUsername" placeholder="например: danil">
+                <label>🔗 Ваш Telegram username:</label><br>
+                <input type="text" id="tgUsername" placeholder="danil_cooldown" value="danil_cooldown">
                 <button onclick="saveTgUsername()">💾 Сохранить</button>
             </div>
             <button class="add-item-btn" onclick="openModal()">✨ Добавить товар</button>
@@ -112,14 +112,15 @@
 
     <script>
         const API_URL = 'https://api.npoint.io/5a29c0f8eaf291939ddf';
+        const DEFAULT_TG = 'danil_cooldown';
         let items = [];
         let currentImage = null;
         let isAdmin = false;
-        let tgUsername = localStorage.getItem('tgUsername') || '';
+        let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadData();
-            if (tgUsername) document.getElementById('tgUsername').value = tgUsername;
+            document.getElementById('tgUsername').value = tgUsername;
             
             document.getElementById('imagePreview').addEventListener('click', () => document.getElementById('imageInput').click());
             document.getElementById('imageInput').addEventListener('change', (e) => {
@@ -148,10 +149,6 @@
         }
 
         function buyItem(item) {
-            if (!tgUsername) {
-                alert('Администратор ещё не настроил Telegram контакт.');
-                return;
-            }
             const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg}, ${item.quantity} за ${item.price}₽`);
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
         }
