@@ -7,32 +7,18 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        @keyframes petalFall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-        }
         @keyframes shimmer {
             0% { background-position: -200% center; }
             100% { background-position: 200% center; }
-        }
-        @keyframes confirmPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); background: #4CAF50; }
-            100% { transform: scale(1); }
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ffd1dc 0%, #f8e8ff 30%, #ffe4e1 60%, #fff0f5 100%);
-            min-height: 100vh; padding: 20px; position: relative; overflow-x: hidden;
+            min-height: 100vh; padding: 20px;
         }
         
-        .petal {
-            position: fixed; pointer-events: none; z-index: 0;
-            font-size: 20px; animation: petalFall 10s linear infinite;
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+        .container { max-width: 1200px; margin: 0 auto; }
         
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { 
@@ -78,12 +64,16 @@
         .sync-btn { background: rgba(76,175,80,0.2); color: #2e7d32; border: 1px solid rgba(76,175,80,0.3); }
         .reset-btn { background: rgba(244,67,54,0.2); color: #c62828; border: 1px solid rgba(244,67,54,0.3); }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal.active { display: flex; }
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); justify-content: center; align-items: center; 
+            z-index: 9999; -webkit-overflow-scrolling: touch;
+        }
+        .modal.active { display: flex !important; }
         .modal-content { 
             background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 500px;
-            box-shadow: 0 20px 60px rgba(156,39,176,0.2); max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(156,39,176,0.2); max-height: 85vh; overflow-y: auto;
+            position: relative; z-index: 10000; -webkit-overflow-scrolling: touch;
         }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #5c2d91; font-weight: 500; }
@@ -94,8 +84,11 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             background-size: cover; background-position: center; }
         .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { padding: 12px 24px; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; 
-            font-weight: 500; flex: 1; transition: all 0.3s ease; }
+        .modal-buttons .btn { 
+            padding: 14px 24px; border: none; border-radius: 12px; font-size: 1rem; 
+            cursor: pointer; font-weight: 500; flex: 1; transition: all 0.3s ease;
+            touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+        }
         .btn-primary { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; }
         .btn-secondary { background: #f8e8ff; color: #5c2d91; }
         
@@ -125,6 +118,11 @@
             padding: 8px 12px; margin-bottom: 10px; font-size: 0.9rem; color: #5c2d91;
         }
         .admin-mode .card-sales-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px; }
+        .card-sales-info.pending { background: rgba(255,152,0,0.2); animation: glow 1.5s infinite; }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); }
+            50% { box-shadow: 0 0 15px rgba(255,152,0,0.6); }
+        }
         
         .buy-btn {
             display: block; width: 100%; padding: 12px; 
@@ -138,8 +136,15 @@
             background: linear-gradient(135deg, #4CAF50, #2e7d32); color: white;
             border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer;
             font-size: 0.8rem; font-weight: bold; transition: all 0.3s ease;
+            display: none;
         }
-        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .confirm-btn.show { display: inline-block; animation: pulse 0.5s ease; }
+        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; display: inline-block; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
         
         .card-buttons { display: none; gap: 8px; margin-top: 8px; }
         .admin-mode .card-buttons { display: flex; }
@@ -198,8 +203,6 @@
     </style>
 </head>
 <body>
-    <div id="petalsContainer"></div>
-    
     <div class="container">
         <div class="header">
             <h1>🌸 Наш Прайс-лист</h1>
@@ -207,8 +210,8 @@
         </div>
         
         <div class="stats-panel" id="statsPanel">
-            <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Товаров</div></div>
-            <div class="stat-card"><div class="stat-value" id="totalValue">0₽</div><div class="stat-label">💰 Стоимость</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Всего товаров</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalValue">0₽</div><div class="stat-label">💰 Общая стоимость</div></div>
             <div class="stat-card"><div class="stat-value" id="totalSold">0</div><div class="stat-label">🛒 Продано</div></div>
             <div class="stat-card"><div class="stat-value" id="totalRevenue">0₽</div><div class="stat-label">💵 Прибыль</div></div>
         </div>
@@ -224,7 +227,7 @@
                 <button onclick="saveTgUsername()">💾 Сохранить</button>
             </div>
             <button class="add-item-btn" onclick="openModal()">✨ Добавить товар</button>
-            <button class="sync-btn" onclick="loadData()">🔄 Обновить</button>
+            <button class="sync-btn" onclick="loadData()">🔄 Обновить из облака</button>
             <button class="reset-btn" onclick="resetAllStats()">🗑️ Сброс статистики</button>
             <div class="status-message" id="statusMessage"></div>
         </div>
@@ -244,7 +247,7 @@
             <div class="form-group"><label>📛 Название</label><input type="text" id="itemName"></div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg"></div>
             <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors"></textarea></div>
-            <div class="form-group"><label>📦 Количество</label><input type="number" id="itemQuantity" min="0"></div>
+            <div class="form-group"><label>📦 Количество (только цифра)</label><input type="number" id="itemQuantity" min="0" placeholder="3"></div>
             <div class="form-group"><label>💰 Цена (₽)</label><input type="number" id="itemPrice"></div>
             <div class="form-group"><label>📸 Фото</label><div class="image-preview" id="imagePreview"><span>Нажмите для загрузки</span></div><input type="file" id="imageInput" accept="image/*" style="display:none;"></div>
             <div class="modal-buttons"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="saveItem()">Сохранить</button></div>
@@ -267,29 +270,21 @@
         let currentImage = null;
         let isAdmin = false;
         let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
-        let salesData = JSON.parse(localStorage.getItem('salesData') || '{}');
-        let salesHistory = JSON.parse(localStorage.getItem('salesHistory') || '[]');
-
-        function createPetals() {
-            const container = document.getElementById('petalsContainer');
-            const petals = ['🌸', '💮', '🏵️', '🌺'];
-            for (let i = 0; i < 15; i++) {
-                const petal = document.createElement('span');
-                petal.className = 'petal';
-                petal.textContent = petals[Math.floor(Math.random() * petals.length)];
-                petal.style.left = Math.random() * 100 + '%';
-                petal.style.animationDelay = Math.random() * 10 + 's';
-                petal.style.animationDuration = (8 + Math.random() * 8) + 's';
-                petal.style.fontSize = (15 + Math.random() * 20) + 'px';
-                container.appendChild(petal);
-            }
-        }
+        // Статистика теперь тоже в облаке
+        let salesData = {};
+        let salesHistory = [];
+        let pendingSales = {}; // Ожидающие подтверждения
 
         document.addEventListener('DOMContentLoaded', async () => {
-            createPetals();
             document.getElementById('tgUsername').value = tgUsername;
-            document.getElementById('imagePreview').addEventListener('click', () => document.getElementById('imageInput').click());
-            document.getElementById('imageInput').addEventListener('change', (e) => {
+            
+            const preview = document.getElementById('imagePreview');
+            const input = document.getElementById('imageInput');
+            
+            preview.addEventListener('click', () => input.click());
+            preview.addEventListener('touchend', (e) => { e.preventDefault(); input.click(); });
+            
+            input.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
@@ -304,10 +299,9 @@
                             canvas.width = w; canvas.height = h;
                             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                             currentImage = canvas.toDataURL('image/jpeg', 0.8);
-                            const p = document.getElementById('imagePreview');
-                            p.style.backgroundImage = `url(${currentImage})`;
-                            p.classList.add('has-image');
-                            p.innerHTML = '';
+                            preview.style.backgroundImage = `url(${currentImage})`;
+                            preview.classList.add('has-image');
+                            preview.innerHTML = '';
                         };
                         img.src = ev.target.result;
                     };
@@ -325,6 +319,13 @@
         function buyItem(item) {
             const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
+            
+            // Отмечаем что кто-то нажал купить
+            if (!pendingSales[item.id]) pendingSales[item.id] = 0;
+            pendingSales[item.id]++;
+            saveAllData();
+            renderItems();
+            showStatus('🔔 Новый заказ! Подтвердите в админке', 'success');
         }
 
         function confirmSale(itemId) {
@@ -346,13 +347,13 @@
             });
             if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
             
-            localStorage.setItem('salesData', JSON.stringify(salesData));
-            localStorage.setItem('salesHistory', JSON.stringify(salesHistory));
+            // Сбрасываем ожидание
+            pendingSales[itemId] = 0;
             
-            saveData();
+            saveAllData();
             updateStats();
             renderItems();
-            showStatus(`✅ Продажа! +${item.price}₽`, 'success');
+            showStatus(`✅ Продажа подтверждена! +${item.price}₽`, 'success');
         }
 
         function updateStats() {
@@ -369,8 +370,8 @@
 
         function resetAllStats() {
             if (confirm('Сбросить ВСЮ статистику?')) {
-                salesData = {}; salesHistory = [];
-                localStorage.setItem('salesData', '{}'); localStorage.setItem('salesHistory', '[]');
+                salesData = {}; salesHistory = []; pendingSales = {};
+                saveAllData();
                 updateStats(); renderItems();
                 showStatus('🗑️ Сброшено', 'success');
             }
@@ -385,10 +386,11 @@
                 list.innerHTML = '<p style="text-align:center;color:#999;">Нет истории</p>';
                 summary.textContent = '';
             } else {
-                list.innerHTML = salesHistory.slice(0, 20).map(h => `
-                    <div class="history-item"><span>${h.name}</span><span style="font-size:0.8rem;opacity:0.7;">${h.date}</span><span style="font-weight:bold;">${h.price}₽</span></div>
-                `).join('');
-                summary.textContent = `Продаж: ${salesHistory.length} | Сумма: ${salesHistory.reduce((s, h) => s + h.price, 0)}₽`;
+                list.innerHTML = salesHistory.slice(0, 20).map(h => 
+                    '<div class="history-item"><span>' + h.name + '</span><span style="font-size:0.8rem;opacity:0.7;">' + h.date + '</span><span style="font-weight:bold;">' + h.price + '₽</span></div>'
+                ).join('');
+                const total = salesHistory.reduce((s, h) => s + h.price, 0);
+                summary.textContent = 'Продаж: ' + salesHistory.length + ' | Сумма: ' + total + '₽';
             }
             modal.classList.add('active');
         }
@@ -398,27 +400,43 @@
         async function loadData() {
             try {
                 const r = await fetch(API_URL);
-                if (r.ok) { const d = await r.json(); items = d.items || []; }
+                if (r.ok) { 
+                    const d = await r.json(); 
+                    items = d.items || []; 
+                    salesData = d.salesData || {};
+                    salesHistory = d.salesHistory || [];
+                    pendingSales = d.pendingSales || {};
+                }
             } catch (e) {}
             updateStats();
             renderItems();
         }
 
-        async function saveData() {
+        async function saveAllData() {
             try {
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: items })
+                    body: JSON.stringify({ 
+                        items: items,
+                        salesData: salesData,
+                        salesHistory: salesHistory,
+                        pendingSales: pendingSales
+                    })
                 });
-                showStatus('✅ Сохранено!', 'success');
-            } catch (e) { showStatus('❌ Ошибка', 'error'); }
+            } catch (e) {}
+        }
+
+        async function saveData() {
+            await saveAllData();
+            showStatus('✅ Сохранено!', 'success');
         }
 
         function toggleAdmin() {
             isAdmin = !isAdmin;
             if (isAdmin) {
-                if (prompt('Пароль:') === 'admin123') {
+                const pass = prompt('Пароль:');
+                if (pass === 'admin123') {
                     document.getElementById('adminSection').classList.add('active');
                     document.querySelector('.admin-login-btn').textContent = '🔒 Выйти';
                     document.body.classList.add('admin-mode');
@@ -434,32 +452,44 @@
         function showStatus(msg, type) {
             const el = document.getElementById('statusMessage');
             el.textContent = msg; el.className = 'status-message show';
-            el.style.background = type === 'success' ? 'rgba(76,175,80,0.2)' : 'rgba(244,67,54,0.2)';
+            el.style.background = type === 'success' ? 'rgba(76,175,80,0.3)' : 'rgba(244,67,54,0.3)';
             setTimeout(() => el.classList.remove('show'), 2000);
         }
 
-        function openModal(editItem = null) {
+        function openModal(editItem) {
             document.getElementById('modal').classList.add('active');
             if (editItem) {
                 document.getElementById('modalTitle').textContent = 'Редактировать товар';
                 document.getElementById('editId').value = editItem.id;
-                document.getElementById('itemName').value = editItem.name;
-                document.getElementById('itemMg').value = editItem.mg;
-                document.getElementById('itemFlavors').value = editItem.flavors;
-                document.getElementById('itemQuantity').value = editItem.quantity;
-                document.getElementById('itemPrice').value = editItem.price;
-                currentImage = editItem.image;
+                document.getElementById('itemName').value = editItem.name || '';
+                document.getElementById('itemMg').value = editItem.mg || '';
+                document.getElementById('itemFlavors').value = editItem.flavors || '';
+                document.getElementById('itemQuantity').value = editItem.quantity || 0;
+                document.getElementById('itemPrice').value = editItem.price || '';
+                currentImage = editItem.image || null;
                 const p = document.getElementById('imagePreview');
-                p.style.backgroundImage = `url(${currentImage})`;
-                p.classList.add('has-image');
-                p.innerHTML = '';
+                if (currentImage) {
+                    p.style.backgroundImage = 'url(' + currentImage + ')';
+                    p.classList.add('has-image');
+                    p.innerHTML = '';
+                } else {
+                    p.style.backgroundImage = '';
+                    p.classList.remove('has-image');
+                    p.innerHTML = '<span>Нажмите для загрузки</span>';
+                }
             } else {
                 document.getElementById('modalTitle').textContent = 'Добавить товар';
                 document.getElementById('editId').value = '';
-                ['itemName','itemMg','itemFlavors','itemQuantity','itemPrice'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemMg').value = '';
+                document.getElementById('itemFlavors').value = '';
+                document.getElementById('itemQuantity').value = '';
+                document.getElementById('itemPrice').value = '';
                 currentImage = null;
                 const p = document.getElementById('imagePreview');
-                p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки</span>';
+                p.style.backgroundImage = '';
+                p.classList.remove('has-image');
+                p.innerHTML = '<span>Нажмите для загрузки</span>';
             }
         }
 
@@ -472,9 +502,18 @@
             const f = document.getElementById('itemFlavors').value.trim();
             const q = parseInt(document.getElementById('itemQuantity').value) || 0;
             const p = document.getElementById('itemPrice').value.trim();
-            if (!n || !m || !f || p === '' || !currentImage) { alert('Заполните все поля!'); return; }
             
-            const itemData = { id: editId ? parseInt(editId) : Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage };
+            if (!n || !m || !f || p === '' || !currentImage) { 
+                alert('Заполните все поля!'); 
+                return; 
+            }
+            
+            const itemData = { 
+                id: editId ? parseInt(editId) : Date.now(), 
+                name: n, mg: m, flavors: f, 
+                quantity: q, price: p, 
+                image: currentImage 
+            };
             
             if (editId) {
                 const index = items.findIndex(i => i.id == editId);
@@ -482,6 +521,7 @@
             } else {
                 items.push(itemData);
             }
+            
             await saveData();
             updateStats();
             renderItems();
@@ -489,7 +529,12 @@
         }
 
         async function deleteItem(id) {
-            if (confirm('Удалить?')) { items = items.filter(i => i.id !== id); await saveData(); updateStats(); renderItems(); }
+            if (confirm('Удалить?')) { 
+                items = items.filter(i => i.id !== id); 
+                await saveData(); 
+                updateStats(); 
+                renderItems(); 
+            }
         }
 
         function editItem(id) {
@@ -500,37 +545,39 @@
         function renderItems() {
             const grid = document.getElementById('priceGrid');
             if (items.length === 0) {
-                grid.innerHTML = `<div class="loading-container" style="grid-column:1/-1;"><div style="font-size:4rem;">🌸</div><div>Товары не добавлены</div></div>`;
+                grid.innerHTML = '<div class="loading-container" style="grid-column:1/-1;"><div style="font-size:4rem;">🌸</div><div>Товары не добавлены</div></div>';
                 return;
             }
             grid.innerHTML = '';
             items.forEach(item => {
                 const sold = salesData[item.id] || { count: 0, revenue: 0 };
+                const pending = pendingSales[item.id] || 0;
+                const hasPending = pending > 0;
+                
                 const card = document.createElement('div');
                 card.className = 'price-card';
-                card.innerHTML = `
-                    <img src="${item.image}" class="card-image">
-                    <div class="card-content">
-                        <h3 class="card-title">${item.name}</h3>
-                        <div class="card-details">
-                            <span class="card-badge mg">⚡ ${item.mg}</span>
-                            <span class="card-badge quantity">📦 ${item.quantity} шт</span>
-                        </div>
-                        <div class="card-flavors">🍓 ${item.flavors}</div>
-                        <div class="card-price">${item.price} ₽</div>
-                        <div class="card-sales-info">
-                            <span>📊 Продано: ${sold.count}</span>
-                            <span>💵 ${sold.revenue}₽</span>
-                            <button class="confirm-btn" onclick="confirmSale(${item.id})" ${item.quantity <= 0 ? 'disabled' : ''}>✅</button>
-                        </div>
-                        <button class="buy-btn" onclick="buyItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">💬 Купить</button>
-                        <div class="card-buttons">
-                            <button class="edit-btn" onclick="editItem(${item.id})">✏️</button>
-                            <button class="history-btn" onclick="showHistory()">📊</button>
-                            <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️</button>
-                        </div>
-                    </div>
-                `;
+                card.innerHTML = 
+                    '<img src="' + item.image + '" class="card-image">' +
+                    '<div class="card-content">' +
+                    '<h3 class="card-title">' + item.name + '</h3>' +
+                    '<div class="card-details">' +
+                    '<span class="card-badge mg">⚡ ' + item.mg + '</span>' +
+                    '<span class="card-badge quantity">📦 ' + item.quantity + ' шт</span>' +
+                    '</div>' +
+                    '<div class="card-flavors">🍓 ' + item.flavors + '</div>' +
+                    '<div class="card-price">' + item.price + ' ₽</div>' +
+                    '<div class="card-sales-info' + (hasPending ? ' pending' : '') + '">' +
+                    '<span>📊 Продано: ' + sold.count + '</span>' +
+                    '<span>💵 ' + sold.revenue + '₽</span>' +
+                    (hasPending ? '<span style="color:#ff9800;font-weight:bold;">🔔 ' + pending + '</span>' : '') +
+                    '<button class="confirm-btn' + (hasPending ? ' show' : '') + '" onclick="confirmSale(' + item.id + ')" ' + (item.quantity <= 0 ? 'disabled' : '') + '>✅</button>' +
+                    '</div>' +
+                    '<button class="buy-btn" onclick="buyItem(' + JSON.stringify(item).replace(/"/g, '&quot;') + ')">💬 Купить</button>' +
+                    '<div class="card-buttons">' +
+                    '<button class="edit-btn" onclick="editItem(' + item.id + ')">✏️</button>' +
+                    '<button class="history-btn" onclick="showHistory()">📊</button>' +
+                    '<button class="delete-btn" onclick="deleteItem(' + item.id + ')">🗑️</button>' +
+                    '</div></div>';
                 grid.appendChild(card);
             });
         }
