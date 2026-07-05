@@ -27,9 +27,10 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+        .modal-content h2 { margin-bottom: 20px; color: #333; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; font-family: inherit; }
         .form-group textarea { min-height: 80px; resize: vertical; }
         .image-preview { width: 100%; height: 200px; border: 2px dashed #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background-size: cover; background-position: center; }
         .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
@@ -38,7 +39,7 @@
         .btn-secondary { background: #e0e0e0; color: #333; }
         .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
         .price-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
-        .price-card:hover { transform: translateY(-10px); }
+        .price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .card-image { width: 100%; height: 250px; object-fit: cover; }
         .card-content { padding: 20px; }
         .card-title { font-size: 1.5rem; font-weight: bold; color: #333; margin-bottom: 10px; }
@@ -47,9 +48,17 @@
         .card-badge.mg { background: #ff6b6b; }
         .card-badge.quantity { background: #4ecdc4; }
         .card-flavors { color: #666; margin-bottom: 10px; }
-        .card-price { font-size: 1.8rem; font-weight: bold; color: #667eea; }
-        .delete-btn { background: #ff6b6b; color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-top: 10px; width: 100%; display: none; }
-        .admin-mode .delete-btn { display: block; }
+        .card-price { font-size: 1.8rem; font-weight: bold; color: #667eea; margin-bottom: 10px; }
+        .card-buttons { display: none; gap: 8px; }
+        .admin-mode .card-buttons { display: flex; }
+        .edit-btn, .delete-btn { 
+            border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; 
+            font-size: 0.9rem; transition: all 0.3s ease; color: white; flex: 1; 
+        }
+        .edit-btn { background: #ffa502; }
+        .edit-btn:hover { background: #ff9f43; }
+        .delete-btn { background: #ff6b6b; }
+        .delete-btn:hover { background: #ff5252; }
         .status-message { text-align: center; color: white; margin-top: 10px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.2); display: none; }
         .status-message.show { display: block; }
     </style>
@@ -65,20 +74,24 @@
         </div>
         <div class="price-grid" id="priceGrid"></div>
     </div>
+
+    <!-- Модальное окно -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2>Добавить товар</h2>
+            <h2 id="modalTitle">Добавить товар</h2>
+            <input type="hidden" id="editId">
             <div class="form-group"><label>📛 Название</label><input type="text" id="itemName" placeholder="Название товара"></div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg" placeholder="20мг, 50мг"></div>
             <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors" placeholder="Арбуз, Клубника"></textarea></div>
             <div class="form-group"><label>📦 Количество</label><input type="text" id="itemQuantity" placeholder="1шт, 2шт"></div>
             <div class="form-group"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" placeholder="Цена"></div>
             <div class="form-group"><label>📸 Фото</label><div class="image-preview" id="imagePreview"><span>Нажмите для загрузки</span></div><input type="file" id="imageInput" accept="image/*" style="display:none;"></div>
-            <div class="modal-buttons"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="addItem()">Добавить</button></div>
+            <div class="modal-buttons"><button class="btn btn-secondary" onclick="closeModal()">Отмена</button><button class="btn btn-primary" onclick="saveItem()">Сохранить</button></div>
         </div>
     </div>
+
     <script>
-        const API_URL = 'https://api.npoint.io/5a29c0f8eaf291939ddf';
+        const API_URL = 'https://api.npoint.io/55674e9c91b4698843d7';
         let items = [];
         let currentImage = null;
         let isAdmin = false;
@@ -91,22 +104,11 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        const img = new Image();
-                        img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const maxSize = 400;
-                            let w = img.width, h = img.height;
-                            if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
-                            else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
-                            canvas.width = w; canvas.height = h;
-                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                            currentImage = canvas.toDataURL('image/jpeg', 0.5);
-                            const p = document.getElementById('imagePreview');
-                            p.style.backgroundImage = `url(${currentImage})`;
-                            p.classList.add('has-image');
-                            p.innerHTML = '';
-                        };
-                        img.src = ev.target.result;
+                        currentImage = ev.target.result;
+                        const p = document.getElementById('imagePreview');
+                        p.style.backgroundImage = `url(${currentImage})`;
+                        p.classList.add('has-image');
+                        p.innerHTML = '';
                     };
                     reader.readAsDataURL(file);
                 }
@@ -154,30 +156,73 @@
             setTimeout(() => el.classList.remove('show'), 2000);
         }
 
-        function openModal() {
+        function openModal(editItem = null) {
             document.getElementById('modal').classList.add('active');
-            ['itemName','itemMg','itemFlavors','itemQuantity','itemPrice'].forEach(id => document.getElementById(id).value = '');
-            currentImage = null;
-            const p = document.getElementById('imagePreview'); p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки</span>';
+            
+            if (editItem) {
+                document.getElementById('modalTitle').textContent = 'Редактировать товар';
+                document.getElementById('editId').value = editItem.id;
+                document.getElementById('itemName').value = editItem.name;
+                document.getElementById('itemMg').value = editItem.mg;
+                document.getElementById('itemFlavors').value = editItem.flavors;
+                document.getElementById('itemQuantity').value = editItem.quantity;
+                document.getElementById('itemPrice').value = editItem.price;
+                currentImage = editItem.image;
+                const p = document.getElementById('imagePreview');
+                p.style.backgroundImage = `url(${currentImage})`;
+                p.classList.add('has-image');
+                p.innerHTML = '';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Добавить товар';
+                document.getElementById('editId').value = '';
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemMg').value = '';
+                document.getElementById('itemFlavors').value = '';
+                document.getElementById('itemQuantity').value = '';
+                document.getElementById('itemPrice').value = '';
+                currentImage = null;
+                const p = document.getElementById('imagePreview');
+                p.style.backgroundImage = '';
+                p.classList.remove('has-image');
+                p.innerHTML = '<span>Нажмите для загрузки</span>';
+            }
         }
 
         function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-        async function addItem() {
+        async function saveItem() {
+            const editId = document.getElementById('editId').value;
             const n = document.getElementById('itemName').value.trim();
             const m = document.getElementById('itemMg').value.trim();
             const f = document.getElementById('itemFlavors').value.trim();
             const q = document.getElementById('itemQuantity').value.trim();
             const p = document.getElementById('itemPrice').value.trim();
+
             if (!n || !m || !f || !q || !p || !currentImage) { alert('Заполните все поля!'); return; }
-            items.push({ id: Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage });
+
+            if (editId) {
+                // Редактирование
+                const index = items.findIndex(i => i.id == editId);
+                if (index !== -1) {
+                    items[index] = { ...items[index], name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage };
+                }
+            } else {
+                // Добавление
+                items.push({ id: Date.now(), name: n, mg: m, flavors: f, quantity: q, price: p, image: currentImage });
+            }
+
             await saveData();
             renderItems();
             closeModal();
         }
 
         async function deleteItem(id) {
-            if (confirm('Удалить?')) { items = items.filter(i => i.id !== id); await saveData(); renderItems(); }
+            if (confirm('Удалить товар?')) { items = items.filter(i => i.id !== id); await saveData(); renderItems(); }
+        }
+
+        function editItem(id) {
+            const item = items.find(i => i.id === id);
+            if (item) openModal(item);
         }
 
         function renderItems() {
@@ -186,7 +231,22 @@
             items.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'price-card';
-                card.innerHTML = `<img src="${item.image}" class="card-image"><div class="card-content"><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity}</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div><button class="delete-btn" onclick="deleteItem(${item.id})">🗑️ Удалить</button></div>`;
+                card.innerHTML = `
+                    <img src="${item.image}" class="card-image" alt="${item.name}">
+                    <div class="card-content">
+                        <h3 class="card-title">${item.name}</h3>
+                        <div class="card-details">
+                            <span class="card-badge mg">⚡ ${item.mg}</span>
+                            <span class="card-badge quantity">📦 ${item.quantity}</span>
+                        </div>
+                        <div class="card-flavors">🍓 ${item.flavors}</div>
+                        <div class="card-price">${item.price} ₽</div>
+                        <div class="card-buttons">
+                            <button class="edit-btn" onclick="editItem(${item.id})">✏️ Изменить</button>
+                            <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                `;
                 grid.appendChild(card);
             });
         }
