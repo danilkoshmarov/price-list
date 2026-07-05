@@ -101,7 +101,6 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            animation: fadeIn 0.3s ease;
         }
 
         .modal.active {
@@ -115,7 +114,6 @@
             width: 90%;
             max-width: 500px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -143,19 +141,11 @@
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
-            font-family: inherit;
         }
 
         .form-group textarea {
-            resize: vertical;
             min-height: 80px;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
+            resize: vertical;
         }
 
         .image-preview {
@@ -166,16 +156,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            cursor: pointer;
             background-size: cover;
             background-position: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .image-preview.has-image {
-            border-style: solid;
-            border-color: #667eea;
         }
 
         .modal-buttons {
@@ -190,29 +173,18 @@
             border-radius: 10px;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: 500;
+            flex: 1;
         }
 
         .btn-primary {
             background: #667eea;
             color: white;
-            flex: 1;
-        }
-
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
         }
 
         .btn-secondary {
             background: #e0e0e0;
             color: #333;
-            flex: 1;
-        }
-
-        .btn-secondary:hover {
-            background: #d0d0d0;
         }
 
         .price-grid {
@@ -227,13 +199,11 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.5s ease;
+            transition: transform 0.3s ease;
         }
 
         .price-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
         .card-image {
@@ -253,19 +223,11 @@
             margin-bottom: 10px;
         }
 
-        .card-flavors {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
         .card-details {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 15px;
-            align-items: center;
+            margin-bottom: 10px;
         }
 
         .card-badge {
@@ -274,7 +236,6 @@
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 500;
         }
 
         .card-badge.mg {
@@ -285,11 +246,16 @@
             background: #4ecdc4;
         }
 
+        .card-flavors {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
         .card-price {
             font-size: 1.8rem;
             font-weight: bold;
             color: #667eea;
-            margin-top: 10px;
         }
 
         .delete-btn {
@@ -299,11 +265,9 @@
             padding: 8px 16px;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            display: none;
             margin-top: 10px;
             width: 100%;
+            display: none;
         }
 
         .admin-mode .delete-btn {
@@ -322,7 +286,6 @@
 
         .status-message.show {
             display: block;
-            animation: fadeIn 0.3s ease;
         }
 
         @keyframes fadeIn {
@@ -331,36 +294,8 @@
         }
 
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -372,27 +307,18 @@
         </div>
 
         <div class="admin-controls">
-            <button class="admin-login-btn" onclick="toggleAdmin()">
-                🔑 Войти как админ
-            </button>
+            <button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button>
         </div>
 
         <div class="admin-section" id="adminSection">
-            <button class="add-item-btn" onclick="openModal()">
-                ✨ Добавить товар
-            </button>
-            <button class="sync-btn" onclick="syncData()">
-                🔄 Синхронизировать с облаком
-            </button>
+            <button class="add-item-btn" onclick="openModal()">✨ Добавить товар</button>
+            <button class="sync-btn" onclick="syncData()">🔄 Синхронизировать с облаком</button>
             <div class="status-message" id="statusMessage"></div>
         </div>
 
-        <div class="price-grid" id="priceGrid">
-            <!-- Карточки будут добавляться здесь -->
-        </div>
+        <div class="price-grid" id="priceGrid"></div>
     </div>
 
-    <!-- Модальное окно для добавления товара -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2>Добавить новый товар</h2>
@@ -409,7 +335,7 @@
 
             <div class="form-group">
                 <label>🍓 Вкусы</label>
-                <textarea id="itemFlavors" placeholder="Например: Арбуз, Клубника, Манго, Банан"></textarea>
+                <textarea id="itemFlavors" placeholder="Например: Арбуз, Клубника, Манго"></textarea>
             </div>
 
             <div class="form-group">
@@ -438,20 +364,16 @@
     </div>
 
     <script>
-        // ===== НАСТРОЙКИ =====
         const JSONBIN_API_KEY = '$2a$10$e9b2f1B7CDdjU0uCpb9Wi.H8OyGeMXyX8HQRIdgK5QMnBauM8pZmu';
         const JSONBIN_BIN_ID = '6a4a5f7eda38895dfe30e687';
-        // =====================
 
         let items = [];
         let currentImage = null;
         let isAdmin = false;
 
-        // Загрузка данных при старте
         document.addEventListener('DOMContentLoaded', async () => {
             await loadData();
             
-            // Обработчик загрузки изображения
             document.getElementById('imagePreview').addEventListener('click', () => {
                 document.getElementById('imageInput').click();
             });
@@ -472,29 +394,21 @@
             });
         });
 
-        // Загрузка данных из JSONbin
         async function loadData() {
             try {
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
-                    headers: {
-                        'X-Master-Key': JSONBIN_API_KEY
-                    }
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
                 });
-                
                 if (response.ok) {
                     const data = await response.json();
                     items = data.record.items || [];
-                } else {
-                    items = [];
                 }
             } catch (error) {
                 console.error('Ошибка загрузки:', error);
-                showStatus('❌ Ошибка загрузки данных', 'error');
             }
             renderItems();
         }
 
-        // Сохранение данных в JSONbin
         async function saveData() {
             try {
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
@@ -505,15 +419,11 @@
                     },
                     body: JSON.stringify({ items: items })
                 });
-
                 if (response.ok) {
-                    showStatus('✅ Данные успешно сохранены в облаке!', 'success');
-                } else {
-                    throw new Error('Ошибка сохранения');
+                    showStatus('✅ Данные сохранены!', 'success');
                 }
             } catch (error) {
-                console.error('Ошибка сохранения:', error);
-                showStatus('❌ Ошибка сохранения данных', 'error');
+                showStatus('❌ Ошибка сохранения', 'error');
             }
         }
 
@@ -527,7 +437,7 @@
                     adminSection.classList.add('active');
                     document.querySelector('.admin-login-btn').textContent = '🔒 Выйти из админки';
                     document.body.classList.add('admin-mode');
-                    showStatus('👑 Режим администратора активирован', 'success');
+                    showStatus('👑 Режим администратора', 'success');
                 } else {
                     alert('Неверный пароль!');
                     isAdmin = false;
@@ -536,39 +446,24 @@
                 adminSection.classList.remove('active');
                 document.querySelector('.admin-login-btn').textContent = '🔑 Войти как админ';
                 document.body.classList.remove('admin-mode');
-                showStatus('👤 Режим просмотра', 'info');
             }
         }
 
         async function syncData() {
             await saveData();
             await loadData();
-            showStatus('🔄 Данные синхронизированы!', 'success');
         }
 
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             statusEl.textContent = message;
             statusEl.className = 'status-message show';
-            
-            if (type === 'success') {
-                statusEl.style.background = 'rgba(76, 175, 80, 0.3)';
-            } else if (type === 'error') {
-                statusEl.style.background = 'rgba(244, 67, 54, 0.3)';
-            } else {
-                statusEl.style.background = 'rgba(255, 255, 255, 0.2)';
-            }
-
-            setTimeout(() => {
-                statusEl.classList.remove('show');
-            }, 3000);
+            if (type === 'success') statusEl.style.background = 'rgba(76, 175, 80, 0.3)';
+            else if (type === 'error') statusEl.style.background = 'rgba(244, 67, 54, 0.3)';
+            setTimeout(() => statusEl.classList.remove('show'), 3000);
         }
 
         function openModal() {
-            if (!isAdmin) {
-                alert('Только администратор может добавлять товары!');
-                return;
-            }
             document.getElementById('modal').classList.add('active');
             document.getElementById('itemName').value = '';
             document.getElementById('itemMg').value = '';
@@ -587,8 +482,6 @@
         }
 
         async function addItem() {
-            if (!isAdmin) return;
-
             const name = document.getElementById('itemName').value.trim();
             const mg = document.getElementById('itemMg').value.trim();
             const flavors = document.getElementById('itemFlavors').value.trim();
@@ -596,30 +489,23 @@
             const price = document.getElementById('itemPrice').value.trim();
 
             if (!name || !mg || !flavors || !quantity || !price || !currentImage) {
-                alert('Пожалуйста, заполните все поля и добавьте изображение!');
+                alert('Заполните все поля!');
                 return;
             }
 
-            const newItem = {
+            items.push({
                 id: Date.now(),
-                name: name,
-                mg: mg,
-                flavors: flavors,
-                quantity: quantity,
-                price: price,
+                name, mg, flavors, quantity, price,
                 image: currentImage
-            };
+            });
 
-            items.push(newItem);
             await saveData();
             renderItems();
             closeModal();
         }
 
         async function deleteItem(id) {
-            if (!isAdmin) return;
-            
-            if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+            if (confirm('Удалить товар?')) {
                 items = items.filter(item => item.id !== id);
                 await saveData();
                 renderItems();
@@ -641,13 +527,9 @@
                             <span class="card-badge mg">⚡ ${item.mg}</span>
                             <span class="card-badge quantity">📦 ${item.quantity}</span>
                         </div>
-                        <div class="card-flavors">
-                            🍓 <strong>Вкусы:</strong> ${item.flavors}
-                        </div>
+                        <div class="card-flavors">🍓 Вкусы: ${item.flavors}</div>
                         <div class="card-price">${item.price} ₽</div>
-                        <button class="delete-btn" onclick="deleteItem(${item.id})">
-                            🗑️ Удалить
-                        </button>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑️ Удалить</button>
                     </div>
                 `;
                 grid.appendChild(card);
