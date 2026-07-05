@@ -78,8 +78,7 @@
         </div>
     </div>
     <script>
-        const JSONBIN_API_KEY = '$2a$10$e9b2f1B7CDdjU0uCpb9Wi.H8OyGeMXyX8HQRIdgK5QMnBauM8pZmu';
-        const JSONBIN_BIN_ID = '6a4a5f7eda38895dfe30e687';
+        const API_URL = 'https://api.npoint.io/5a29c0f8eaf291939ddf';
         let items = [];
         let currentImage = null;
         let isAdmin = false;
@@ -116,16 +115,17 @@
 
         async function loadData() {
             try {
-                const r = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, { headers: { 'X-Master-Key': JSONBIN_API_KEY } });
-                if (r.ok) { const d = await r.json(); items = d.record.items || []; }
+                const r = await fetch(API_URL);
+                if (r.ok) { const d = await r.json(); items = d.items || []; }
             } catch (e) {}
             renderItems();
         }
 
         async function saveData() {
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-                    method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ items: items })
                 });
                 showStatus('✅ Сохранено!', 'success');
