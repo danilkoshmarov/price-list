@@ -270,10 +270,9 @@
         let currentImage = null;
         let isAdmin = false;
         let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
-        // Статистика теперь тоже в облаке
         let salesData = {};
         let salesHistory = [];
-        let pendingSales = {}; // Ожидающие подтверждения
+        let pendingSales = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('tgUsername').value = tgUsername;
@@ -320,7 +319,6 @@
             const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
             
-            // Отмечаем что кто-то нажал купить
             if (!pendingSales[item.id]) pendingSales[item.id] = 0;
             pendingSales[item.id]++;
             saveAllData();
@@ -347,7 +345,6 @@
             });
             if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
             
-            // Сбрасываем ожидание
             pendingSales[itemId] = 0;
             
             saveAllData();
@@ -357,7 +354,7 @@
         }
 
         function updateStats() {
-            const totalItems = items.reduce((sum, i) => sum + (i.quantity || 0), 0);
+            const totalItems = items.length;
             const totalValue = items.reduce((sum, i) => sum + (parseInt(i.price) * (i.quantity || 0)), 0);
             const totalSold = Object.values(salesData).reduce((sum, s) => sum + s.count, 0);
             const totalRevenue = Object.values(salesData).reduce((sum, s) => sum + s.revenue, 0);
