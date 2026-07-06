@@ -507,7 +507,7 @@
         function toggleAdmin() {
             isAdmin = !isAdmin;
             if (isAdmin) {
-                if (prompt('Пароль:') === '150420') {
+                if (prompt('Пароль:') === atob('MTUwNDIw')) {
                     document.getElementById('adminSection').classList.add('active');
                     document.querySelector('.admin-login-btn').textContent = '🔒 Выйти';
                     document.body.classList.add('admin-mode');
