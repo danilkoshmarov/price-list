@@ -11,6 +11,10 @@
             0% { background-position: -200% center; }
             100% { background-position: 200% center; }
         }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,33 +24,55 @@
         
         .container { max-width: 1200px; margin: 0 auto; }
         
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 25px; }
         .header h1 { 
-            font-size: 3rem; margin-bottom: 10px; 
+            font-size: 3rem; margin-bottom: 5px; 
             background: linear-gradient(135deg, #e91e63, #9c27b0, #e91e63);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-size: 200% auto; animation: shimmer 3s linear infinite;
         }
-        .header p { font-size: 1.2rem; color: #9c27b0; opacity: 0.8; }
+        .header p { font-size: 1.1rem; color: #9c27b0; opacity: 0.8; }
+
+        /* Категории */
+        .categories-nav {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+            margin-bottom: 25px; padding: 5px;
+        }
+        .cat-tab {
+            padding: 10px 22px; border-radius: 50px; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;
+            background: rgba(255,255,255,0.4); color: #9c27b0;
+            border: 2px solid transparent; white-space: nowrap;
+            backdrop-filter: blur(5px);
+        }
+        .cat-tab:hover { background: rgba(255,255,255,0.6); transform: translateY(-2px); }
+        .cat-tab.active {
+            background: white; color: #e91e63; 
+            border-color: #e91e63; box-shadow: 0 4px 15px rgba(233,30,99,0.2);
+        }
+        .cat-tab .count {
+            font-size: 0.7rem; background: #e91e63; color: white;
+            padding: 2px 8px; border-radius: 20px; margin-left: 6px;
+        }
         
         .stats-panel { display: none; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
         .admin-mode .stats-panel { display: flex; }
         .stat-card {
             background: rgba(255,255,255,0.25); backdrop-filter: blur(15px);
-            border-radius: 20px; padding: 20px 25px; color: #5c2d91; text-align: center;
-            min-width: 150px; flex: 1; border: 1px solid rgba(255,182,193,0.4);
+            border-radius: 20px; padding: 18px 22px; color: #5c2d91; text-align: center;
+            min-width: 140px; flex: 1; border: 1px solid rgba(255,182,193,0.4);
             box-shadow: 0 8px 32px rgba(156,39,176,0.1);
         }
         .stat-value { 
-            font-size: 2rem; font-weight: bold; 
+            font-size: 1.8rem; font-weight: bold; 
             background: linear-gradient(135deg, #e91e63, #9c27b0);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .stat-label { font-size: 0.85rem; opacity: 0.7; margin-top: 5px; }
+        .stat-label { font-size: 0.8rem; opacity: 0.7; margin-top: 5px; }
 
         .admin-controls { text-align: center; margin-bottom: 20px; }
         .admin-login-btn { 
-            border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 50px;
+            border: none; padding: 14px 28px; font-size: 1rem; border-radius: 50px;
             cursor: pointer; transition: all 0.3s ease; font-weight: bold;
             background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
             color: #9c27b0; border: 1px solid rgba(156,39,176,0.3);
@@ -57,7 +83,7 @@
             border: 1px solid rgba(255,182,193,0.3); }
         .admin-section.active { display: block; }
         .add-item-btn, .sync-btn, .reset-btn {
-            border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 50px;
+            border: none; padding: 14px 28px; font-size: 1rem; border-radius: 50px;
             cursor: pointer; margin: 5px; transition: all 0.3s ease; font-weight: bold;
         }
         .add-item-btn { background: white; color: #e91e63; box-shadow: 0 5px 15px rgba(233,30,99,0.2); }
@@ -67,19 +93,19 @@
         .modal { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.5); justify-content: center; align-items: center; 
-            z-index: 9999; -webkit-overflow-scrolling: touch;
+            z-index: 9999;
         }
         .modal.active { display: flex !important; }
         .modal-content { 
             background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 500px;
             box-shadow: 0 20px 60px rgba(156,39,176,0.2); max-height: 85vh; overflow-y: auto;
-            position: relative; z-index: 10000; -webkit-overflow-scrolling: touch;
         }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #5c2d91; font-weight: 500; }
-        .form-group input, .form-group textarea { 
+        .form-group label { display: block; margin-bottom: 5px; color: #5c2d91; font-weight: 500; font-size: 0.9rem; }
+        .form-group input, .form-group textarea, .form-group select { 
             width: 100%; padding: 12px; border: 2px solid #f8e8ff; border-radius: 12px;
             font-size: 1rem; font-family: inherit; }
+        .form-group select { background: white; cursor: pointer; }
         .image-preview { width: 100%; height: 200px; border: 2px dashed #ffd1dc; border-radius: 15px;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             background-size: cover; background-position: center; }
@@ -92,32 +118,37 @@
         .btn-primary { background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; }
         .btn-secondary { background: #f8e8ff; color: #5c2d91; }
         
-        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
+        .price-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 15px; }
         .price-card { 
             background: rgba(255,255,255,0.3); backdrop-filter: blur(20px);
             border-radius: 25px; overflow: hidden; border: 1px solid rgba(255,182,193,0.3);
             box-shadow: 0 8px 32px rgba(156,39,176,0.08); transition: all 0.3s ease;
+            animation: fadeIn 0.4s ease;
         }
-        .price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(156,39,176,0.15); }
-        .card-image { width: 100%; height: 250px; object-fit: cover; }
-        .card-content { padding: 20px; }
-        .card-title { font-size: 1.5rem; font-weight: bold; color: #5c2d91; margin-bottom: 10px; }
-        .card-details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-        .card-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; color: white; }
+        .price-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(156,39,176,0.15); }
+        .card-image { width: 100%; height: 230px; object-fit: cover; }
+        .card-content { padding: 18px; }
+        .card-category {
+            font-size: 0.7rem; color: #e91e63; text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 6px; font-weight: 600;
+        }
+        .card-title { font-size: 1.3rem; font-weight: bold; color: #5c2d91; margin-bottom: 8px; }
+        .card-details { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .card-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; color: white; }
         .card-badge.mg { background: linear-gradient(135deg, #e91e63, #ad1457); }
         .card-badge.quantity { background: linear-gradient(135deg, #7b1fa2, #4a148c); }
-        .card-flavors { color: #6a1b9a; margin-bottom: 10px; font-size: 0.95rem; }
+        .card-flavors { color: #6a1b9a; margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
         .card-price { 
-            font-size: 1.8rem; font-weight: bold; 
+            font-size: 1.6rem; font-weight: bold; 
             background: linear-gradient(135deg, #e91e63, #9c27b0);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
         .card-sales-info {
             display: none; background: rgba(255,182,193,0.2); border-radius: 10px;
-            padding: 8px 12px; margin-bottom: 10px; font-size: 0.9rem; color: #5c2d91;
+            padding: 6px 10px; margin-bottom: 8px; font-size: 0.8rem; color: #5c2d91;
         }
-        .admin-mode .card-sales-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px; }
+        .admin-mode .card-sales-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
         .card-sales-info.pending { background: rgba(255,152,0,0.2); animation: glow 1.5s infinite; }
         @keyframes glow {
             0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); }
@@ -125,17 +156,17 @@
         }
         
         .buy-btn {
-            display: block; width: 100%; padding: 12px; 
+            display: block; width: 100%; padding: 11px; 
             background: linear-gradient(135deg, #e91e63, #ad1457);
-            color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold;
+            color: white; border: none; border-radius: 15px; font-size: 1rem; font-weight: bold;
             cursor: pointer; transition: all 0.3s ease; text-align: center;
         }
         .buy-btn:hover { transform: scale(1.02); }
         
         .confirm-btn {
             background: linear-gradient(135deg, #4CAF50, #2e7d32); color: white;
-            border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer;
-            font-size: 0.8rem; font-weight: bold; transition: all 0.3s ease;
+            border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer;
+            font-size: 0.75rem; font-weight: bold; transition: all 0.3s ease;
             display: none;
         }
         .confirm-btn.show { display: inline-block; animation: pulse 0.5s ease; }
@@ -146,12 +177,12 @@
             100% { transform: scale(1); }
         }
         
-        .card-buttons { display: none; gap: 8px; margin-top: 8px; }
+        .card-buttons { display: none; gap: 6px; margin-top: 6px; }
         .admin-mode .card-buttons { display: flex; }
         .admin-mode .buy-btn { display: none; }
         .edit-btn, .delete-btn, .history-btn { 
-            border: none; padding: 10px; border-radius: 12px; cursor: pointer; 
-            font-size: 0.85rem; color: white; flex: 1; 
+            border: none; padding: 8px; border-radius: 12px; cursor: pointer; 
+            font-size: 0.8rem; color: white; flex: 1; 
         }
         .edit-btn { background: linear-gradient(135deg, #ff9800, #f57c00); }
         .delete-btn { background: linear-gradient(135deg, #f44336, #c62828); }
@@ -182,7 +213,7 @@
         }
         .history-item {
             padding: 10px; border-bottom: 1px solid #f8e8ff; color: #5c2d91;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;
         }
         
         .loading-container {
@@ -196,9 +227,15 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
+        .empty-category {
+            text-align: center; padding: 40px; color: #9c27b0; opacity: 0.6;
+            grid-column: 1 / -1;
+        }
+        
         @media (max-width: 768px) {
             .price-grid { grid-template-columns: 1fr; }
             .stats-panel { flex-direction: column; }
+            .cat-tab { padding: 8px 16px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -207,6 +244,11 @@
         <div class="header">
             <h1>🌸 Наш Прайс-лист</h1>
             <p>Нажми на "Купить" чтобы оформить заказ</p>
+        </div>
+        
+        <!-- Категории -->
+        <div class="categories-nav" id="categoriesNav">
+            <div class="cat-tab active" data-cat="all">Все</div>
         </div>
         
         <div class="stats-panel" id="statsPanel">
@@ -245,6 +287,14 @@
             <h2 id="modalTitle" style="color:#5c2d91;">Добавить товар</h2>
             <input type="hidden" id="editId">
             <div class="form-group"><label>📛 Название</label><input type="text" id="itemName"></div>
+            <div class="form-group"><label>📂 Категория</label>
+                <select id="itemCategory">
+                    <option value="Жижи">💧 Жижи</option>
+                    <option value="Одноразки">🚬 Одноразки</option>
+                    <option value="Снюсы">👄 Снюсы</option>
+                    <option value="Поды">💨 Поды</option>
+                </select>
+            </div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg"></div>
             <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors"></textarea></div>
             <div class="form-group"><label>📦 Количество (только цифра)</label><input type="number" id="itemQuantity" min="0" placeholder="3"></div>
@@ -269,10 +319,14 @@
         let items = [];
         let currentImage = null;
         let isAdmin = false;
+        let currentCategory = 'all';
         let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
         let salesData = {};
         let salesHistory = [];
         let pendingSales = {};
+
+        const categories = ['Жижи', 'Одноразки', 'Снюсы', 'Поды'];
+        const catEmojis = { 'Жижи': '💧', 'Одноразки': '🚬', 'Снюсы': '👄', 'Поды': '💨' };
 
         document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('tgUsername').value = tgUsername;
@@ -308,7 +362,44 @@
                 }
             });
             await loadData();
+            buildCategories();
+            
+            // Клики по категориям
+            document.getElementById('categoriesNav').addEventListener('click', (e) => {
+                if (e.target.classList.contains('cat-tab')) {
+                    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentCategory = e.target.dataset.cat;
+                    renderItems();
+                }
+            });
         });
+
+        function buildCategories() {
+            const nav = document.getElementById('categoriesNav');
+            let html = '<div class="cat-tab active" data-cat="all">Все</div>';
+            
+            categories.forEach(cat => {
+                const count = items.filter(i => i.category === cat).length;
+                html += `<div class="cat-tab" data-cat="${cat}">${catEmojis[cat]} ${cat}<span class="count">${count}</span></div>`;
+            });
+            
+            nav.innerHTML = html;
+            if (currentCategory !== 'all') {
+                document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+                const activeTab = document.querySelector(`.cat-tab[data-cat="${currentCategory}"]`);
+                if (activeTab) activeTab.classList.add('active');
+                else {
+                    currentCategory = 'all';
+                    document.querySelector('.cat-tab[data-cat="all"]').classList.add('active');
+                }
+            }
+        }
+
+        function getFilteredItems() {
+            if (currentCategory === 'all') return items;
+            return items.filter(i => i.category === currentCategory);
+        }
 
         function saveTgUsername() {
             const input = document.getElementById('tgUsername').value.trim().replace('@', '');
@@ -323,7 +414,7 @@
             pendingSales[item.id]++;
             saveAllData();
             renderItems();
-            showStatus('🔔 Новый заказ! Подтвердите в админке', 'success');
+            showStatus('🔔 Новый заказ!', 'success');
         }
 
         function confirmSale(itemId) {
@@ -350,12 +441,14 @@
             saveAllData();
             updateStats();
             renderItems();
-            showStatus(`✅ Продажа подтверждена! +${item.price}₽`, 'success');
+            buildCategories();
+            showStatus(`✅ Продажа! +${item.price}₽`, 'success');
         }
 
         function updateStats() {
-            const totalItems = items.length;
-            const totalValue = items.reduce((sum, i) => sum + (parseInt(i.price) * (i.quantity || 0)), 0);
+            const filtered = getFilteredItems();
+            const totalItems = filtered.length;
+            const totalValue = filtered.reduce((sum, i) => sum + (parseInt(i.price) * (i.quantity || 0)), 0);
             const totalSold = Object.values(salesData).reduce((sum, s) => sum + s.count, 0);
             const totalRevenue = Object.values(salesData).reduce((sum, s) => sum + s.revenue, 0);
             
@@ -368,8 +461,7 @@
         function resetAllStats() {
             if (confirm('Сбросить ВСЮ статистику?')) {
                 salesData = {}; salesHistory = []; pendingSales = {};
-                saveAllData();
-                updateStats(); renderItems();
+                saveAllData(); updateStats(); renderItems();
                 showStatus('🗑️ Сброшено', 'success');
             }
         }
@@ -407,6 +499,7 @@
             } catch (e) {}
             updateStats();
             renderItems();
+            buildCategories();
         }
 
         async function saveAllData() {
@@ -414,12 +507,7 @@
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        items: items,
-                        salesData: salesData,
-                        salesHistory: salesHistory,
-                        pendingSales: pendingSales
-                    })
+                    body: JSON.stringify({ items, salesData, salesHistory, pendingSales })
                 });
             } catch (e) {}
         }
@@ -459,6 +547,7 @@
                 document.getElementById('modalTitle').textContent = 'Редактировать товар';
                 document.getElementById('editId').value = editItem.id;
                 document.getElementById('itemName').value = editItem.name || '';
+                document.getElementById('itemCategory').value = editItem.category || 'Жижи';
                 document.getElementById('itemMg').value = editItem.mg || '';
                 document.getElementById('itemFlavors').value = editItem.flavors || '';
                 document.getElementById('itemQuantity').value = editItem.quantity || 0;
@@ -470,22 +559,21 @@
                     p.classList.add('has-image');
                     p.innerHTML = '';
                 } else {
-                    p.style.backgroundImage = '';
-                    p.classList.remove('has-image');
+                    p.style.backgroundImage = ''; p.classList.remove('has-image');
                     p.innerHTML = '<span>Нажмите для загрузки</span>';
                 }
             } else {
                 document.getElementById('modalTitle').textContent = 'Добавить товар';
                 document.getElementById('editId').value = '';
                 document.getElementById('itemName').value = '';
+                document.getElementById('itemCategory').value = 'Жижи';
                 document.getElementById('itemMg').value = '';
                 document.getElementById('itemFlavors').value = '';
                 document.getElementById('itemQuantity').value = '';
                 document.getElementById('itemPrice').value = '';
                 currentImage = null;
                 const p = document.getElementById('imagePreview');
-                p.style.backgroundImage = '';
-                p.classList.remove('has-image');
+                p.style.backgroundImage = ''; p.classList.remove('has-image');
                 p.innerHTML = '<span>Нажмите для загрузки</span>';
             }
         }
@@ -495,21 +583,18 @@
         async function saveItem() {
             const editId = document.getElementById('editId').value;
             const n = document.getElementById('itemName').value.trim();
+            const cat = document.getElementById('itemCategory').value;
             const m = document.getElementById('itemMg').value.trim();
             const f = document.getElementById('itemFlavors').value.trim();
             const q = parseInt(document.getElementById('itemQuantity').value) || 0;
             const p = document.getElementById('itemPrice').value.trim();
             
-            if (!n || !m || !f || p === '' || !currentImage) { 
-                alert('Заполните все поля!'); 
-                return; 
-            }
+            if (!n || !m || !f || p === '' || !currentImage) { alert('Заполните все поля!'); return; }
             
             const itemData = { 
                 id: editId ? parseInt(editId) : Date.now(), 
-                name: n, mg: m, flavors: f, 
-                quantity: q, price: p, 
-                image: currentImage 
+                name: n, category: cat, mg: m, flavors: f, 
+                quantity: q, price: p, image: currentImage 
             };
             
             if (editId) {
@@ -522,6 +607,7 @@
             await saveData();
             updateStats();
             renderItems();
+            buildCategories();
             closeModal();
         }
 
@@ -529,8 +615,7 @@
             if (confirm('Удалить?')) { 
                 items = items.filter(i => i.id !== id); 
                 await saveData(); 
-                updateStats(); 
-                renderItems(); 
+                updateStats(); renderItems(); buildCategories(); 
             }
         }
 
@@ -541,12 +626,20 @@
 
         function renderItems() {
             const grid = document.getElementById('priceGrid');
+            const filtered = getFilteredItems();
+            
             if (items.length === 0) {
-                grid.innerHTML = '<div class="loading-container" style="grid-column:1/-1;"><div style="font-size:4rem;">🌸</div><div>Товары не добавлены</div></div>';
+                grid.innerHTML = '<div class="empty-category">🌸 Товары не добавлены</div>';
                 return;
             }
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="empty-category">📂 В этой категории пока нет товаров</div>';
+                return;
+            }
+            
             grid.innerHTML = '';
-            items.forEach(item => {
+            filtered.forEach(item => {
                 const sold = salesData[item.id] || { count: 0, revenue: 0 };
                 const pending = pendingSales[item.id] || 0;
                 const hasPending = pending > 0;
@@ -556,6 +649,7 @@
                 card.innerHTML = 
                     '<img src="' + item.image + '" class="card-image">' +
                     '<div class="card-content">' +
+                    '<div class="card-category">' + (catEmojis[item.category] || '📦') + ' ' + (item.category || 'Без категории') + '</div>' +
                     '<h3 class="card-title">' + item.name + '</h3>' +
                     '<div class="card-details">' +
                     '<span class="card-badge mg">⚡ ' + item.mg + '</span>' +
@@ -564,9 +658,8 @@
                     '<div class="card-flavors">🍓 ' + item.flavors + '</div>' +
                     '<div class="card-price">' + item.price + ' ₽</div>' +
                     '<div class="card-sales-info' + (hasPending ? ' pending' : '') + '">' +
-                    '<span>📊 Продано: ' + sold.count + '</span>' +
-                    '<span>💵 ' + sold.revenue + '₽</span>' +
-                    (hasPending ? '<span style="color:#ff9800;font-weight:bold;">🔔 ' + pending + '</span>' : '') +
+                    '<span>📊 ' + sold.count + '</span><span>💵 ' + sold.revenue + '₽</span>' +
+                    (hasPending ? '<span style="color:#ff9800;">🔔' + pending + '</span>' : '') +
                     '<button class="confirm-btn' + (hasPending ? ' show' : '') + '" onclick="confirmSale(' + item.id + ')" ' + (item.quantity <= 0 ? 'disabled' : '') + '>✅</button>' +
                     '</div>' +
                     '<button class="buy-btn" onclick="buyItem(' + JSON.stringify(item).replace(/"/g, '&quot;') + ')">💬 Купить</button>' +
@@ -577,6 +670,8 @@
                     '</div></div>';
                 grid.appendChild(card);
             });
+            
+            updateStats();
         }
     </script>
 </body>
