@@ -15,10 +15,24 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8); }
+        }
         @keyframes searchFocus {
             0% { box-shadow: 0 0 0 rgba(233,30,99,0); }
             100% { box-shadow: 0 0 20px rgba(233,30,99,0.2); }
         }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); }
+            50% { box-shadow: 0 0 15px rgba(255,152,0,0.6); }
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -55,8 +69,6 @@
         }
         .search-clear.show { display: block; }
         .search-clear:hover { color: #e91e63; }
-        .search-results { text-align: center; color: #9c27b0; font-size: 0.9rem; margin-bottom: 15px; display: none; }
-        .search-results.show { display: block; }
 
         .categories-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 25px; padding: 5px; }
         .cat-tab {
@@ -133,6 +145,7 @@
             animation: fadeIn 0.4s ease;
         }
         .price-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(156,39,176,0.15); }
+        .price-card.removing { animation: fadeOut 0.4s ease forwards; }
         .card-image { width: 100%; height: 230px; object-fit: cover; }
         .card-content { padding: 18px; }
         .card-category { font-size: 0.7rem; color: #e91e63; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; font-weight: 600; }
@@ -141,20 +154,28 @@
         .card-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; color: white; }
         .card-badge.mg { background: linear-gradient(135deg, #e91e63, #ad1457); }
         .card-badge.quantity { background: linear-gradient(135deg, #7b1fa2, #4a148c); }
+        .card-badge.zero { background: #f44336; animation: pulse 0.5s ease; }
         .card-flavors { color: #6a1b9a; margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
         .card-price { font-size: 1.6rem; font-weight: bold; background: linear-gradient(135deg, #e91e63, #9c27b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        
         .card-sales-info { display: none; background: rgba(255,182,193,0.2); border-radius: 10px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.8rem; color: #5c2d91; }
         .admin-mode .card-sales-info { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
         .card-sales-info.pending { background: rgba(255,152,0,0.2); animation: glow 1.5s infinite; }
-        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); } 50% { box-shadow: 0 0 15px rgba(255,152,0,0.6); } }
         
         .buy-btn { display: block; width: 100%; padding: 11px; background: linear-gradient(135deg, #e91e63, #ad1457); color: white; border: none; border-radius: 15px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; text-align: center; }
         .buy-btn:hover { transform: scale(1.02); }
+        .buy-btn.sold-out { background: #999; cursor: not-allowed; }
+        .buy-btn.sold-out:hover { transform: none; }
         
-        .confirm-btn { background: linear-gradient(135deg, #4CAF50, #2e7d32); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: bold; transition: all 0.3s ease; display: none; }
-        .confirm-btn.show { display: inline-block; animation: pulse 0.5s ease; }
-        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; display: inline-block; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .confirm-btn, .cancel-btn {
+            border: none; padding: 5px 10px; border-radius: 20px; cursor: pointer;
+            font-size: 0.75rem; font-weight: bold; transition: all 0.3s ease; display: none;
+        }
+        .confirm-btn { background: linear-gradient(135deg, #4CAF50, #2e7d32); color: white; }
+        .cancel-btn { background: linear-gradient(135deg, #f44336, #c62828); color: white; }
+        .confirm-btn.show, .cancel-btn.show { display: inline-block; }
+        .confirm-btn.show { animation: pulse 0.5s ease; }
+        .confirm-btn:disabled, .cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .card-buttons { display: none; gap: 6px; margin-top: 6px; }
         .admin-mode .card-buttons { display: flex; }
@@ -178,7 +199,6 @@
         
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #9c27b0; text-align: center; }
         .loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(156,39,176,0.2); border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .empty-category { text-align: center; padding: 40px; color: #9c27b0; opacity: 0.6; grid-column: 1 / -1; }
         
@@ -204,7 +224,6 @@
                 <span class="search-icon">🔍</span>
             </div>
         </div>
-        <div class="search-results" id="searchResults"></div>
         
         <div class="categories-nav" id="categoriesNav">
             <div class="cat-tab active" data-cat="all">Все</div>
@@ -379,6 +398,7 @@
         }
 
         function buyItem(item) {
+            if (item.quantity <= 0) return;
             const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
             if (!pendingSales[item.id]) pendingSales[item.id] = 0;
@@ -391,6 +411,7 @@
         function confirmSale(itemId) {
             const item = items.find(i => i.id === itemId);
             if (!item || item.quantity <= 0) return;
+            
             item.quantity--;
             if (!salesData[itemId]) salesData[itemId] = { count: 0, revenue: 0, name: item.name };
             salesData[itemId].count++;
@@ -398,8 +419,26 @@
             salesHistory.unshift({ date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price), itemId });
             if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
             pendingSales[itemId] = 0;
+            
+            // Автоудаление если 0
+            if (item.quantity <= 0) {
+                setTimeout(() => {
+                    items = items.filter(i => i.id !== itemId);
+                    saveAllData(); updateStats(); renderItems(); buildCategories();
+                    showStatus('🗑️ Товар распродан и удалён!', 'success');
+                }, 1500);
+            }
+            
             saveAllData(); updateStats(); renderItems(); buildCategories();
             showStatus(`✅ Продажа! +${item.price}₽`, 'success');
+        }
+
+        function cancelSale(itemId) {
+            if (!pendingSales[itemId] || pendingSales[itemId] <= 0) return;
+            pendingSales[itemId]--;
+            saveAllData();
+            renderItems();
+            showStatus('❌ Заказ отменён', 'error');
         }
 
         function updateStats() {
@@ -411,9 +450,10 @@
         }
 
         function resetAllStats() {
-            if (confirm('Сбросить статистику?')) {
+            if (confirm('Сбросить ВСЮ статистику и историю?')) {
                 salesData = {}; salesHistory = []; pendingSales = {};
                 saveAllData(); updateStats(); renderItems();
+                showStatus('🗑️ Всё сброшено', 'success');
             }
         }
 
@@ -566,6 +606,8 @@
             filtered.forEach(item => {
                 const sold = salesData[item.id] || { count: 0, revenue: 0 };
                 const pending = pendingSales[item.id] || 0;
+                const isZero = item.quantity <= 0;
+                
                 const card = document.createElement('div');
                 card.className = 'price-card';
                 card.innerHTML = 
@@ -573,15 +615,16 @@
                     '<div class="card-content">' +
                     '<div class="card-category">' + (catEmojis[item.category]||'📦') + ' ' + (item.category||'') + '</div>' +
                     '<h3 class="card-title">' + item.name + '</h3>' +
-                    '<div class="card-details"><span class="card-badge mg">⚡ ' + item.mg + '</span><span class="card-badge quantity">📦 ' + item.quantity + ' шт</span></div>' +
+                    '<div class="card-details"><span class="card-badge mg">⚡ ' + item.mg + '</span><span class="card-badge quantity' + (isZero ? ' zero' : '') + '">📦 ' + item.quantity + ' шт</span></div>' +
                     '<div class="card-flavors">🍓 ' + item.flavors + '</div>' +
                     '<div class="card-price">' + item.price + ' ₽</div>' +
                     '<div class="card-sales-info' + (pending ? ' pending' : '') + '">' +
                     '<span>📊 ' + sold.count + '</span><span>💵 ' + sold.revenue + '₽</span>' +
                     (pending ? '<span style="color:#ff9800;">🔔' + pending + '</span>' : '') +
                     '<button class="confirm-btn' + (pending ? ' show' : '') + '" onclick="confirmSale(' + item.id + ')" ' + (item.quantity <= 0 ? 'disabled' : '') + '>✅</button>' +
+                    '<button class="cancel-btn' + (pending ? ' show' : '') + '" onclick="cancelSale(' + item.id + ')">✕</button>' +
                     '</div>' +
-                    '<button class="buy-btn" onclick="buyItem(' + JSON.stringify(item).replace(/"/g, '&quot;') + ')">💬 Купить</button>' +
+                    '<button class="buy-btn' + (isZero ? ' sold-out' : '') + '" onclick="buyItem(' + JSON.stringify(item).replace(/"/g, '&quot;') + ')" ' + (isZero ? 'disabled' : '') + '>' + (isZero ? 'Нет в наличии' : '💬 Купить') + '</button>' +
                     '<div class="card-buttons">' +
                     '<button class="edit-btn" onclick="editItem(' + item.id + ')">✏️</button>' +
                     '<button class="history-btn" onclick="showHistory()">📊</button>' +
