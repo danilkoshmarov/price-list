@@ -245,25 +245,31 @@ function buyItem(item) { if (item.quantity <= 0) return; const message = encodeU
 function addToCart(item) {
     const existing = cart.find(c => c.id === item.id);
     if (existing) { existing.qty++; }
-    else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1 }); }
+    else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1, parentId: null }); }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartPanel();
     showStatus('🛒 В корзине!', 'success');
-    if (items.length > 1) {
-        const other = items.filter(i => i.id !== item.id)[0];
-        if (other) {
-            document.getElementById('upsellName').textContent = other.name;
-            document.getElementById('upsellOldPrice').textContent = other.price + '₽';
-            document.getElementById('upsellNewPrice').textContent = Math.round(other.price * 0.9) + '₽';
-            document.getElementById('upsellOverlay').classList.add('active');
-            upsellItem = other;
-        }
+    
+    const otherItems = items.filter(i => i.id !== item.id);
+    if (otherItems.length > 0) {
+        const randomItem = otherItems[Math.floor(Math.random() * otherItems.length)];
+        upsellItem = { ...randomItem, parentId: item.id };
+        document.getElementById('upsellName').textContent = randomItem.name;
+        document.getElementById('upsellOldPrice').textContent = randomItem.price + '₽';
+        document.getElementById('upsellNewPrice').textContent = Math.round(randomItem.price * 0.9) + '₽';
+        document.getElementById('upsellOverlay').classList.add('active');
     }
 }
 
 function acceptUpsell() {
     if (upsellItem) {
-        cart.push({ id: 'd_' + Date.now(), name: upsellItem.name + ' (-10%)', price: Math.round(upsellItem.price * 0.9), qty: 1 });
+        cart.push({ 
+            id: 'd_' + Date.now(), 
+            name: upsellItem.name + ' (-10%)', 
+            price: Math.round(upsellItem.price * 0.9), 
+            qty: 1, 
+            parentId: upsellItem.parentId 
+        });
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartPanel();
         showStatus('✅ Добавлено со скидкой 10%!', 'success');
@@ -274,7 +280,11 @@ function acceptUpsell() {
 function closeUpsell() { document.getElementById('upsellOverlay').classList.remove('active'); upsellItem = null; }
 
 function removeFromCart(id) { 
+    const item = cart.find(c => c.id == id);
     cart = cart.filter(c => c.id != id);
+    if (item && !item.id.toString().startsWith('d_')) {
+        cart = cart.filter(c => c.parentId != id);
+    }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartPanel();
     openCart();
