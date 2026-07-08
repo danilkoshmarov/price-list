@@ -317,22 +317,15 @@ function orderCart() {
     const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); 
     window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
     
-    // Считаем каждый реальный товар только 1 раз
-    const seen = [];
+    // Считаем КАЖДЫЙ товар в корзине
     cart.forEach(c => {
-        let realId;
-        if (c.parentId) {
-            realId = c.parentId;
-        } else if (c.id.toString().startsWith('d_')) {
-            realId = c.parentId;
-        } else {
-            realId = c.id;
+        let realId = c.parentId || c.id;
+        // Убираем 'd_' если есть
+        if (realId.toString().startsWith('d_')) {
+            realId = realId.toString().replace('d_', '');
         }
-        if (!seen.includes(realId)) {
-            seen.push(realId);
-            if (!pendingSales[realId]) pendingSales[realId] = 0;
-            pendingSales[realId] += c.qty;
-        }
+        if (!pendingSales[realId]) pendingSales[realId] = 0;
+        pendingSales[realId] += c.qty;
     });
     
     saveAllData(); renderItems(); showStatus('🔔 Заказ из корзины!', 'success');
