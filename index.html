@@ -473,15 +473,16 @@
             showUpsell(item);
         }
         
-        function showUpsell(addedItem) {
+                function showUpsell(addedItem) {
             if (cart.some(c => c.id.toString().includes('_discount'))) return;
-            const otherItems = items.filter(i => i.id !== addedItem.id && i.quantity > 0);
+            const otherItems = items.filter(i => i.id !== addedItem.id);
             if (otherItems.length === 0) return;
             upsellItem = otherItems[Math.floor(Math.random() * otherItems.length)];
             document.getElementById('upsellName').textContent = upsellItem.name;
             document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
             document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
             document.getElementById('upsellOverlay').classList.add('active');
+        }
         }
 
         function acceptUpsell() {
