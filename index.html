@@ -432,15 +432,15 @@ setTimeout(() => {
         }
         
         function showUpsell(addedItem) {
-            if (cart.some(c => c.id.toString().includes('_discount'))) return;
-            const otherItems = items.filter(i => i.id !== addedItem.id);
-            if (otherItems.length === 0) return;
-            upsellItem = otherItems[Math.floor(Math.random() * otherItems.length)];
-            document.getElementById('upsellName').textContent = upsellItem.name;
-            document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
-            document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
-            document.getElementById('upsellOverlay').classList.add('active');
-        }
+    if (items.length < 2) return;
+    const otherItems = items.filter(i => i.id !== addedItem.id);
+    if (otherItems.length === 0) return;
+    upsellItem = otherItems[Math.floor(Math.random() * otherItems.length)];
+    document.getElementById('upsellName').textContent = upsellItem.name;
+    document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
+    document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
+    document.getElementById('upsellOverlay').classList.add('active');
+}
 
         function acceptUpsell() {
             if (upsellItem) {
@@ -457,15 +457,16 @@ setTimeout(() => {
 
         function closeUpsell() { document.getElementById('upsellOverlay').classList.remove('active'); upsellItem = null; }
         
-        function removeFromCart(id) { 
-            cart = cart.filter(c => c.id !== id);
-            if (!id.toString().includes('_discount')) {
-                const discountId = id + '_discount';
-                cart = cart.filter(c => c.id !== discountId);
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartPanel();
-            openCart();
+        function function removeFromCart(id) { 
+    cart = cart.filter(c => c.id !== id);
+    if (!id.toString().includes('_discount')) {
+        const discountId = id + '_discount';
+        cart = cart.filter(c => c.id !== discountId);
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartPanel();
+    openCart();
+}
         }
         
         function updateCartPanel() { const panel = document.getElementById('cartPanel'), count = cart.reduce((s, c) => s + c.qty, 0), total = cart.reduce((s, c) => s + c.price * c.qty, 0); document.getElementById('cartCount').textContent = count; document.getElementById('cartInfo').textContent = `${count} тов. · ${total}₽`; panel.classList.toggle('show', count > 0); }
