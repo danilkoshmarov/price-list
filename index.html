@@ -95,32 +95,18 @@
             --login-color: #aaa;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg); min-height: 100vh; padding: 20px; transition: all 0.5s ease;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); min-height: 100vh; padding: 20px; transition: all 0.5s ease; }
         .container { max-width: 1200px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { font-size: 3rem; margin-bottom: 5px; background: var(--stat-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shimmer 3s linear infinite; }
         .header p { font-size: 1.1rem; color: var(--header-p); opacity: 0.8; }
         
-        .theme-toggle {
-            width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
-            background: var(--card-bg); backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border); font-size: 1.3rem;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease; position: fixed; top: 15px; right: 15px; z-index: 500;
-        }
+        .theme-toggle { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--card-border); font-size: 1.3rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: fixed; top: 15px; right: 15px; z-index: 500; }
         .theme-toggle:hover { transform: scale(1.1); }
         
         .quick-actions { display: none; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px; }
         .admin-mode .quick-actions { display: flex; }
-        .quick-btn {
-            padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border);
-            background: var(--cat-bg); color: var(--cat-color); cursor: pointer;
-            font-size: 0.8rem; transition: all 0.3s; font-family: inherit; font-weight: 500;
-            backdrop-filter: blur(5px);
-        }
+        .quick-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--card-border); background: var(--cat-bg); color: var(--cat-color); cursor: pointer; font-size: 0.8rem; transition: all 0.3s; font-family: inherit; font-weight: 500; backdrop-filter: blur(5px); }
         .quick-btn:hover { background: var(--cat-active-bg); transform: translateY(-2px); }
         .quick-btn.danger { border-color: #f44336; color: #f44336; }
         .quick-btn.danger:hover { background: rgba(244,67,54,0.1); }
@@ -263,10 +249,7 @@
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
     
     <div class="container">
-        <div class="header">
-            <h1>🌸 Наш Прайс-лист</h1>
-            <p>Доставка в удобное время и место 🚗</p>
-        </div>
+        <div class="header"><h1>🌸 Наш Прайс-лист</h1><p>Доставка в удобное время и место 🚗</p></div>
         
         <div class="quick-actions" id="quickActions">
             <button class="quick-btn" onclick="openModal()">✨ Добавить</button>
@@ -277,13 +260,7 @@
             <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveData();renderItems();buildCategories();}">⚠️ Сброс товаров</button>
         </div>
         
-        <div class="search-container">
-            <div class="search-wrapper">
-                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск...">
-                <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
-                <span class="search-icon">🔍</span>
-            </div>
-        </div>
+        <div class="search-container"><div class="search-wrapper"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск..."><button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button><span class="search-icon">🔍</span></div></div>
         
         <div class="sort-bar">
             <button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button>
@@ -303,38 +280,23 @@
         
         <div class="demand-panel" id="demandPanel"></div>
         
-        <div class="admin-controls">
-            <button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button>
-        </div>
+        <div class="admin-controls"><button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button></div>
         
         <div class="admin-section" id="adminSection">
-            <div class="tg-setup">
-                <input type="text" id="tgUsername" value="danil_cooldown" placeholder="Telegram username">
-                <button onclick="saveTgUsername()">💾 Сохранить</button>
-            </div>
+            <div class="tg-setup"><input type="text" id="tgUsername" value="danil_cooldown" placeholder="Telegram username"><button onclick="saveTgUsername()">💾 Сохранить</button></div>
         </div>
         
-        <div class="price-grid" id="priceGrid">
-            <div class="loading-container" style="grid-column:1/-1;"><div class="loading-spinner"></div><div>Загружаем...</div></div>
-        </div>
+        <div class="price-grid" id="priceGrid"><div class="loading-container" style="grid-column:1/-1;"><div class="loading-spinner"></div><div>Загружаем...</div></div></div>
     </div>
 
-    <div class="cart-panel" id="cartPanel">
-        <span class="cart-count" id="cartCount">0</span>
-        <span class="cart-info" id="cartInfo">0 тов. · 0₽</span>
-        <button class="cart-btn cart-view-btn" onclick="openCart()">🛒</button>
-        <button class="cart-btn cart-order-btn" onclick="orderCart()">💬 Заказать</button>
-    </div>
+    <div class="cart-panel" id="cartPanel"><span class="cart-count" id="cartCount">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span><button class="cart-btn cart-view-btn" onclick="openCart()">🛒</button><button class="cart-btn cart-order-btn" onclick="orderCart()">💬 Заказать</button></div>
     
     <div class="cart-modal" id="cartModal">
         <div class="cart-modal-content">
             <h3 style="color:var(--modal-color);text-align:center;">🛒 Корзина</h3>
             <div id="cartItems"></div>
             <div class="cart-total" id="cartTotal">Итого: 0₽</div>
-            <div class="cart-meetup">
-                <input type="text" id="meetupPlace" placeholder="📍 Где встретиться?">
-                <input type="text" id="meetupTime" placeholder="🕐 Когда? (например: завтра в 18:00)">
-            </div>
+            <div class="cart-meetup"><input type="text" id="meetupPlace" placeholder="📍 Где встретиться?"><input type="text" id="meetupTime" placeholder="🕐 Когда?"></div>
             <button class="cart-order-all-btn" onclick="orderCart()">💬 Заказать с доставкой</button>
             <button class="btn btn-secondary" onclick="closeCart()" style="margin-top:8px;width:100%;">Закрыть</button>
         </div>
@@ -342,26 +304,19 @@
 
     <div class="upsell-overlay" id="upsellOverlay">
         <div class="upsell-popup">
-            <span class="upsell-badge">-10%</span>
-            <h3>🛒 Добавить к заказу?</h3>
+            <span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3>
             <p id="upsellName">Товар</p>
             <span class="upsell-old-price" id="upsellOldPrice">600₽</span>
             <span class="upsell-price" id="upsellNewPrice">540₽</span>
-            <div class="upsell-buttons">
-                <button class="upsell-no" onclick="closeUpsell()">Нет</button>
-                <button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button>
-            </div>
+            <div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div>
         </div>
     </div>
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" style="color:var(--modal-color);">Добавить товар</h2>
-            <input type="hidden" id="editId">
+            <h2 id="modalTitle" style="color:var(--modal-color);">Добавить товар</h2><input type="hidden" id="editId">
             <div class="form-group"><label>📛 Название</label><input type="text" id="itemName"></div>
-            <div class="form-group"><label>📂 Категория</label>
-                <select id="itemCategory"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select>
-            </div>
+            <div class="form-group"><label>📂 Категория</label><select id="itemCategory"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg"></div>
             <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors"></textarea></div>
             <div class="form-group"><label>📦 Количество</label><input type="number" id="itemQuantity" min="0"></div>
@@ -371,13 +326,7 @@
         </div>
     </div>
     
-    <div class="history-modal" id="historyModal">
-        <div class="history-content">
-            <h3 style="color:var(--modal-color);text-align:center;">📋 История продаж</h3>
-            <div id="historyList"></div>
-            <button class="btn btn-secondary" onclick="closeHistory()" style="margin-top:10px;width:100%;">Закрыть</button>
-        </div>
-    </div>
+    <div class="history-modal" id="historyModal"><div class="history-content"><h3 style="color:var(--modal-color);text-align:center;">📋 История продаж</h3><div id="historyList"></div><button class="btn btn-secondary" onclick="closeHistory()" style="margin-top:10px;width:100%;">Закрыть</button></div></div>
 
     <script>
         const API_URL = 'https://api.npoint.io/55674e9c91b4698843d7';
@@ -473,7 +422,7 @@
             showUpsell(item);
         }
         
-                function showUpsell(addedItem) {
+        function showUpsell(addedItem) {
             if (cart.some(c => c.id.toString().includes('_discount'))) return;
             const otherItems = items.filter(i => i.id !== addedItem.id);
             if (otherItems.length === 0) return;
@@ -482,7 +431,6 @@
             document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
             document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
             document.getElementById('upsellOverlay').classList.add('active');
-        }
         }
 
         function acceptUpsell() {
@@ -512,6 +460,7 @@
         }
         
         function updateCartPanel() { const panel = document.getElementById('cartPanel'), count = cart.reduce((s, c) => s + c.qty, 0), total = cart.reduce((s, c) => s + c.price * c.qty, 0); document.getElementById('cartCount').textContent = count; document.getElementById('cartInfo').textContent = `${count} тов. · ${total}₽`; panel.classList.toggle('show', count > 0); }
+        
         function openCart() { 
             const modal = document.getElementById('cartModal'), itemsEl = document.getElementById('cartItems'); 
             if (cart.length === 0) { itemsEl.innerHTML = '<p style="text-align:center;">Пусто</p>'; } 
@@ -526,9 +475,9 @@
             const place = document.getElementById('meetupPlace').value.trim();
             const time = document.getElementById('meetupTime').value.trim();
             const meetupInfo = (place || time) ? `\n\n📍 ${place || '—'}\n🕐 ${time || '—'}` : '';
-            const items = cart.map(c => `• ${c.name} x${c.qty} = ${c.price*c.qty}₽`).join('\n'); 
+            const itemsText = cart.map(c => `• ${c.name} x${c.qty} = ${c.price*c.qty}₽`).join('\n'); 
             const total = cart.reduce((s,c)=>s+c.price*c.qty,0); 
-            const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${items}\n\nИтого: ${total}₽${meetupInfo}`); 
+            const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); 
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
             cart.forEach(c => { 
                 const realId = c.id.toString().replace('_discount', '');
@@ -543,12 +492,8 @@
         
         function resetHistory() {
             if (confirm('Сбросить историю продаж и статистику? Товары останутся.')) {
-                salesData = {};
-                salesHistory = [];
-                pendingSales = {};
-                saveAllData();
-                updateStats();
-                renderItems();
+                salesData = {}; salesHistory = []; pendingSales = {};
+                saveAllData(); updateStats(); renderItems();
                 showStatus('🗑️ История продаж сброшена', 'success');
             }
         }
