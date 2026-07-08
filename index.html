@@ -372,8 +372,7 @@
                 document.getElementById('searchClear').classList.toggle('show', !!searchQuery);
                 renderItems();
             });
-            await loadData(); buildCategories(); updateCartPanel();// ТЕСТ: показать окно через 2 секунды
-setTimeout(() => {
+            
     if (!isAdmin && items.length > 1) {
         upsellItem = items[1];
         document.getElementById('upsellName').textContent = upsellItem.name;
