@@ -248,6 +248,7 @@ function addToCart(item) {
     else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1, parentId: null }); }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartPanel();
+    renderItems();
     showStatus('🛒 В корзине!', 'success');
     
     const otherItems = items.filter(i => i.id !== item.id);
@@ -292,7 +293,6 @@ function removeFromCart(id) {
     } else {
         openCart();
     }
-    // Обновляем карточки чтобы кнопка "В корзине" сбросилась
     renderItems();
 }
 
@@ -317,13 +317,10 @@ function orderCart() {
     const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); 
     window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
     
-    // Считаем каждый товар только ОДИН раз
     const counted = {};
     cart.forEach(c => {
-        let realId = c.parentId || c.id.toString().replace('d_', '');
-        if (!counted[realId]) {
-            counted[realId] = 0;
-        }
+        let realId = c.parentId || c.id.toString().replace('d_', '').split('_')[0];
+        if (!counted[realId]) counted[realId] = 0;
         counted[realId] += c.qty;
     });
     
@@ -333,7 +330,7 @@ function orderCart() {
     }
     
     saveAllData(); renderItems(); showStatus('🔔 Заказ из корзины!', 'success');
-}
+}    
 
 function confirmSale(itemId) { const item = items.find(i => i.id === itemId); if (!item || item.quantity <= 0 || !pendingSales[itemId]) return; item.quantity--; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; if (!salesData[itemId]) salesData[itemId] = { count: 0, revenue: 0, name: item.name }; salesData[itemId].count++; salesData[itemId].revenue += parseInt(item.price); salesHistory.unshift({ date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price), itemId }); if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100); if (item.quantity <= 0) { setTimeout(() => { items = items.filter(i => i.id !== itemId); saveAllData(); updateStats(); renderItems(); buildCategories(); }, 1500); } saveAllData(); updateStats(); renderItems(); buildCategories(); showStatus(`✅ Продажа! +${item.price}₽`, 'success'); }
 function cancelSale(itemId) { if (!pendingSales[itemId]) return; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; saveAllData(); renderItems(); }
