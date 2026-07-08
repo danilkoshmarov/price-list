@@ -317,20 +317,18 @@ function orderCart() {
     const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); 
     window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
     
-    // Временный вывод для проверки
-    console.log('Корзина:', JSON.stringify(cart));
-    
     cart.forEach(c => {
-        console.log('Товар:', c.name, 'ID:', c.id, 'parentId:', c.parentId);
+        // Если есть parentId — используем его, иначе сам id
         let realId = c.parentId || c.id;
-        if (realId.toString().startsWith('d_')) {
-            realId = realId.toString().replace('d_', '');
+        // На всякий случай убираем 'd_' если вдруг осталось
+        if (typeof realId === 'string' && realId.startsWith('d_')) {
+            realId = parseInt(realId.replace('d_', ''));
         }
-        console.log('realId:', realId);
         if (!pendingSales[realId]) pendingSales[realId] = 0;
         pendingSales[realId] += c.qty;
     });
     
+    console.log('pendingSales после заказа:', pendingSales);
     saveAllData(); renderItems(); showStatus('🔔 Заказ из корзины!', 'success');
 }
 
