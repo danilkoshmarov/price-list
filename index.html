@@ -317,9 +317,13 @@ function orderCart() {
     const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); 
     window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
     
+    // Считаем каждый товар
     cart.forEach(c => {
-        // Для скидочных товаров — parentId, для обычных — id
-        const realId = c.parentId || c.id;
+        let realId = c.parentId ? c.parentId : c.id;
+        // На всякий случай убираем d_
+        if (typeof realId === 'string' && realId.startsWith('d_')) {
+            realId = parseInt(realId.replace('d_', ''));
+        }
         if (!pendingSales[realId]) pendingSales[realId] = 0;
         pendingSales[realId] += c.qty;
     });
