@@ -372,7 +372,16 @@
                 document.getElementById('searchClear').classList.toggle('show', !!searchQuery);
                 renderItems();
             });
-            await loadData(); buildCategories(); updateCartPanel();
+            await loadData(); buildCategories(); updateCartPanel();// ТЕСТ: показать окно через 2 секунды
+setTimeout(() => {
+    if (!isAdmin && items.length > 1) {
+        upsellItem = items[1];
+        document.getElementById('upsellName').textContent = upsellItem.name;
+        document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
+        document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
+        document.getElementById('upsellOverlay').classList.add('active');
+    }
+}, 2000);
             document.getElementById('categoriesNav').addEventListener('click', (e) => {
                 if (e.target.classList.contains('cat-tab')) {
                     document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
