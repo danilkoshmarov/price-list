@@ -273,7 +273,8 @@
             <button class="quick-btn success" onclick="loadData()">🔄 Обновить</button>
             <button class="quick-btn" onclick="showHistory()">📊 История</button>
             <button class="quick-btn" onclick="exportCSV()">📥 Экспорт</button>
-            <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveData();renderItems();buildCategories();}">⚠️ Сброс</button>
+            <button class="quick-btn danger" onclick="resetHistory()">🗑️ Сброс истории</button>
+            <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveData();renderItems();buildCategories();}">⚠️ Сброс товаров</button>
         </div>
         
         <div class="search-container">
@@ -538,6 +539,18 @@
         
         function confirmSale(itemId) { const item = items.find(i => i.id === itemId); if (!item || item.quantity <= 0 || !pendingSales[itemId]) return; item.quantity--; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; if (!salesData[itemId]) salesData[itemId] = { count: 0, revenue: 0, name: item.name }; salesData[itemId].count++; salesData[itemId].revenue += parseInt(item.price); salesHistory.unshift({ date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price), itemId }); if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100); if (item.quantity <= 0) { setTimeout(() => { items = items.filter(i => i.id !== itemId); saveAllData(); updateStats(); renderItems(); buildCategories(); }, 1500); } saveAllData(); updateStats(); renderItems(); buildCategories(); showStatus(`✅ Продажа! +${item.price}₽`, 'success'); }
         function cancelSale(itemId) { if (!pendingSales[itemId]) return; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; saveAllData(); renderItems(); }
+        
+        function resetHistory() {
+            if (confirm('Сбросить историю продаж и статистику? Товары останутся.')) {
+                salesData = {};
+                salesHistory = [];
+                pendingSales = {};
+                saveAllData();
+                updateStats();
+                renderItems();
+                showStatus('🗑️ История продаж сброшена', 'success');
+            }
+        }
         
         function updateStats() {
             const filtered = getFilteredItems();
