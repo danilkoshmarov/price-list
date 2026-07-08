@@ -284,14 +284,25 @@ function getFilteredItems() {
 function saveTgUsername() { const input = document.getElementById('tgUsername').value.trim().replace('@', ''); if (input) { tgUsername = input; localStorage.setItem('tgUsername', input); showStatus('✅ Сохранено!', 'success'); } }
 function buyItem(item) { if (item.quantity <= 0) return; const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`); window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank'); if (!pendingSales[item.id]) pendingSales[item.id] = 0; pendingSales[item.id]++; saveAllData(); renderItems(); showStatus('🔔 Новый заказ!', 'success'); }
 
-function addToCart(item) {
+functionfunction addToCart(item) {
     const existing = cart.find(c => c.id === item.id);
     if (existing) { existing.qty++; }
     else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1 }); }
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartPanel();
     showStatus('🛒 В корзине!', 'success');
-    showUpsell(item);
+    // Принудительно показываем окно
+    if (items.length > 1) {
+        const other = items.filter(i => i.id !== item.id)[0];
+        if (other) {
+            document.getElementById('upsellName').textContent = other.name;
+            document.getElementById('upsellOldPrice').textContent = other.price + '₽';
+            document.getElementById('upsellNewPrice').textContent = Math.round(other.price * 0.9) + '₽';
+            document.getElementById('upsellOverlay').classList.add('active');
+            upsellItem = other;
+        }
+    }
+}
 }
 
 function showUpsell(addedItem) {
@@ -319,7 +330,7 @@ function acceptUpsell() {
 function closeUpsell() { document.getElementById('upsellOverlay').classList.remove('active'); upsellItem = null; }
 
 function removeFromCart(id) { 
-    cart = cart.filter(c => c.id !== id);
+    cart = cart.filter(c => c.id != id);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartPanel();
     openCart();
