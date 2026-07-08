@@ -14,6 +14,7 @@
         @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(255,152,0,0.3); } 50% { box-shadow: 0 0 15px rgba(255,152,0,0.6); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes slideUp { from { transform: translateX(-50%) translateY(100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
         :root {
             --bg: linear-gradient(135deg, #ffd1dc 0%, #f8e8ff 30%, #ffe4e1 60%, #fff0f5 100%);
@@ -158,10 +159,6 @@
         
         .admin-section { display: none; text-align: center; margin-bottom: 20px; padding: 20px; background: var(--tg-setup-bg); border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid var(--card-border); }
         .admin-section.active { display: block; }
-        .add-item-btn, .sync-btn, .reset-btn { border: none; padding: 14px 28px; font-size: 1rem; border-radius: 50px; cursor: pointer; margin: 5px; transition: all 0.3s ease; font-weight: bold; }
-        .add-item-btn { background: white; color: #e91e63; }
-        .sync-btn { background: rgba(76,175,80,0.2); color: #2e7d32; border: 1px solid rgba(76,175,80,0.3); }
-        .reset-btn { background: rgba(244,67,54,0.2); color: #c62828; border: 1px solid rgba(244,67,54,0.3); }
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999; }
         .modal.active { display: flex !important; }
@@ -206,7 +203,6 @@
         .cancel-btn { background: linear-gradient(135deg, #f44336, #c62828); }
         .confirm-btn.show, .cancel-btn.show { display: inline-block; }
         .confirm-btn.show { animation: pulse 0.5s ease; }
-        .confirm-btn:disabled, .cancel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .card-buttons { display: none; gap: 6px; margin-top: 6px; }
         .admin-mode .card-buttons { display: flex; }
@@ -222,8 +218,8 @@
         .tg-setup input { padding: 10px 15px; border-radius: 10px; border: 1px solid var(--card-border); font-size: 1rem; width: 250px; text-align: center; margin: 10px 5px; background: var(--input-bg); color: var(--input-color); }
         .tg-setup button { padding: 10px 20px; border-radius: 10px; border: none; background: linear-gradient(135deg, #e91e63, #9c27b0); color: white; font-size: 1rem; cursor: pointer; font-weight: bold; }
         
-        .history-modal, .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 2000; }
-        .history-modal.active, .cart-modal.active { display: flex; }
+        .history-modal, .cart-modal, .upsell-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 3000; }
+        .history-modal.active, .cart-modal.active, .upsell-overlay.active { display: flex; }
         .history-content, .cart-modal-content { background: var(--history-bg); padding: 25px; border-radius: 25px; width: 90%; max-width: 450px; max-height: 80vh; overflow-y: auto; }
         .history-item, .cart-item { padding: 10px 0; border-bottom: 1px solid var(--history-border); color: var(--history-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
         
@@ -237,6 +233,19 @@
         .cart-total { text-align: right; font-size: 1.3rem; font-weight: bold; margin: 15px 0; color: var(--card-title); }
         .cart-remove-btn { background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; }
         .cart-order-all-btn { width: 100%; padding: 14px; background: #0088cc; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        
+        .cart-meetup { margin-top: 10px; }
+        .cart-meetup input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--input-color); font-size: 0.9rem; margin-bottom: 8px; }
+        
+        .upsell-popup { background: var(--modal-bg); border-radius: 25px; padding: 25px; text-align: center; max-width: 350px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s ease; }
+        .upsell-popup h3 { color: var(--modal-color); margin-bottom: 8px; }
+        .upsell-popup p { color: var(--stat-color); margin-bottom: 12px; font-size: 0.9rem; }
+        .upsell-price { font-size: 1.3rem; font-weight: bold; color: #e91e63; }
+        .upsell-old-price { text-decoration: line-through; opacity: 0.5; font-size: 0.9rem; margin-right: 8px; }
+        .upsell-badge { display: inline-block; background: #4CAF50; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .upsell-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .upsell-yes { flex: 2; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.95rem; }
+        .upsell-no { flex: 1; padding: 12px; background: var(--btn-sec-bg); color: var(--btn-sec-color); border: none; border-radius: 15px; cursor: pointer; }
         
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: var(--stat-color); text-align: center; }
         .loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(156,39,176,0.2); border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -256,14 +265,14 @@
     <div class="container">
         <div class="header">
             <h1>🌸 Наш Прайс-лист</h1>
-            <p>Нажми на "Купить" чтобы оформить заказ</p>
+            <p>Доставка в удобное время и место 🚗</p>
         </div>
         
         <div class="quick-actions" id="quickActions">
             <button class="quick-btn" onclick="openModal()">✨ Добавить</button>
             <button class="quick-btn success" onclick="loadData()">🔄 Обновить</button>
             <button class="quick-btn" onclick="showHistory()">📊 История</button>
-            <button class="quick-btn" onclick="exportCSV()">📥 Экспорт CSV</button>
+            <button class="quick-btn" onclick="exportCSV()">📥 Экспорт</button>
             <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveData();renderItems();buildCategories();}">⚠️ Сброс</button>
         </div>
         
@@ -282,9 +291,7 @@
             <button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button>
         </div>
         
-        <div class="categories-nav" id="categoriesNav">
-            <div class="cat-tab active" data-cat="all">Все</div>
-        </div>
+        <div class="categories-nav" id="categoriesNav"><div class="cat-tab active" data-cat="all">Все</div></div>
         
         <div class="stats-panel" id="statsPanel">
             <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Товаров</div></div>
@@ -307,10 +314,7 @@
         </div>
         
         <div class="price-grid" id="priceGrid">
-            <div class="loading-container" style="grid-column:1/-1;">
-                <div class="loading-spinner"></div>
-                <div>Загружаем...</div>
-            </div>
+            <div class="loading-container" style="grid-column:1/-1;"><div class="loading-spinner"></div><div>Загружаем...</div></div>
         </div>
     </div>
 
@@ -326,8 +330,26 @@
             <h3 style="color:var(--modal-color);text-align:center;">🛒 Корзина</h3>
             <div id="cartItems"></div>
             <div class="cart-total" id="cartTotal">Итого: 0₽</div>
-            <button class="cart-order-all-btn" onclick="orderCart()">💬 Заказать всё</button>
-            <button class="btn btn-secondary" onclick="closeCart()" style="margin-top:10px;width:100%;">Закрыть</button>
+            <div class="cart-meetup">
+                <input type="text" id="meetupPlace" placeholder="📍 Где встретиться?">
+                <input type="text" id="meetupTime" placeholder="🕐 Когда? (например: завтра в 18:00)">
+            </div>
+            <button class="cart-order-all-btn" onclick="orderCart()">💬 Заказать с доставкой</button>
+            <button class="btn btn-secondary" onclick="closeCart()" style="margin-top:8px;width:100%;">Закрыть</button>
+        </div>
+    </div>
+
+    <div class="upsell-overlay" id="upsellOverlay">
+        <div class="upsell-popup">
+            <span class="upsell-badge">-10%</span>
+            <h3>🛒 Добавить к заказу?</h3>
+            <p id="upsellName">Товар</p>
+            <span class="upsell-old-price" id="upsellOldPrice">600₽</span>
+            <span class="upsell-price" id="upsellNewPrice">540₽</span>
+            <div class="upsell-buttons">
+                <button class="upsell-no" onclick="closeUpsell()">Нет</button>
+                <button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button>
+            </div>
         </div>
     </div>
 
@@ -337,12 +359,7 @@
             <input type="hidden" id="editId">
             <div class="form-group"><label>📛 Название</label><input type="text" id="itemName"></div>
             <div class="form-group"><label>📂 Категория</label>
-                <select id="itemCategory">
-                    <option value="Жижи">💧 Жижи</option>
-                    <option value="Одноразки">🚬 Одноразки</option>
-                    <option value="Снюсы">👄 Снюсы</option>
-                    <option value="Поды">💨 Поды</option>
-                </select>
+                <select id="itemCategory"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select>
             </div>
             <div class="form-group"><label>⚡ МГ</label><input type="text" id="itemMg"></div>
             <div class="form-group"><label>🍓 Вкусы</label><textarea id="itemFlavors"></textarea></div>
@@ -369,6 +386,7 @@
         let salesData = {}, salesHistory = [], pendingSales = {};
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         let isDark = localStorage.getItem('darkTheme') === 'true';
+        let upsellItem = null;
         const categories = ['Жижи', 'Одноразки', 'Снюсы', 'Поды'];
         const catEmojis = { 'Жижи': '💧', 'Одноразки': '🚬', 'Снюсы': '👄', 'Поды': '💨' };
 
@@ -419,15 +437,9 @@
         
         function exportCSV() {
             let csv = 'Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n';
-            items.forEach(i => {
-                const s = salesData[i.id] || { count: 0, revenue: 0 };
-                csv += `"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue}\n`;
-            });
+            items.forEach(i => { const s = salesData[i.id] || { count: 0, revenue: 0 }; csv += `"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue}\n`; });
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'price_export.csv';
-            link.click();
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'price_export.csv'; link.click();
             showStatus('📥 Экспортировано!', 'success');
         }
 
@@ -449,19 +461,78 @@
 
         function saveTgUsername() { const input = document.getElementById('tgUsername').value.trim().replace('@', ''); if (input) { tgUsername = input; localStorage.setItem('tgUsername', input); showStatus('✅ Сохранено!', 'success'); } }
         function buyItem(item) { if (item.quantity <= 0) return; const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`); window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank'); if (!pendingSales[item.id]) pendingSales[item.id] = 0; pendingSales[item.id]++; saveAllData(); renderItems(); showStatus('🔔 Новый заказ!', 'success'); }
-        function addToCart(item) { const existing = cart.find(c => c.id === item.id); if (existing) { existing.qty++; } else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1 }); } localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); showStatus('🛒 В корзине!', 'success'); }
-        function removeFromCart(id) { cart = cart.filter(c => c.id !== id); localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); openCart(); }
+        
+        function addToCart(item) {
+            const existing = cart.find(c => c.id === item.id);
+            if (existing) { existing.qty++; }
+            else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1 }); }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartPanel();
+            showStatus('🛒 В корзине!', 'success');
+            showUpsell(item);
+        }
+        
+        function showUpsell(addedItem) {
+            if (cart.some(c => c.id.toString().includes('_discount'))) return;
+            const otherItems = items.filter(i => i.id !== addedItem.id && i.quantity > 0);
+            if (otherItems.length === 0) return;
+            upsellItem = otherItems[Math.floor(Math.random() * otherItems.length)];
+            document.getElementById('upsellName').textContent = upsellItem.name;
+            document.getElementById('upsellOldPrice').textContent = upsellItem.price + '₽';
+            document.getElementById('upsellNewPrice').textContent = Math.round(upsellItem.price * 0.9) + '₽';
+            document.getElementById('upsellOverlay').classList.add('active');
+        }
+
+        function acceptUpsell() {
+            if (upsellItem) {
+                const discountedPrice = Math.round(upsellItem.price * 0.9);
+                const existing = cart.find(c => c.id === upsellItem.id + '_discount');
+                if (existing) { existing.qty++; }
+                else { cart.push({ id: upsellItem.id + '_discount', name: upsellItem.name + ' (-10%)', price: discountedPrice, qty: 1 }); }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartPanel();
+                showStatus('✅ Добавлено со скидкой 10%!', 'success');
+            }
+            closeUpsell();
+        }
+
+        function closeUpsell() { document.getElementById('upsellOverlay').classList.remove('active'); upsellItem = null; }
+        
+        function removeFromCart(id) { 
+            cart = cart.filter(c => c.id !== id);
+            if (!id.toString().includes('_discount')) {
+                const discountId = id + '_discount';
+                cart = cart.filter(c => c.id !== discountId);
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartPanel();
+            openCart();
+        }
+        
         function updateCartPanel() { const panel = document.getElementById('cartPanel'), count = cart.reduce((s, c) => s + c.qty, 0), total = cart.reduce((s, c) => s + c.price * c.qty, 0); document.getElementById('cartCount').textContent = count; document.getElementById('cartInfo').textContent = `${count} тов. · ${total}₽`; panel.classList.toggle('show', count > 0); }
-        function openCart() { const modal = document.getElementById('cartModal'), itemsEl = document.getElementById('cartItems'); if (cart.length === 0) { itemsEl.innerHTML = '<p style="text-align:center;">Пусто</p>'; } else { itemsEl.innerHTML = cart.map(c => `<div class="cart-item"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${c.id})">✕</button></div>`).join(''); } document.getElementById('cartTotal').textContent = `Итого: ${cart.reduce((s,c)=>s+c.price*c.qty,0)}₽`; modal.classList.add('active'); }
+        function openCart() { 
+            const modal = document.getElementById('cartModal'), itemsEl = document.getElementById('cartItems'); 
+            if (cart.length === 0) { itemsEl.innerHTML = '<p style="text-align:center;">Пусто</p>'; } 
+            else { itemsEl.innerHTML = cart.map(c => `<div class="cart-item"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${c.id})">✕</button></div>`).join(''); } 
+            document.getElementById('cartTotal').textContent = `Итого: ${cart.reduce((s,c)=>s+c.price*c.qty,0)}₽`; 
+            modal.classList.add('active'); 
+        }
         function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
         
         function orderCart() { 
             if (cart.length === 0) return; 
+            const place = document.getElementById('meetupPlace').value.trim();
+            const time = document.getElementById('meetupTime').value.trim();
+            const meetupInfo = (place || time) ? `\n\n📍 ${place || '—'}\n🕐 ${time || '—'}` : '';
             const items = cart.map(c => `• ${c.name} x${c.qty} = ${c.price*c.qty}₽`).join('\n'); 
             const total = cart.reduce((s,c)=>s+c.price*c.qty,0); 
-            const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${items}\n\nИтого: ${total}₽`); 
+            const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${items}\n\nИтого: ${total}₽${meetupInfo}`); 
             window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank');
-            cart.forEach(c => { if (!pendingSales[c.id]) pendingSales[c.id] = 0; pendingSales[c.id] += c.qty; });
+            cart.forEach(c => { 
+                const realId = c.id.toString().replace('_discount', '');
+                if (!pendingSales[realId]) pendingSales[realId] = 0; 
+                pendingSales[realId] += c.qty; 
+            });
             saveAllData(); renderItems(); showStatus('🔔 Заказ из корзины!', 'success');
         }
         
