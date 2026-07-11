@@ -319,6 +319,20 @@ async function loadData() {
 }
 async function saveAllData() { 
     localStorage.setItem('priceData', JSON.stringify({ items, salesData, salesHistory, pendingSales }));
+    try {
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify({ items, salesData, salesHistory, pendingSales }))));
+        const res = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
+            method: 'GET', headers: { 'Authorization': 'token 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' }
+        });
+        const data = await res.json();
+        await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
+            method: 'PUT',
+            headers: { 'Authorization': 'token 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', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: 'update data', content: content, sha: data.sha })
+        });
+        console.log('✅ Сохранено на GitHub');
+    } catch (e) { console.log('💾 Сохранено локально'); }
+}
 }
 async function saveData() { await saveAllData(); showStatus('✅ Сохранено!', 'success'); }
 function toggleAdmin() { isAdmin = !isAdmin; if (isAdmin) { if (prompt('Пароль:') === atob('MTUwNDIw')) { document.getElementById('adminSection').classList.add('active'); document.querySelector('.admin-login-btn').textContent = '🔒 Выйти'; document.body.classList.add('admin-mode'); updateStats(); } else { alert('Неверно!'); isAdmin = false; } } else { document.getElementById('adminSection').classList.remove('active'); document.querySelector('.admin-login-btn').textContent = '🔑 Войти как админ'; document.body.classList.remove('admin-mode'); } }
