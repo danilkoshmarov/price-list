@@ -241,7 +241,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     document.getElementById('searchInput').addEventListener('input', () => { searchQuery = document.getElementById('searchInput').value.trim().toLowerCase(); document.getElementById('searchClear').classList.toggle('show', !!searchQuery); renderItems(); });
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/price-list/sw.js'); }
     await loadData(); buildCategories(); updateCartPanel();
     document.getElementById('categoriesNav').addEventListener('click', (e) => { if (e.target.classList.contains('cat-tab')) { document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active')); e.target.classList.add('active'); currentCategory = e.target.dataset.cat; renderItems(); } });
 });
