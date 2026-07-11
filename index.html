@@ -156,7 +156,8 @@
         <div class="header"><div class="logo" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#e91e63,#9c27b0);display:inline-flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:10px;box-shadow:0 4px 15px rgba(233,30,99,0.2);">🌸</div><h1>Smoky Notes</h1><p>Доставка в удобное время и место 🚗</p></div>
         <div class="quick-actions" id="quickActions">
             <button class="quick-btn" onclick="openModal()">✨ Добавить</button>
-            <button class="quick-btn success" onclick="loadData()">🔄 Обновить</button>
+            <button class="quick-btn success" onclick="uploadToNpoint()">📥 Выгрузить</button>
+            <button class="quick-btn" onclick="downloadFromNpoint()">📤 Загрузить</button>
             <button class="quick-btn" onclick="showHistory()">📊 История</button>
             <button class="quick-btn" onclick="exportCSV()">📥 Экспорт</button>
             <button class="quick-btn danger" onclick="resetHistory()">🗑️ Сброс истории</button>
@@ -232,6 +233,37 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('categoriesNav').addEventListener('click', function(e) { if (e.target.classList.contains('cat-tab')) { document.querySelectorAll('.cat-tab').forEach(function(t) { t.classList.remove('active'); }); e.target.classList.add('active'); currentCategory = e.target.dataset.cat; renderItems(); } });
 });
 
+function uploadToNpoint() {
+    var data = JSON.stringify({ items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales });
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.npoint.io/55674e9c91b4698843d7', false);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    try {
+        xhr.send(data);
+        showStatus('✅ Данные выгружены!', 'success');
+    } catch(e) {
+        showStatus('❌ Не удалось выгрузить', 'error');
+    }
+}
+
+function downloadFromNpoint() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://api.npoint.io/55674e9c91b4698843d7', false);
+    try {
+        xhr.send();
+        if (xhr.status === 200) {
+            var d = JSON.parse(xhr.responseText);
+            items = d.items || [];
+            salesData = d.salesData || {};
+            salesHistory = d.salesHistory || [];
+            pendingSales = d.pendingSales || {};
+            updateStats(); renderItems(); buildCategories();
+            showStatus('✅ Данные загружены!', 'success');
+        }
+    } catch(e) {
+        showStatus('❌ Сервер не отвечает', 'error');
+    }
+}    
 function toggleTheme() { isDark = !isDark; document.body.classList.toggle('dark', isDark); document.getElementById('themeToggle').textContent = isDark ? '🌙' : '🌸'; localStorage.setItem('darkTheme', isDark); }
 function setSort(mode) { sortMode = mode; document.querySelectorAll('.sort-btn').forEach(function(b) { b.classList.remove('active'); }); event.target.classList.add('active'); renderItems(); }
 function clearSearch() { document.getElementById('searchInput').value = ''; searchQuery = ''; document.getElementById('searchClear').classList.remove('show'); renderItems(); }
