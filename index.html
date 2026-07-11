@@ -259,7 +259,7 @@ function showHistory() { var modal = document.getElementById('historyModal'), li
 function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
 function loadData() { 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'data.json', false);
+    xhr.open('GET', 'https://api.npoint.io/2cb2de4958ee91fc3dc2', false);
     try {
         xhr.send();
         if (xhr.status === 200) {
@@ -285,21 +285,11 @@ function loadData() {
 function saveAllData() { 
     var data = JSON.stringify({ items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales });
     localStorage.setItem('priceData', data);
-    // Сохраняем на GitHub
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', false);
-    xhr.setRequestHeader('Authorization', 'token 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');
-    try {
-        xhr.send();
-        if (xhr.status === 200) {
-            var d = JSON.parse(xhr.responseText);
-            var content = btoa(unescape(encodeURIComponent(data)));
-            var putXhr = new XMLHttpRequest();
-            putXhr.open('PUT', 'https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', false);
-            putXhr.setRequestHeader('Authorization', 'token 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');
-            putXhr.setRequestHeader('Content-Type', 'application/json');
-            putXhr.send(JSON.stringify({ message: 'update', content: content, sha: d.sha }));
-        }
+    xhr.open('POST', 'https://api.npoint.io/2cb2de4958ee91fc3dc2', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(data);
+}
     } catch(e) {}
 }
 function toggleAdmin() { isAdmin = !isAdmin; if (isAdmin) { if (prompt('Пароль:') === atob('MTUwNDIw')) { document.getElementById('adminSection').classList.add('active'); document.querySelector('.admin-login-btn').textContent = '🔒 Выйти'; document.body.classList.add('admin-mode'); updateStats(); } else { alert('Неверно!'); isAdmin = false; } } else { document.getElementById('adminSection').classList.remove('active'); document.querySelector('.admin-login-btn').textContent = '🔑 Войти как админ'; document.body.classList.remove('admin-mode'); } }
