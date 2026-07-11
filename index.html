@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smoky Notes</title>
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#e91e63">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Smoky Notes">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/GvyPxNKK/SN.jpg">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
@@ -158,11 +154,7 @@
 <body>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
     <div class="container">
-        <div class="header">
-            <img src="SN.jpg" alt="Smoky Notes" class="logo">
-            <h1>Smoky Notes</h1>
-            <p>Доставка в удобное время и место 🚗</p>
-        </div>
+        <div class="header"><div class="logo" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#e91e63,#9c27b0);display:inline-flex;align-items:center;justify-content:center;font-size:2.5rem;margin-bottom:10px;box-shadow:0 4px 15px rgba(233,30,99,0.2);">🌸</div><h1>Smoky Notes</h1><p>Доставка в удобное время и место 🚗</p></div>
         <div class="quick-actions" id="quickActions">
             <button class="quick-btn" onclick="openModal()">✨ Добавить</button>
             <button class="quick-btn success" onclick="loadData()">🔄 Обновить</button>
@@ -172,12 +164,7 @@
             <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveData();renderItems();buildCategories();}">⚠️ Сброс товаров</button>
         </div>
         <div class="search-container"><div class="search-wrapper"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск..."><button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button><span class="search-icon">🔍</span></div></div>
-        <div class="sort-bar">
-            <button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button>
-            <button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button>
-            <button class="sort-btn" onclick="setSort('price-desc')">💎 Дороже</button>
-            <button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button>
-        </div>
+        <div class="sort-bar"><button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button><button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button><button class="sort-btn" onclick="setSort('price-desc')">💎 Дороже</button><button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button></div>
         <div class="categories-nav" id="categoriesNav"><div class="cat-tab active" data-cat="all">Все</div></div>
         <div class="chart-container" id="chartContainer"><div class="chart-title">📊 Продажи за 7 дней</div><div class="chart-bars" id="chartBars"></div></div>
         <div class="stats-panel" id="statsPanel">
@@ -190,11 +177,10 @@
         <div class="top5-panel" id="top5Panel"></div>
         <div class="demand-panel" id="demandPanel"></div>
         <div class="admin-controls"><button class="admin-login-btn" onclick="toggleAdmin()">🔑 Войти как админ</button></div>
-        <div class="admin-section" id="adminSection"><div class="tg-setup" style="background:var(--card);border-radius:20px;padding:15px;margin-bottom:20px;text-align:center;"><input type="text" id="tgUsername" value="danil_cooldown" style="padding:10px 15px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:1rem;width:250px;text-align:center;margin:10px 5px;"><button onclick="saveTgUsername()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;cursor:pointer;font-weight:bold;">💾 Сохранить</button></div></div>
+        <div class="admin-section" id="adminSection"><div style="background:var(--card);border-radius:20px;padding:15px;margin-bottom:20px;text-align:center;"><input type="text" id="tgUsername" value="danil_cooldown" style="padding:10px 15px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:1rem;width:250px;text-align:center;margin:10px 5px;"><button onclick="saveTgUsername()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;cursor:pointer;font-weight:bold;">💾 Сохранить</button></div></div>
         <div class="status-message" id="statusMessage"></div>
         <div class="price-grid" id="priceGrid"><div class="loading-container" style="grid-column:1/-1;"><div class="loading-spinner"></div><div>Загружаем...</div></div></div>
     </div>
-
     <div class="cart-panel" id="cartPanel"><span class="cart-count" id="cartCount">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span><button class="cart-btn cart-view-btn" onclick="openCart()">🛒</button><button class="cart-btn cart-order-btn" onclick="orderCart()">💬 Заказать</button></div>
     <div class="cart-modal" id="cartModal"><div class="cart-modal-content"><h3>🛒 Корзина</h3><div id="cartItems"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div><div class="cart-meetup"><input type="text" id="meetupPlace" placeholder="📍 Где встретиться?"><input type="text" id="meetupTime" placeholder="🕐 Когда?"></div><button class="cart-order-all-btn" onclick="orderCart()">💬 Заказать с доставкой</button><button class="btn btn-secondary" onclick="closeCart()" style="margin-top:8px;width:100%;">Закрыть</button></div></div>
     <div class="upsell-overlay" id="upsellOverlay"><div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span><span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div></div></div>
@@ -202,7 +188,6 @@
     <div class="history-modal" id="historyModal"><div class="history-content"><h3>📋 История продаж</h3><div id="historyList"></div><button class="btn btn-secondary" onclick="closeHistory()" style="margin-top:10px;width:100%;">Закрыть</button></div></div>
 
 <script>
-const API_URL = 'https://danilkoshmarov.github.io/price-list/data.json';
 const DEFAULT_TG = 'danil_cooldown';
 let items = [], currentImage = null, isAdmin = false, currentCategory = 'all', searchQuery = '', sortMode = 'default';
 let tgUsername = localStorage.getItem('tgUsername') || DEFAULT_TG;
@@ -220,25 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     preview.addEventListener('click', () => input.click());
     preview.addEventListener('touchend', (e) => { e.preventDefault(); input.click(); });
     input.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas'), maxSize = 800;
-                    let w = img.width, h = img.height;
-                    if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } } else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    currentImage = canvas.toDataURL('image/jpeg', 0.8);
-                    preview.style.backgroundImage = `url(${currentImage})`;
-                    preview.classList.add('has-image'); preview.innerHTML = '';
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
+        const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = (ev) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'), maxSize = 800; let w = img.width, h = img.height; if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } } else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } } canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h); currentImage = canvas.toDataURL('image/jpeg', 0.8); preview.style.backgroundImage = `url(${currentImage})`; preview.classList.add('has-image'); preview.innerHTML = ''; }; img.src = ev.target.result; }; reader.readAsDataURL(file); } }
     });
     document.getElementById('searchInput').addEventListener('input', () => { searchQuery = document.getElementById('searchInput').value.trim().toLowerCase(); document.getElementById('searchClear').classList.toggle('show', !!searchQuery); renderItems(); });
     await loadData(); buildCategories(); updateCartPanel();
@@ -253,105 +220,33 @@ function buildCategories() { const nav = document.getElementById('categoriesNav'
 function getFilteredItems() { let filtered = currentCategory === 'all' ? [...items] : items.filter(i => i.category === currentCategory); if (searchQuery) filtered = filtered.filter(i => i.name.toLowerCase().includes(searchQuery) || i.flavors.toLowerCase().includes(searchQuery) || (i.category && i.category.toLowerCase().includes(searchQuery))); if (sortMode === 'price-asc') filtered.sort((a, b) => parseInt(a.price) - parseInt(b.price)); else if (sortMode === 'price-desc') filtered.sort((a, b) => parseInt(b.price) - parseInt(a.price)); else if (sortMode === 'popular') filtered.sort((a, b) => (salesData[b.id]?.count || 0) - (salesData[a.id]?.count || 0)); return filtered; }
 function saveTgUsername() { const input = document.getElementById('tgUsername').value.trim().replace('@', ''); if (input) { tgUsername = input; localStorage.setItem('tgUsername', input); showStatus('✅ Сохранено!', 'success'); } }
 function buyItem(item) { if (item.quantity <= 0) return; const message = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`); window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank'); if (!pendingSales[item.id]) pendingSales[item.id] = 0; pendingSales[item.id]++; saveAllData(); renderItems(); showStatus('🔔 Новый заказ!', 'success'); }
-
 function addToCart(item) { const existing = cart.find(c => c.id === item.id); if (existing) { existing.qty++; } else { cart.push({ id: item.id, name: item.name, price: parseInt(item.price), qty: 1, parentId: null }); } localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); showStatus('🛒 В корзине!', 'success'); const otherItems = items.filter(i => i.id !== item.id); if (otherItems.length > 0) { const randomItem = otherItems[Math.floor(Math.random() * otherItems.length)]; upsellItem = { ...randomItem, parentId: item.id }; document.getElementById('upsellName').textContent = randomItem.name; document.getElementById('upsellOldPrice').textContent = randomItem.price + '₽'; document.getElementById('upsellNewPrice').textContent = Math.round(randomItem.price * 0.9) + '₽'; document.getElementById('upsellOverlay').classList.add('active'); } }
 function acceptUpsell() { if (upsellItem) { cart.push({ id: 'd_' + Date.now(), name: upsellItem.name + ' (-10%)', price: Math.round(upsellItem.price * 0.9), qty: 1, parentId: upsellItem.parentId }); localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); showStatus('✅ Добавлено со скидкой 10%!', 'success'); } closeUpsell(); }
 function closeUpsell() { document.getElementById('upsellOverlay').classList.remove('active'); upsellItem = null; }
-function removeFromCart(id) { const item = cart.find(c => c.id == id); cart = cart.filter(c => c.id != id); if (item && !item.id.toString().startsWith('d_')) { cart = cart.filter(c => c.parentId != id); } localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); if (cart.length === 0) closeCart(); else openCart(); renderItems(); }
+function removeFromCart(id) { cart = cart.filter(c => c.id != id); localStorage.setItem('cart', JSON.stringify(cart)); updateCartPanel(); if (cart.length === 0) closeCart(); else openCart(); renderItems(); }
 function updateCartPanel() { const panel = document.getElementById('cartPanel'), count = cart.reduce((s, c) => s + c.qty, 0), total = cart.reduce((s, c) => s + c.price * c.qty, 0); document.getElementById('cartCount').textContent = count; document.getElementById('cartInfo').textContent = `${count} тов. · ${total}₽`; panel.classList.toggle('show', count > 0); }
 function openCart() { const modal = document.getElementById('cartModal'), itemsEl = document.getElementById('cartItems'); if (cart.length === 0) { itemsEl.innerHTML = '<p style="text-align:center;">Пусто</p>'; } else { itemsEl.innerHTML = cart.map(c => `<div class="cart-item"><span>${c.name} x${c.qty}</span><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart('${c.id}')">✕</button></div>`).join(''); } document.getElementById('cartTotal').textContent = `Итого: ${cart.reduce((s,c)=>s+c.price*c.qty,0)}₽`; modal.classList.add('active'); }
 function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
-
 function orderCart() { if (cart.length === 0) return; const place = document.getElementById('meetupPlace').value.trim(); const time = document.getElementById('meetupTime').value.trim(); const meetupInfo = (place || time) ? `\n\n📍 ${place || '—'}\n🕐 ${time || '—'}` : ''; const itemsText = cart.map(c => `• ${c.name} x${c.qty} = ${c.price*c.qty}₽`).join('\n'); const total = cart.reduce((s,c)=>s+c.price*c.qty,0); const message = encodeURIComponent(`Здравствуйте! Хочу заказать:\n${itemsText}\n\nИтого: ${total}₽${meetupInfo}`); window.open(`https://t.me/${tgUsername}?text=${message}`, '_blank'); cart.forEach(c => { if (!pendingSales[c.id]) pendingSales[c.id] = 0; pendingSales[c.id] += c.qty; }); saveAllData(); renderItems(); showStatus('🔔 Заказ из корзины!', 'success'); }
-
 function confirmSale(itemId) { const item = items.find(i => i.id == itemId); if (!item || item.quantity <= 0) return; if (!pendingSales[itemId] || pendingSales[itemId] <= 0) return; item.quantity--; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; if (!salesData[itemId]) salesData[itemId] = { count: 0, revenue: 0, name: item.name }; salesData[itemId].count++; salesData[itemId].revenue += parseInt(item.price); salesHistory.unshift({ date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price), itemId }); if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100); if (item.quantity <= 0) { setTimeout(() => { items = items.filter(i => i.id != itemId); saveAllData(); updateStats(); renderItems(); buildCategories(); }, 1500); } saveAllData(); updateStats(); renderItems(); buildCategories(); showStatus(`✅ Продажа! +${item.price}₽`, 'success'); }
 function cancelSale(itemId) { if (!pendingSales[itemId]) return; pendingSales[itemId]--; if (pendingSales[itemId] <= 0) pendingSales[itemId] = 0; saveAllData(); renderItems(); }
 function resetHistory() { if (confirm('Сбросить историю продаж и статистику? Товары останутся.')) { salesData = {}; salesHistory = []; pendingSales = {}; saveAllData(); updateStats(); renderItems(); showStatus('🗑️ История продаж сброшена', 'success'); } }
-
-function updateStats() { 
-    const filtered = getFilteredItems(); 
-    document.getElementById('totalItems').textContent = filtered.length; 
-    document.getElementById('totalValue').textContent = filtered.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0)+'₽'; 
-    const totalSold = Object.values(salesData).reduce((s,d)=>s+d.count,0);
-    const totalRevenue = Object.values(salesData).reduce((s,d)=>s+d.revenue,0);
-    document.getElementById('totalSold').textContent = totalSold; 
-    document.getElementById('totalRevenue').textContent = totalRevenue + '₽'; 
-    document.getElementById('avgCheck').textContent = (totalSold > 0 ? Math.round(totalRevenue / totalSold) : 0) + '₽';
-    if (isAdmin) { updateDemandAnalysis(); renderChart(); updateTop5(); }
-}
-
-function renderChart() {
-    const container = document.getElementById('chartBars'); const days = []; const today = new Date();
-    for (let i = 6; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); days.push({ label: d.toLocaleDateString('ru-RU', { weekday: 'short' }), date: d.toLocaleDateString('ru-RU'), total: 0 }); }
-    salesHistory.forEach(s => { const sDate = s.date.split(',')[0]; const day = days.find(d => d.date === sDate); if (day) day.total += s.price; });
-    const maxTotal = Math.max(...days.map(d => d.total), 1);
-    if (days.every(d => d.total === 0)) { container.innerHTML = '<div class="chart-empty">Нет продаж за 7 дней</div>'; return; }
-    container.innerHTML = days.map(d => `<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${Math.max((d.total/maxTotal)*130,4)}px"></div><div class="chart-bar-label">${d.label}</div></div>`).join('');
-}
-
-function updateTop5() {
-    const panel = document.getElementById('top5Panel');
-    const ranked = items.map(i => ({ ...i, sold: salesData[i.id]?.count || 0, revenue: salesData[i.id]?.revenue || 0 })).filter(i => i.sold > 0).sort((a, b) => b.sold - a.sold).slice(0, 5);
-    if (ranked.length === 0) { panel.innerHTML = ''; return; }
-    const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
-    panel.innerHTML = `<div class="stat-card" style="flex:1;min-width:250px;border:1px solid #FFD700;"><div class="stat-label" style="color:#FFD700;">🏆 Топ-5 товаров</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ranked.map((i,idx)=>`${medals[idx]} ${i.name} — ${i.sold} шт. (${i.revenue}₽)`).join('<br>')}</div></div>`;
-}
-
+function updateStats() { const filtered = getFilteredItems(); document.getElementById('totalItems').textContent = filtered.length; document.getElementById('totalValue').textContent = filtered.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0)+'₽'; const totalSold = Object.values(salesData).reduce((s,d)=>s+d.count,0); const totalRevenue = Object.values(salesData).reduce((s,d)=>s+d.revenue,0); document.getElementById('totalSold').textContent = totalSold; document.getElementById('totalRevenue').textContent = totalRevenue + '₽'; document.getElementById('avgCheck').textContent = (totalSold > 0 ? Math.round(totalRevenue / totalSold) : 0) + '₽'; if (isAdmin) { updateDemandAnalysis(); renderChart(); updateTop5(); } }
+function renderChart() { const container = document.getElementById('chartBars'); const days = []; const today = new Date(); for (let i = 6; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); days.push({ label: d.toLocaleDateString('ru-RU', { weekday: 'short' }), date: d.toLocaleDateString('ru-RU'), total: 0 }); } salesHistory.forEach(s => { const sDate = s.date.split(',')[0]; const day = days.find(d => d.date === sDate); if (day) day.total += s.price; }); const maxTotal = Math.max(...days.map(d => d.total), 1); if (days.every(d => d.total === 0)) { container.innerHTML = '<div class="chart-empty">Нет продаж за 7 дней</div>'; return; } container.innerHTML = days.map(d => `<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${Math.max((d.total/maxTotal)*130,4)}px"></div><div class="chart-bar-label">${d.label}</div></div>`).join(''); }
+function updateTop5() { const panel = document.getElementById('top5Panel'); const ranked = items.map(i => ({ ...i, sold: salesData[i.id]?.count || 0, revenue: salesData[i.id]?.revenue || 0 })).filter(i => i.sold > 0).sort((a, b) => b.sold - a.sold).slice(0, 5); if (ranked.length === 0) { panel.innerHTML = ''; return; } const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣']; panel.innerHTML = `<div class="stat-card" style="flex:1;min-width:250px;border:1px solid #FFD700;"><div class="stat-label" style="color:#FFD700;">🏆 Топ-5 товаров</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ranked.map((i,idx)=>`${medals[idx]} ${i.name} — ${i.sold} шт. (${i.revenue}₽)`).join('<br>')}</div></div>`; }
 function updateDemandAnalysis() { const panel = document.getElementById('demandPanel'); if (items.length === 0) { panel.innerHTML = ''; return; } const withSales = items.map(i => ({ ...i, sold: salesData[i.id]?.count || 0 })).filter(i => i.sold > 0); if (withSales.length === 0) { panel.innerHTML = '<div class="stat-card" style="flex:1;text-align:center;">📊 Пока нет продаж</div>'; return; } const sorted = [...withSales].sort((a, b) => b.sold - a.sold), topCount = Math.max(1, Math.ceil(sorted.length * 0.3)); const highDemand = sorted.slice(0, topCount), lowDemand = sorted.slice(-topCount), noSales = items.filter(i => (salesData[i.id]?.count || 0) === 0); let html = ''; if (highDemand.length > 0) html += `<div class="stat-card" style="border:1px solid #4CAF50;flex:2;min-width:250px;"><div class="stat-label" style="color:#4CAF50;">🔥 Высокий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${highDemand.map(i=>`• ${i.name} — ${i.sold} шт.`).join('<br>')}</div></div>`; if (lowDemand.length > 0) html += `<div class="stat-card" style="border:1px solid #f44336;flex:2;min-width:250px;"><div class="stat-label" style="color:#f44336;">📉 Низкий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${lowDemand.map(i=>`• ${i.name} — ${i.sold} шт.`).join('<br>')}</div></div>`; if (noSales.length > 0) html += `<div class="stat-card" style="border:1px solid #FF9800;flex:1;min-width:200px;"><div class="stat-label" style="color:#FF9800;">🆕 Без продаж</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${noSales.slice(0,5).map(i=>`• ${i.name}`).join('<br>')}${noSales.length>5?`<br>...и ещё ${noSales.length-5}`:''}</div></div>`; panel.innerHTML = html; }
-
 function showHistory() { const modal = document.getElementById('historyModal'), list = document.getElementById('historyList'); list.innerHTML = salesHistory.length === 0 ? '<p style="text-align:center;">Нет истории</p>' : salesHistory.slice(0,20).map(h=>`<div class="history-item"><span>${h.name}</span><span>${h.date}</span><span>${h.price}₽</span></div>`).join(''); modal.classList.add('active'); }
 function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
-aasync function loadData() { 
-    // Сначала пробуем GitHub
-    try {
-        const r = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
-            headers: { 'Authorization': 'token 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' }
-        });
-        if (r.ok) {
-            const d = await r.json();
-            const content = JSON.parse(atob(d.content));
-            items = content.items || [];
-            salesData = content.salesData || {};
-            salesHistory = content.salesHistory || [];
-            pendingSales = content.pendingSales || {};
-        }
-    } catch (e) {
-        // Если GitHub не доступен — берём из localStorage
-        const saved = localStorage.getItem('priceData');
-        if (saved) {
-            const d = JSON.parse(saved);
-            items = d.items || [];
-            salesData = d.salesData || {};
-            salesHistory = d.salesHistory || [];
-            pendingSales = d.pendingSales || {};
-        }
-    }
-    updateStats(); renderItems(); buildCategories();
-}
-async function saveAllData() { 
-    localStorage.setItem('priceData', JSON.stringify({ items, salesData, salesHistory, pendingSales }));
-    try {
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify({ items, salesData, salesHistory, pendingSales }))));
-        const res = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
-            method: 'GET', headers: { 'Authorization': 'token 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' }
-        });
-        const data = await res.json();
-        await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
-            method: 'PUT',
-            headers: { 'Authorization': 'token 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', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: 'update data', content: content, sha: data.sha })
-        });
-        console.log('✅ Сохранено на GitHub');
-    } catch (e) { console.log('💾 Сохранено локально'); }
-}
-}
-async function saveData() { await saveAllData(); showStatus('✅ Сохранено!', 'success'); }
+
+async function loadData() { const saved = localStorage.getItem('priceData'); if (saved) { const d = JSON.parse(saved); items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {}; } else { try { const r = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', { headers: { 'Authorization': 'token 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' } }); if (r.ok) { const d = await r.json(); const content = JSON.parse(atob(d.content)); items = content.items || []; salesData = content.salesData || {}; salesHistory = content.salesHistory || []; pendingSales = content.pendingSales || {}; } } catch (e) {} } updateStats(); renderItems(); buildCategories(); }
+async function saveAllData() { localStorage.setItem('priceData', JSON.stringify({ items, salesData, salesHistory, pendingSales })); try { const content = btoa(unescape(encodeURIComponent(JSON.stringify({ items, salesData, salesHistory, pendingSales })))); const res = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', { method: 'GET', headers: { 'Authorization': 'token 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' } }); const data = await res.json(); await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', { method: 'PUT', headers: { 'Authorization': 'token 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', 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'update data', content: content, sha: data.sha }) }); } catch (e) {} }
+
 function toggleAdmin() { isAdmin = !isAdmin; if (isAdmin) { if (prompt('Пароль:') === atob('MTUwNDIw')) { document.getElementById('adminSection').classList.add('active'); document.querySelector('.admin-login-btn').textContent = '🔒 Выйти'; document.body.classList.add('admin-mode'); updateStats(); } else { alert('Неверно!'); isAdmin = false; } } else { document.getElementById('adminSection').classList.remove('active'); document.querySelector('.admin-login-btn').textContent = '🔑 Войти как админ'; document.body.classList.remove('admin-mode'); } }
 function showStatus(msg, type) { const el = document.getElementById('statusMessage'); if (!el) return; el.textContent = msg; el.className = 'status-message show'; el.style.background = type === 'success' ? 'rgba(76,175,80,0.3)' : 'rgba(244,67,54,0.3)'; setTimeout(() => el.classList.remove('show'), 2000); }
 function openModal(editItem) { document.getElementById('modal').classList.add('active'); if (editItem) { document.getElementById('modalTitle').textContent = 'Редактировать'; document.getElementById('editId').value = editItem.id; document.getElementById('itemName').value = editItem.name||''; document.getElementById('itemCategory').value = editItem.category||'Жижи'; document.getElementById('itemMg').value = editItem.mg||''; document.getElementById('itemFlavors').value = editItem.flavors||''; document.getElementById('itemQuantity').value = editItem.quantity||0; document.getElementById('itemPrice').value = editItem.price||''; currentImage = editItem.image||null; const p = document.getElementById('imagePreview'); if (currentImage) { p.style.backgroundImage = 'url('+currentImage+')'; p.classList.add('has-image'); p.innerHTML = ''; } else { p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки</span>'; } } else { document.getElementById('modalTitle').textContent = 'Добавить товар'; document.getElementById('editId').value = ''; ['itemName','itemMg','itemFlavors','itemQuantity','itemPrice'].forEach(id => document.getElementById(id).value = ''); document.getElementById('itemCategory').value = 'Жижи'; currentImage = null; const p = document.getElementById('imagePreview'); p.style.backgroundImage = ''; p.classList.remove('has-image'); p.innerHTML = '<span>Нажмите для загрузки</span>'; } }
 function closeModal() { document.getElementById('modal').classList.remove('active'); }
-async function saveItem() { const editId = document.getElementById('editId').value; const n = document.getElementById('itemName').value.trim(); const cat = document.getElementById('itemCategory').value; const m = document.getElementById('itemMg').value.trim(); const f = document.getElementById('itemFlavors').value.trim(); const q = parseInt(document.getElementById('itemQuantity').value)||0; const p = document.getElementById('itemPrice').value.trim(); if (!n||!m||!f||p===''||!currentImage) { alert('Заполните все поля!'); return; } const itemData = { id: editId?parseInt(editId):Date.now(), name: n, category: cat, mg: m, flavors: f, quantity: q, price: p, image: currentImage }; if (editId) { const idx = items.findIndex(i=>i.id==editId); if (idx!==-1) items[idx] = itemData; } else { items.push(itemData); } await saveData(); updateStats(); renderItems(); buildCategories(); closeModal(); }
-async function deleteItem(id) { if (confirm('Удалить?')) { items = items.filter(i=>i.id!==id); await saveData(); updateStats(); renderItems(); buildCategories(); } }
+async function saveItem() { const editId = document.getElementById('editId').value; const n = document.getElementById('itemName').value.trim(); const cat = document.getElementById('itemCategory').value; const m = document.getElementById('itemMg').value.trim(); const f = document.getElementById('itemFlavors').value.trim(); const q = parseInt(document.getElementById('itemQuantity').value)||0; const p = document.getElementById('itemPrice').value.trim(); if (!n||!m||!f||p===''||!currentImage) { alert('Заполните все поля!'); return; } const itemData = { id: editId?parseInt(editId):Date.now(), name: n, category: cat, mg: m, flavors: f, quantity: q, price: p, image: currentImage }; if (editId) { const idx = items.findIndex(i=>i.id==editId); if (idx!==-1) items[idx] = itemData; } else { items.push(itemData); } await saveAllData(); updateStats(); renderItems(); buildCategories(); closeModal(); }
+async function deleteItem(id) { if (confirm('Удалить?')) { items = items.filter(i=>i.id!==id); await saveAllData(); updateStats(); renderItems(); buildCategories(); } }
 function editItem(id) { const item = items.find(i=>i.id===id); if (item) openModal(item); }
 
 function renderItems() {
