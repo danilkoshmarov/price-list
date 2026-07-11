@@ -269,6 +269,7 @@ function loadData() {
             salesHistory = d.salesHistory || [];
             pendingSales = d.pendingSales || {};
             localStorage.setItem('priceData', xhr.responseText);
+            showStatus('✅ Данные обновлены!', 'success');
         }
     } catch(e) {
         var saved = localStorage.getItem('priceData');
@@ -283,6 +284,7 @@ function loadData() {
                 items = []; salesData = {}; salesHistory = []; pendingSales = {};
             }
         }
+        showStatus('❌ Сервер не отвечает, попробуйте позже', 'error');
     }
     updateStats(); renderItems(); buildCategories();
 }
