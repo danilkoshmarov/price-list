@@ -171,6 +171,9 @@
 button:focus { outline: none !important; }
 input:focus { border-color: var(--card-border) !important; }
     </style>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
@@ -189,7 +192,8 @@ input:focus { border-color: var(--card-border) !important; }
             <button class="quick-btn danger" onclick="resetHistory()">🗑️ Сброс истории</button>
             <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveAllData();renderItems();buildCategories();}">⚠️ Сброс товаров</button>
         </div>
-        <div class="search-container">
+        <div class="status-message" id="statusMessage"></div>
+<div class="search-container">
             <div class="search-wrapper">
                 <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск...">
                 <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
@@ -223,7 +227,6 @@ input:focus { border-color: var(--card-border) !important; }
                 <button onclick="saveTgUsername()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;cursor:pointer;font-weight:bold;">💾 Сохранить</button>
             </div>
         </div>
-        <div class="status-message" id="statusMessage"></div>
         <div class="price-grid" id="priceGrid">
             <div class="loading-container" style="grid-column:1/-1;">
                 <div class="loading-spinner"></div>
