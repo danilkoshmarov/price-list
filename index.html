@@ -301,8 +301,25 @@ function updateDemandAnalysis() { const panel = document.getElementById('demandP
 
 function showHistory() { const modal = document.getElementById('historyModal'), list = document.getElementById('historyList'); list.innerHTML = salesHistory.length === 0 ? '<p style="text-align:center;">Нет истории</p>' : salesHistory.slice(0,20).map(h=>`<div class="history-item"><span>${h.name}</span><span>${h.date}</span><span>${h.price}₽</span></div>`).join(''); modal.classList.add('active'); }
 function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
-async function loadData() { try { const r = await fetch(API_URL); if (r.ok) { const d = await r.json(); items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {}; } } catch (e) {} updateStats(); renderItems(); buildCategories(); }
-async function saveAllData() { try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, salesData, salesHistory, pendingSales }) }); } catch (e) {} }
+async function loadData() { 
+    const saved = localStorage.getItem('priceData');
+    if (saved) {
+        const d = JSON.parse(saved);
+        items = d.items || [];
+        salesData = d.salesData || {};
+        salesHistory = d.salesHistory || [];
+        pendingSales = d.pendingSales || {};
+    } else {
+        try {
+            const r = await fetch(API_URL);
+            if (r.ok) { const d = await r.json(); items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {}; }
+        } catch (e) {}
+    }
+    updateStats(); renderItems(); buildCategories();
+}
+async function saveAllData() { 
+    localStorage.setItem('priceData', JSON.stringify({ items, salesData, salesHistory, pendingSales }));
+}
 async function saveData() { await saveAllData(); showStatus('✅ Сохранено!', 'success'); }
 function toggleAdmin() { isAdmin = !isAdmin; if (isAdmin) { if (prompt('Пароль:') === atob('MTUwNDIw')) { document.getElementById('adminSection').classList.add('active'); document.querySelector('.admin-login-btn').textContent = '🔒 Выйти'; document.body.classList.add('admin-mode'); updateStats(); } else { alert('Неверно!'); isAdmin = false; } } else { document.getElementById('adminSection').classList.remove('active'); document.querySelector('.admin-login-btn').textContent = '🔑 Войти как админ'; document.body.classList.remove('admin-mode'); } }
 function showStatus(msg, type) { const el = document.getElementById('statusMessage'); if (!el) return; el.textContent = msg; el.className = 'status-message show'; el.style.background = type === 'success' ? 'rgba(76,175,80,0.3)' : 'rgba(244,67,54,0.3)'; setTimeout(() => el.classList.remove('show'), 2000); }
