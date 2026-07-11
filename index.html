@@ -301,19 +301,30 @@ function updateDemandAnalysis() { const panel = document.getElementById('demandP
 
 function showHistory() { const modal = document.getElementById('historyModal'), list = document.getElementById('historyList'); list.innerHTML = salesHistory.length === 0 ? '<p style="text-align:center;">Нет истории</p>' : salesHistory.slice(0,20).map(h=>`<div class="history-item"><span>${h.name}</span><span>${h.date}</span><span>${h.price}₽</span></div>`).join(''); modal.classList.add('active'); }
 function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
-async function loadData() { 
-    const saved = localStorage.getItem('priceData');
-    if (saved) {
-        const d = JSON.parse(saved);
-        items = d.items || [];
-        salesData = d.salesData || {};
-        salesHistory = d.salesHistory || [];
-        pendingSales = d.pendingSales || {};
-    } else {
-        try {
-            const r = await fetch(API_URL);
-            if (r.ok) { const d = await r.json(); items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {}; }
-        } catch (e) {}
+aasync function loadData() { 
+    // Сначала пробуем GitHub
+    try {
+        const r = await fetch('https://api.github.com/repos/danilkoshmarov/price-list/contents/data.json', {
+            headers: { 'Authorization': 'token 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' }
+        });
+        if (r.ok) {
+            const d = await r.json();
+            const content = JSON.parse(atob(d.content));
+            items = content.items || [];
+            salesData = content.salesData || {};
+            salesHistory = content.salesHistory || [];
+            pendingSales = content.pendingSales || {};
+        }
+    } catch (e) {
+        // Если GitHub не доступен — берём из localStorage
+        const saved = localStorage.getItem('priceData');
+        if (saved) {
+            const d = JSON.parse(saved);
+            items = d.items || [];
+            salesData = d.salesData || {};
+            salesHistory = d.salesHistory || [];
+            pendingSales = d.pendingSales || {};
+        }
     }
     updateStats(); renderItems(); buildCategories();
 }
