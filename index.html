@@ -283,7 +283,7 @@ function loadData() {
     }
     updateStats(); renderItems(); buildCategories();
 }
-ffunction saveAllData() { 
+function saveAllData() { 
     var data = JSON.stringify({ items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales });
     localStorage.setItem('priceData', data);
     try {
