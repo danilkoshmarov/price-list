@@ -258,9 +258,9 @@ function updateDemandAnalysis() { var panel = document.getElementById('demandPan
 function showHistory() { var modal = document.getElementById('historyModal'), list = document.getElementById('historyList'); list.innerHTML = salesHistory.length === 0 ? '<p style="text-align:center;">Нет истории</p>' : salesHistory.slice(0,20).map(function(h) { return '<div class="history-item"><span>' + h.name + '</span><span>' + h.date + '</span><span>' + h.price + '₽</span></div>'; }).join(''); modal.classList.add('active'); }
 function closeHistory() { document.getElementById('historyModal').classList.remove('active'); }
 function loadData() { 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.npoint.io/2cb2de4958ee91fc3dc2', false);
     try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://api.npoint.io/55674e9c91b4698843d7', false);
         xhr.send();
         if (xhr.status === 200) {
             var d = JSON.parse(xhr.responseText);
@@ -273,11 +273,15 @@ function loadData() {
     } catch(e) {
         var saved = localStorage.getItem('priceData');
         if (saved) {
-            var d = JSON.parse(saved);
-            items = d.items || [];
-            salesData = d.salesData || {};
-            salesHistory = d.salesHistory || [];
-            pendingSales = d.pendingSales || {};
+            try {
+                var d = JSON.parse(saved);
+                items = d.items || [];
+                salesData = d.salesData || {};
+                salesHistory = d.salesHistory || [];
+                pendingSales = d.pendingSales || {};
+            } catch(e2) {
+                items = []; salesData = {}; salesHistory = []; pendingSales = {};
+            }
         }
     }
     updateStats(); renderItems(); buildCategories();
@@ -287,7 +291,7 @@ function saveAllData() {
     localStorage.setItem('priceData', data);
     try {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.npoint.io/2cb2de4958ee91fc3dc2', true);
+        xhr.open('POST', 'https://api.npoint.io/55674e9c91b4698843d7', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(data);
     } catch(e) {}
