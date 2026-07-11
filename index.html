@@ -167,6 +167,9 @@
         .loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(156,39,176,0.2); border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         .empty-category { text-align: center; padding: 40px; opacity: 0.6; grid-column: 1 / -1; }
         @media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } .stats-panel { flex-direction: column; } .cart-panel { flex-wrap: wrap; justify-content: center; width: 90%; } }
+    *:focus { outline: none !important; }
+button:focus { outline: none !important; }
+input:focus { border-color: var(--card-border) !important; }
     </style>
 </head>
 <body>
