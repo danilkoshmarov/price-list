@@ -13,6 +13,9 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#e91e63">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
@@ -38,7 +41,7 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); min-height: 100vh; padding: 20px; transition: all 0.5s ease; color: var(--text); }
         .container { max-width: 1200px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 20px; }
-        .logo { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; box-shadow: 0 4px 15px rgba(233,30,99,0.2); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; background: var(--stat-gradient); color: white; object-fit: cover; }
+        .logo { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; box-shadow: 0 4px 15px rgba(233,30,99,0.2); object-fit: cover; }
         .header h1 { font-size: 3rem; background: var(--stat-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 3s linear infinite; }
         .header p { color: var(--text); opacity: 0.8; }
         .theme-toggle { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; background: var(--card); border: 1px solid var(--card-border); font-size: 1.3rem; display: flex; align-items: center; justify-content: center; position: fixed; top: 15px; right: 15px; z-index: 500; transition: all 0.3s; }
@@ -166,20 +169,17 @@
         .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; }
         .loading-spinner { width: 50px; height: 50px; border: 3px solid rgba(156,39,176,0.2); border-top: 3px solid #e91e63; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         .empty-category { text-align: center; padding: 40px; opacity: 0.6; grid-column: 1 / -1; }
+        *:focus { outline: none !important; }
+        button:focus { outline: none !important; }
+        input:focus { border-color: var(--card-border) !important; }
         @media (max-width: 768px) { .price-grid { grid-template-columns: 1fr; } .stats-panel { flex-direction: column; } .cart-panel { flex-wrap: wrap; justify-content: center; width: 90%; } }
-    *:focus { outline: none !important; }
-button:focus { outline: none !important; }
-input:focus { border-color: var(--card-border) !important; }
     </style>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
     <div class="container">
         <div class="header">
-            <img src="SN.jpg" alt="Smoky Notes" class="logo" style="object-fit:cover;">
+            <img src="SN.jpg" alt="Smoky Notes" class="logo">
             <h1>Smoky Notes</h1>
             <p>Доставка в удобное время и место 🚗</p>
         </div>
@@ -194,7 +194,7 @@ input:focus { border-color: var(--card-border) !important; }
             <button class="quick-btn danger" onclick="if(confirm('Удалить ВСЕ товары?')){items=[];saveAllData();renderItems();buildCategories();}">⚠️ Сброс товаров</button>
         </div>
         <div class="status-message" id="statusMessage"></div>
-<div class="search-container">
+        <div class="search-container">
             <div class="search-wrapper">
                 <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск...">
                 <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
@@ -335,6 +335,12 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.classList.add('active'); currentCategory = e.target.dataset.cat; renderItems();
         }
     });
+    // Автобэкап каждый час
+    setInterval(function() {
+        if (items.length > 0) {
+            localStorage.setItem('autoBackup', JSON.stringify({items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales}));
+        }
+    }, 3600000);
 });
 
 function toggleTheme() { isDark = !isDark; document.body.classList.toggle('dark', isDark); document.getElementById('themeToggle').textContent = isDark ? '🌙' : '🌸'; localStorage.setItem('darkTheme', isDark); }
@@ -347,9 +353,7 @@ function restoreBackup() {
             saveAllData(); updateStats(); renderItems(); buildCategories();
             showStatus('✅ Восстановлено!', 'success');
         }
-    } else {
-        showStatus('❌ Бэкап не найден', 'error');
-    }
+    } else { showStatus('❌ Бэкап не найден', 'error'); }
 }
 function setSort(mode, evt) { sortMode = mode; document.querySelectorAll('.sort-btn').forEach(function(b) { b.classList.remove('active'); }); if (evt && evt.currentTarget) evt.currentTarget.classList.add('active'); renderItems(); }
 function clearSearch() { document.getElementById('searchInput').value = ''; searchQuery = ''; document.getElementById('searchClear').classList.remove('show'); renderItems(); }
@@ -394,32 +398,34 @@ function downloadFromNpoint() {
 }
 
 function saveAllData() { localStorage.setItem('priceData', JSON.stringify({ items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales })); }
-function loadData() { 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://api.npoint.io/55674e9c91b4698843d7', false);
-    try {
-        xhr.send();
-        if (xhr.status === 200) {
-            var d = JSON.parse(xhr.responseText);
-            items = d.items || [];
-            salesData = d.salesData || {};
-            salesHistory = d.salesHistory || [];
-            pendingSales = d.pendingSales || {};
-            localStorage.setItem('priceData', xhr.responseText);
-        }
-    } catch(e) {
-        var saved = localStorage.getItem('priceData');
-        if (saved) {
-            try {
-                var d = JSON.parse(saved);
-                items = d.items || [];
-                salesData = d.salesData || {};
-                salesHistory = d.salesHistory || [];
-                pendingSales = d.pendingSales || {};
-            } catch(e2) {}
-        }
+
+function loadFromBackup() {
+    var saved = localStorage.getItem('priceData');
+    if (!saved) saved = localStorage.getItem('autoBackup');
+    if (saved) {
+        try {
+            var d = JSON.parse(saved);
+            items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {};
+        } catch(e) { items = []; salesData = {}; salesHistory = []; pendingSales = {}; }
     }
     updateStats(); renderItems(); buildCategories();
+}
+
+function loadData() { 
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://api.npoint.io/55674e9c91b4698843d7', true);
+    xhr.timeout = 15000;
+    xhr.ontimeout = function() { loadFromBackup(); };
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var d = JSON.parse(xhr.responseText);
+            items = d.items || []; salesData = d.salesData || {}; salesHistory = d.salesHistory || []; pendingSales = d.pendingSales || {};
+            localStorage.setItem('priceData', xhr.responseText);
+        }
+        updateStats(); renderItems(); buildCategories();
+    };
+    xhr.onerror = function() { loadFromBackup(); };
+    xhr.send();
 }
 
 function updateStats() { 
@@ -460,12 +466,6 @@ function renderItems() {
     });
     updateStats();
 }
-    setInterval(function() {
-    if (items.length > 0) {
-        localStorage.setItem('autoBackup', JSON.stringify({items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales}));
-        localStorage.setItem('autoBackupTime', new Date().toLocaleString('ru-RU'));
-    }
-}, 3600000);
 </script>
 </body>
 </html>
