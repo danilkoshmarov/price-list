@@ -186,6 +186,7 @@ input:focus { border-color: var(--card-border) !important; }
         <div class="quick-actions" id="quickActions">
             <button class="quick-btn" onclick="openModal()">✨ Добавить</button>
             <button class="quick-btn success" onclick="uploadToNpoint()">📥 Выгрузить</button>
+            <button class="quick-btn" onclick="restoreBackup()">🔄 Восстановить бэкап</button>
             <button class="quick-btn" onclick="downloadFromNpoint()">📤 Загрузить</button>
             <button class="quick-btn" onclick="showHistory()">📊 История</button>
             <button class="quick-btn" onclick="exportCSV()">📥 Экспорт</button>
@@ -337,6 +338,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toggleTheme() { isDark = !isDark; document.body.classList.toggle('dark', isDark); document.getElementById('themeToggle').textContent = isDark ? '🌙' : '🌸'; localStorage.setItem('darkTheme', isDark); }
+function restoreBackup() {
+    var backup = localStorage.getItem('autoBackup');
+    if (backup) {
+        if (confirm('Восстановить данные из бэкапа?')) {
+            var d = JSON.parse(backup);
+            items = d.items; salesData = d.salesData; salesHistory = d.salesHistory; pendingSales = d.pendingSales;
+            saveAllData(); updateStats(); renderItems(); buildCategories();
+            showStatus('✅ Восстановлено!', 'success');
+        }
+    } else {
+        showStatus('❌ Бэкап не найден', 'error');
+    }
+}
 function setSort(mode, evt) { sortMode = mode; document.querySelectorAll('.sort-btn').forEach(function(b) { b.classList.remove('active'); }); if (evt && evt.currentTarget) evt.currentTarget.classList.add('active'); renderItems(); }
 function clearSearch() { document.getElementById('searchInput').value = ''; searchQuery = ''; document.getElementById('searchClear').classList.remove('show'); renderItems(); }
 function exportCSV() { var csv = 'Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n'; items.forEach(function(i) { var s = salesData[i.id] || { count: 0, revenue: 0 }; csv += '"' + safeText(i.name) + '";"' + (i.category||'') + '";"' + safeText(i.mg) + '";"' + safeText(i.flavors) + '";' + i.quantity + ';' + i.price + ';' + s.count + ';' + s.revenue + '\n'; }); var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); var link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'price_export.csv'; link.click(); showStatus('📥 Экспортировано!', 'success'); }
@@ -446,6 +460,12 @@ function renderItems() {
     });
     updateStats();
 }
+    setInterval(function() {
+    if (items.length > 0) {
+        localStorage.setItem('autoBackup', JSON.stringify({items: items, salesData: salesData, salesHistory: salesHistory, pendingSales: pendingSales}));
+        localStorage.setItem('autoBackupTime', new Date().toLocaleString('ru-RU'));
+    }
+}, 3600000);
 </script>
 </body>
 </html>
