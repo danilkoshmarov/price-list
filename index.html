@@ -485,15 +485,14 @@ function shopLogin() {
     requestApproval(user.role,pass,user.username);
     alert('🔔 Ожидание подтверждения.\n'+(user.role==='moder'?'Админ должен одобрить вход.':'Модер или админ должен одобрить вход.'));
 }
-function updateShopUI() {
-    const actions=document.getElementById('shopActions'),roleEl=document.getElementById('shopRole'),stats=document.getElementById('statsPanel'),chart=document.getElementById('chartContainer'),demand=document.getElementById('demandPanel');
-    if(shopRole==='admin'||shopRole==='moder'){actions.classList.add('show');stats.classList.add('show');chart.classList.add('show');demand.classList.add('show');}
-    else{actions.classList.remove('show');stats.classList.remove('show');chart.classList.remove('show');demand.classList.remove('show');}
-    if(shopRole==='admin'){roleEl.innerHTML='<span class="role-badge role-admin">👑 Админ</span>';document.querySelectorAll('.admin-only').forEach(b=>b.style.display='');localStorage.setItem('adminLoggedIn','true');checkAdminNotifications();}
-    else if(shopRole==='moder'){roleEl.innerHTML='<span class="role-badge role-moder">👑 Модер</span>';document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');}
-    else if(shopRole==='helper'){roleEl.innerHTML='<span class="role-badge role-helper">🤝 Хелпер</span>';}
-    document.getElementById('shopPass').style.display='none'; const btn=document.querySelector('#pageShop .login-bar button'); btn.textContent='🔓 Выйти'; btn.onclick=shopLogout;
-    renderShop();buildCategories();
+if (shopRole === 'admin') {
+    loadAllFromNpoint();
+    setTimeout(() => {
+        const pending = JSON.parse(localStorage.getItem('pendingApprovals') || '[]');
+        if (pending.filter(p => p.status === 'pending').length > 0) {
+            showShopStatus('🔔 Есть запросы на вход! Проверьте панель персонала.');
+        }
+    }, 2000);
 }
 function shopLogout() { shopRole=null;shopCode=null;localStorage.removeItem('adminLoggedIn');document.getElementById('shopActions').classList.remove('show');document.getElementById('statsPanel').classList.remove('show');document.getElementById('chartContainer').classList.remove('show');document.getElementById('demandPanel').classList.remove('show');document.getElementById('shopRole').innerHTML='';document.getElementById('shopPass').style.display='';const btn=document.querySelector('#pageShop .login-bar button');btn.textContent='🔐 Войти';btn.onclick=shopLogin;renderShop();buildCategories(); }
 function loadShopData() { fetch(NP_SHOP).then(r=>{if(!r.ok)throw new Error('err');return r.json();}).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};localStorage.setItem('priceData',JSON.stringify(d));renderShop();buildCategories();updateStats();}).catch(()=>{const s=localStorage.getItem('priceData');if(s){try{const d=JSON.parse(s);items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};}catch(e){}}renderShop();buildCategories();updateStats();}); }
@@ -508,7 +507,46 @@ function renderChart() { if(shopRole!=='admin'&&shopRole!=='moder')return; const
 function updateDemandAnalysis() { if(shopRole!=='admin'&&shopRole!=='moder')return; const p=document.getElementById('demandPanel'); const ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory); if(ci.length===0){p.innerHTML='';return;} const ws=ci.map(i=>({name:i.name,sold:salesData[i.id]?.count||0})).filter(i=>i.sold>0); const ns=ci.filter(i=>(salesData[i.id]?.count||0)===0); let h=''; if(ws.length>0){const srt=ws.sort((a,b)=>b.sold-a.sold);const tc=Math.max(1,Math.ceil(srt.length*0.3));const hd=srt.slice(0,tc);const ld=srt.slice(-tc);if(hd.length>0)h+=`<div class="stat-card" style="border:1px solid #4CAF50;"><div class="stat-label" style="color:#4CAF50;">🔥 Высокий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${hd.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;if(ld.length>0&&ld[0].sold>0)h+=`<div class="stat-card" style="border:1px solid #f44336;"><div class="stat-label" style="color:#f44336;">📉 Низкий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ld.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;} if(ns.length>0)h+=`<div class="stat-card" style="border:1px solid #FF9800;"><div class="stat-label" style="color:#FF9800;">🆕 Без продаж</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ns.slice(0,5).map(i=>'• '+i.name).join('<br>')}${ns.length>5?'<br>...и ещё '+(ns.length-5):''}</div></div>`; p.innerHTML=h||'<div class="stat-card" style="text-align:center;">📊 Пока нет продаж</div>'; }
 function renderShop() { const grid=document.getElementById('priceGrid'); const filtered=getFilteredItems(); if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">🌸 Товары не добавлены</div>';updateStats();return;} if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">📂 Ничего не найдено</div>';updateStats();return;} const showAdmin=(shopRole==='admin'||shopRole==='moder'); grid.innerHTML=filtered.map(item=>{const sold=salesData[item.id]||{count:0,revenue:0};const pending=pendingSales[item.id]||0;const hasPending=pending>0; return `<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800;">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${shopRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`;}).join('');updateStats(); }
 function buyShopItem(id) { const item=items.find(i=>i.id==id); if(!item||item.quantity<=0)return; const msg=encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`); window.open('https://t.me/'+tgUsername+'?text='+msg,'_blank'); if(!pendingSales[id])pendingSales[id]=0; pendingSales[id]++; if(shopRole==='helper'&&shopCode)updateHelperRating(shopCode,'order_created',parseInt(item.price)); saveAllData();renderShop(); autoSyncShop(); showShopStatus('🔔 Новый заказ!'); }
-function confirmSale(id) { const item=items.find(i=>i.id==id); if(!item||item.quantity<=0)return; item.quantity--; if(pendingSales[id])pendingSales[id]--; if(pendingSales[id]<0)pendingSales[id]=0; if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name}; salesData[id].count++;salesData[id].revenue+=parseInt(item.price); salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)}); if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100); if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();},1500);} saveAllData();renderShop();buildCategories(); autoSyncShop(); showShopStatus('✅ Продажа! +'+item.price+'₽'); }
+function confirmSale(id) {
+    const item = items.find(i => i.id == id);
+    if (!item) { console.error('Товар не найден:', id); return; }
+    if (item.quantity <= 0) { console.error('Товар закончился:', item.name); return; }
+    
+    item.quantity--;
+    if (pendingSales[id] && pendingSales[id] > 0) pendingSales[id]--;
+    if (!pendingSales[id] || pendingSales[id] < 0) pendingSales[id] = 0;
+    
+    if (!salesData[id]) salesData[id] = { count: 0, revenue: 0, name: item.name };
+    salesData[id].count++;
+    salesData[id].revenue += parseInt(item.price);
+    
+    salesHistory.unshift({ date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price) });
+    if (salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
+    
+    if (item.quantity <= 0) {
+        setTimeout(() => { items = items.filter(i => i.id != id); saveAllData(); renderShop(); buildCategories(); }, 1500);
+    }
+    
+    saveAllData(); renderShop(); buildCategories(); autoSyncShop();
+    showShopStatus('✅ Продажа! +' + item.price + '₽');
+}
+function createStaffForModer(modCode) {
+    const un = prompt('Введите @username для хелпера:');
+    if (!un || !un.trim()) return;
+    const s = JSON.parse(localStorage.getItem('shopStaff') || '[]');
+    const code = 'HLP_' + Math.random().toString(36).substr(2, 8).toUpperCase();
+    s.push({
+        username: un.trim(), code: code, role: 'helper',
+        createdBy: shopRole === 'admin' ? 'admin' : shopCode,
+        moderatorCode: modCode,
+        createdAt: new Date().toLocaleString('ru-RU'),
+        blocked: false
+    });
+    localStorage.setItem('shopStaff', JSON.stringify(s));
+    autoSyncStaff();
+    alert('✅ Хелпер создан!\n\nИмя: ' + un + '\nКод: ' + code + '\n\nПередайте этот код хелперу.');
+    renderStaffList();
+}
 function cancelSale(id) { if(!pendingSales[id])return; pendingSales[id]--; if(pendingSales[id]<0)pendingSales[id]=0; saveAllData();renderShop(); autoSyncShop(); }
 function openShopModal() { const name=prompt('Название:'); if(!name)return; const cat=prompt('Категория (Жижи/Одноразки/Снюсы/Поды):','Жижи'); const mg=prompt('МГ:','20мг'); const fl=prompt('Вкусы:','Клубника'); const qty=parseInt(prompt('Количество:','10'))||10; const price=prompt('Цена:','600'); const img=prompt('Ссылка на фото:','https://via.placeholder.com/300'); if(!name||!price||!img)return; items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img}); saveAllData();renderShop();buildCategories(); autoSyncShop(); showShopStatus('✅ Добавлено!'); }
 function editShopItem(id) { const item=items.find(i=>i.id==id); if(!item)return; item.name=prompt('Название:',item.name)||item.name; item.price=prompt('Цена:',item.price)||item.price; item.quantity=parseInt(prompt('Количество:',item.quantity))||item.quantity; item.flavors=prompt('Вкусы:',item.flavors)||item.flavors; saveAllData();renderShop(); autoSyncShop(); }
