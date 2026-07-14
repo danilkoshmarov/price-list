@@ -186,16 +186,10 @@
 <div class="particles" id="particles"></div>
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
 <div class="container">
-<div class="nav-bar">
-    <button class="nav-tab active" onclick="switchPage('shop')">🛒 Магазин</button>
-    <button class="nav-tab" onclick="switchPage('giveaway')">🎰 Розыгрыш</button>
-</div>
+<div class="nav-bar"><button class="nav-tab active" onclick="switchPage('shop')">🛒 Магазин</button><button class="nav-tab" onclick="switchPage('giveaway')">🎰 Розыгрыш</button></div>
 
 <div class="page active" id="pageShop">
-    <div class="header">
-        <img src="SN.jpg" alt="Smoky Notes" class="logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>'">
-        <h1>Smoky Notes</h1><p>Доставка в удобное время и место 🚗</p>
-    </div>
+    <div class="header"><img src="SN.jpg" alt="Smoky Notes" class="logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>'"><h1>Smoky Notes</h1><p>Доставка в удобное время и место 🚗</p></div>
     <div class="login-bar"><input type="password" id="shopPass" placeholder="Пароль или код"><button onclick="shopLogin()">🔐 Войти</button><span id="shopRole"></span></div>
     <div class="quick-actions" id="shopActions">
         <button class="quick-btn" onclick="openShopModal()">✨ Товар</button>
@@ -214,12 +208,7 @@
     </div>
     <div class="status-message" id="shopStatus"></div>
     <div class="search-container"><div class="search-wrapper"><input type="text" class="search-input" id="shopSearch" placeholder="🔍 Поиск товаров..." oninput="renderShop()"><span class="search-icon">🔍</span></div></div>
-    <div class="sort-bar">
-        <button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button>
-        <button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button>
-        <button class="sort-btn" onclick="setSort('price-desc')">💎 Дороже</button>
-        <button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button>
-    </div>
+    <div class="sort-bar"><button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button><button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button><button class="sort-btn" onclick="setSort('price-desc')">💎 Дороже</button><button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button></div>
     <div class="categories-nav" id="categoriesNav"></div>
     <div class="stats-panel" id="statsPanel">
         <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Товаров</div></div>
@@ -240,29 +229,15 @@
 </div>
 </div>
 
-<div class="cart-panel" id="cartPanel">
-    <span class="cart-count" id="cartCountBadge">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span>
-    <button class="cart-panel-btn cart-view-btn" onclick="openCartModal()">🛒 Корзина</button>
-    <button class="cart-panel-btn cart-order-btn" onclick="checkout()">💬 Заказать</button>
-</div>
+<div class="cart-panel" id="cartPanel"><span class="cart-count" id="cartCountBadge">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span><button class="cart-panel-btn cart-view-btn" onclick="openCartModal()">🛒 Корзина</button><button class="cart-panel-btn cart-order-btn" onclick="checkout()">💬 Заказать</button></div>
 
-<div class="modal-overlay" id="cartModal">
-    <div class="modal-content">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeCartModal()">✕</span></div>
-        <div id="cartItemsList"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div>
-        <input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:8px">
-        <input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px">
-        <button class="buy-btn" onclick="checkout()" style="width:100%;background:linear-gradient(135deg,#4CAF50,#2E7D32)">💬 Оформить заказ</button>
-    </div>
-</div>
+<div class="modal-overlay" id="cartModal"><div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeCartModal()">✕</span></div><div id="cartItemsList"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div><input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:8px"><input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px"><button class="buy-btn" onclick="checkout()" style="width:100%;background:linear-gradient(135deg,#4CAF50,#2E7D32)">💬 Оформить заказ</button></div></div>
 
-<div class="modal-overlay" id="upsellOverlay">
-    <div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span><span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div></div>
-</div>
+<div class="modal-overlay" id="shopModal"><div class="modal-content" style="max-width:550px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeShopModal()">✕</span></div><input type="hidden" id="editItemId"><div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📛 Название</label><input type="text" id="itemName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div><div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📂 Категория</label><select id="itemCategory" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="flex:1"><label style="font-size:0.85rem;opacity:0.7">⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div><div style="flex:1"><label style="font-size:0.85rem;opacity:0.7">📦 Кол-во</label><input type="number" id="itemQuantity" min="0" value="10" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div></div><div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">🍓 Вкусы</label><textarea id="itemFlavors" rows="2" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px;resize:vertical"></textarea></div><div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div><div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📸 Ссылка на фото</label><input type="text" id="itemImage" placeholder="https://..." value="https://via.placeholder.com/300" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div><button onclick="saveShopItem()" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;font-size:1rem;margin-top:10px">💾 Сохранить</button><button onclick="closeShopModal()" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;margin-top:8px">Отмена</button></div></div>
 
-<div class="modal-overlay" id="historyModal">
-    <div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3>📋 История продаж</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeHistoryModal()">✕</span></div><div id="historyList"></div></div>
-</div>
+<div class="modal-overlay" id="upsellOverlay"><div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span><span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div></div></div>
+
+<div class="modal-overlay" id="historyModal"><div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3>📋 История продаж</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeHistoryModal()">✕</span></div><div id="historyList"></div></div></div>
 
 <script>
 const NP_SHOP='https://api.npoint.io/55674e9c91b4698843d7';
@@ -280,14 +255,7 @@ function createParticles(){const c=document.getElementById('particles');c.innerH
 function toggleTheme(){isDark=!isDark;document.body.classList.toggle('dark',isDark);document.getElementById('themeToggle').textContent=isDark?'🌙':'🌸';localStorage.setItem('darkTheme',isDark);createParticles();}
 function switchPage(page){currentPage=page;document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page'+page.charAt(0).toUpperCase()+page.slice(1)).classList.add('active');event.target.classList.add('active');shopRole=currentRole;gaRole=currentRole;if(page==='shop'){renderShop();if(currentRole)updateShopUI();}if(page==='giveaway'){renderGa();if(currentRole)updateGaUI();}}
 
-function checkNpointConnection(){
-    const dot=document.getElementById('connDot'),text=document.getElementById('connText'),status=document.getElementById('connectionStatus');
-    if(currentRole!=='admin'){status.style.display='none';return;}
-    status.style.display='flex';dot.style.background='#ff9800';text.textContent='...';text.style.color='#ff9800';
-    const start=Date.now();
-    fetch(NP_SHOP,{method:'HEAD'}).then(r=>{const ms=Date.now()-start;
-        if(r.ok){if(ms<100){dot.style.background='#00ff88';text.style.color='#00ff88'}else if(ms<300){dot.style.background='#4CAF50';text.style.color='#4CAF50'}else if(ms<600){dot.style.background='#ff9800';text.style.color='#ff9800'}else{dot.style.background='#f44336';text.style.color='#f44336'}text.textContent=ms+'мс'}else{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Ошибка'}}).catch(()=>{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Офлайн'});
-}
+function checkNpointConnection(){const dot=document.getElementById('connDot'),text=document.getElementById('connText'),status=document.getElementById('connectionStatus');if(currentRole!=='admin'){status.style.display='none';return;}status.style.display='flex';dot.style.background='#ff9800';text.textContent='...';text.style.color='#ff9800';const start=Date.now();fetch(NP_SHOP,{method:'HEAD'}).then(r=>{const ms=Date.now()-start;if(r.ok){if(ms<100){dot.style.background='#00ff88';text.style.color='#00ff88'}else if(ms<300){dot.style.background='#4CAF50';text.style.color='#4CAF50'}else if(ms<600){dot.style.background='#ff9800';text.style.color='#ff9800'}else{dot.style.background='#f44336';text.style.color='#f44336'}text.textContent=ms+'мс'}else{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Ошибка'}}).catch(()=>{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Офлайн'});}
 setInterval(checkNpointConnection,5000);
 
 function uploadAllToNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Выгружаю...');const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]'),gaParticipants,gaWinner,gaHistory,gaSecretCode,gaDeadline,gaBlocked,gaRegOpen};fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.ok?showShopStatus('✅ Выгружено!'):showShopStatus('❌ Ошибка')).catch(()=>showShopStatus('❌ Нет связи'));}
@@ -355,44 +323,10 @@ function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quant
 function confirmSale(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);saveAllData();if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories()},1500)}renderShop();buildCategories();autoSyncAll();showShopStatus('✅ Продажа! +'+item.price+'₽')}
 function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendingSales[id]<0)pendingSales[id]=0;saveAllData();renderShop();autoSyncAll()}
 
-// НОВЫЕ ФУНКЦИИ ДЛЯ ТОВАРОВ (prompt вместо модалки)
-function openShopModal(editItem = null){
-    if(editItem){
-        const name = prompt('Название:', editItem.name);
-        if(!name) return;
-        const cat = prompt('Категория (Жижи/Одноразки/Снюсы/Поды):', editItem.category);
-        const mg = prompt('МГ:', editItem.mg);
-        const fl = prompt('Вкусы:', editItem.flavors);
-        const qty = parseInt(prompt('Количество:', editItem.quantity)) || 10;
-        const price = prompt('Цена:', editItem.price);
-        const img = prompt('Ссылка на фото:', editItem.image);
-        if(!name || !price) return;
-        const idx = items.findIndex(i => String(i.id) === String(editItem.id));
-        if(idx !== -1){
-            items[idx].name = name; items[idx].category = cat; items[idx].mg = mg;
-            items[idx].flavors = fl; items[idx].quantity = qty; items[idx].price = price;
-            items[idx].image = img || editItem.image;
-        }
-    } else {
-        const name = prompt('Название:');
-        if(!name) return;
-        const cat = prompt('Категория (Жижи/Одноразки/Снюсы/Поды):', 'Жижи');
-        const mg = prompt('МГ:', '20мг');
-        const fl = prompt('Вкусы:', 'Клубника');
-        const qty = parseInt(prompt('Количество:', '10')) || 10;
-        const price = prompt('Цена:', '600');
-        const img = prompt('Ссылка на фото:', 'https://via.placeholder.com/300');
-        if(!name || !price) return;
-        items.push({id: Date.now(), name, category: cat, mg, flavors: fl, quantity: qty, price, image: img});
-    }
-    saveAllData(); renderShop(); buildCategories();
-    showShopStatus('✅ Сохранено!');
-    setTimeout(() => { autoSyncAll(); }, 2000);
-}
-function editShopItem(id){ const item = items.find(i => i.id == id); if(item) openShopModal(item); }
-function closeShopModal(){}
-function saveShopItem(){}
-
+function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle');document.getElementById('editItemId').value='';document.getElementById('itemName').value='';document.getElementById('itemCategory').value='Жижи';document.getElementById('itemMg').value='';document.getElementById('itemFlavors').value='';document.getElementById('itemQuantity').value='10';document.getElementById('itemPrice').value='';document.getElementById('itemImage').value='https://via.placeholder.com/300';if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||10;document.getElementById('itemPrice').value=editItem.price||'';document.getElementById('itemImage').value=editItem.image||'https://via.placeholder.com/300'}else{title.textContent='✨ Добавить товар'}modal.classList.add('show')}
+function closeShopModal(){document.getElementById('shopModal').classList.remove('show')}
+function saveShopItem(){const editId=document.getElementById('editItemId').value;const name=document.getElementById('itemName').value.trim();const cat=document.getElementById('itemCategory').value;const mg=document.getElementById('itemMg').value.trim();const fl=document.getElementById('itemFlavors').value.trim();const qty=parseInt(document.getElementById('itemQuantity').value)||10;const price=document.getElementById('itemPrice').value.trim();const img=document.getElementById('itemImage').value.trim()||'https://via.placeholder.com/300';if(!name||!price){alert('❌ Заполните название и цену!');return}if(editId){const idx=items.findIndex(i=>String(i.id)===String(editId));if(idx!==-1){items[idx].name=name;items[idx].category=cat;items[idx].mg=mg;items[idx].flavors=fl;items[idx].quantity=qty;items[idx].price=price;items[idx].image=img}}else{items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img})}saveAllData();renderShop();buildCategories();closeShopModal();showShopStatus('✅ Сохранено!');setTimeout(()=>{autoSyncAll();},2000)}
+function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item)}
 function deleteShopItem(id){if(currentRole!=='admin')return;if(confirm('Удалить?')){items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();showShopStatus('✅ Удалено!')}}
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000)}
 function showShopHistory(){const m=document.getElementById('historyModal'),l=document.getElementById('historyList');l.innerHTML=salesHistory.length===0?'<p style="text-align:center;opacity:0.5">Нет истории</p>':salesHistory.slice(0,30).map(h=>`<div class="cart-item"><span>${h.name}</span><span>${h.date}</span><span style="font-weight:700">${h.price}₽</span></div>`).join('');m.classList.add('show')}
