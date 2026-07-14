@@ -284,7 +284,41 @@ function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendin
 function handleImageUpload(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){const img=new Image();img.onload=function(){const canvas=document.createElement('canvas');const maxSize=800;let w=img.width,h=img.height;if(w>h){if(w>maxSize){h*=maxSize/w;w=maxSize}}else{if(h>maxSize){w*=maxSize/h;h=maxSize}}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);currentImage=canvas.toDataURL('image/jpeg',0.8);const preview=document.getElementById('imagePreview');preview.style.backgroundImage='url('+currentImage+')';preview.style.opacity='1';preview.textContent=''};img.src=e.target.result};reader.readAsDataURL(file)}
 function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle'),preview=document.getElementById('imagePreview'),fileInput=document.getElementById('itemImageInput');currentImage=null;fileInput.value='';if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||0;document.getElementById('itemPrice').value=editItem.price||'';if(editItem.image){currentImage=editItem.image;preview.style.backgroundImage='url('+editItem.image+')';preview.style.opacity='1';preview.textContent=''}else{preview.style.backgroundImage='';preview.style.opacity='0.6';preview.textContent='📸 Нажмите для загрузки фото'}}else{title.textContent='✨ Добавить товар';document.getElementById('editItemId').value='';document.getElementById('itemName').value='';document.getElementById('itemCategory').value='Жижи';document.getElementById('itemMg').value='';document.getElementById('itemFlavors').value='';document.getElementById('itemQuantity').value='';document.getElementById('itemPrice').value='';preview.style.backgroundImage='';preview.style.opacity='0.6';preview.textContent='📸 Нажмите для загрузки фото'}modal.classList.add('show')}
 function closeShopModal(){document.getElementById('shopModal').classList.remove('show')}
-function saveShopItem(){const editId=document.getElementById('editItemId').value,name=document.getElementById('itemName').value.trim(),cat=document.getElementById('itemCategory').value,mg=document.getElementById('itemMg').value.trim(),fl=document.getElementById('itemFlavors').value.trim(),qty=parseInt(document.getElementById('itemQuantity').value)||0,price=document.getElementById('itemPrice').value.trim();if(!name||!price){alert('❌ Заполните обязательные поля!');return}if(!currentImage&&!editId){alert('❌ Загрузите фото!');return}const img=currentImage||(editId?items.find(i=>String(i.id)===String(editId))?.image:'')||'https://via.placeholder.com/300';if(editId){const idx=items.findIndex(i=>String(i.id)===String(editId));if(idx!==-1){items[idx].name=name;items[idx].category=cat;items[idx].mg=mg;items[idx].flavors=fl;items[idx].quantity=qty;items[idx].price=price;items[idx].image=img}}else{items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img})}saveAllData();renderShop();buildCategories();closeShopModal();showShopStatus('✅ Сохранено!')}
+function saveShopItem(){
+    const editId=document.getElementById('editItemId').value,
+          name=document.getElementById('itemName').value.trim(),
+          cat=document.getElementById('itemCategory').value,
+          mg=document.getElementById('itemMg').value.trim(),
+          fl=document.getElementById('itemFlavors').value.trim(),
+          qty=parseInt(document.getElementById('itemQuantity').value)||0,
+          price=document.getElementById('itemPrice').value.trim();
+    
+    if(!name||!price){alert('❌ Заполните обязательные поля!');return;}
+    
+    const img=currentImage||(editId?items.find(i=>String(i.id)===String(editId))?.image:'')||'https://via.placeholder.com/300';
+    
+    if(editId){
+        const idx=items.findIndex(i=>String(i.id)===String(editId));
+        if(idx!==-1){
+            items[idx].name=name;
+            items[idx].category=cat;
+            items[idx].mg=mg;
+            items[idx].flavors=fl;
+            items[idx].quantity=qty;
+            items[idx].price=price;
+            items[idx].image=img;
+        }
+    } else {
+        items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img});
+    }
+    
+    saveAllData(); // Сохраняем локально
+    renderShop();  // Обновляем карточки
+    buildCategories(); // Обновляем категории
+    closeShopModal(); // Закрываем модалку
+    autoSyncAll(); // 🔥 ОТПРАВЛЯЕМ В NPOINT!
+    showShopStatus('✅ Сохранено!');
+}
 function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item)}
 function deleteShopItem(id){if(currentRole!=='admin')return;if(confirm('Удалить?')){items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();showShopStatus('✅ Удалено!')}}
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000)}
