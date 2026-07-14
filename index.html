@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SN | Smoky Notes</title>
     <meta name="theme-color" content="#e91e63">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -253,20 +256,6 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="shopModal">
-    <div class="modal-content" style="max-width:550px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeShopModal()">✕</span></div>
-        <input type="hidden" id="editItemId">
-        <div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📛 Название</label><input type="text" id="itemName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div>
-        <div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📂 Категория</label><select id="itemCategory" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div>
-        <div style="display:flex;gap:10px;margin-bottom:12px"><div style="flex:1"><label style="font-size:0.85rem;opacity:0.7">⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div><div style="flex:1"><label style="font-size:0.85rem;opacity:0.7">📦 Кол-во</label><input type="number" id="itemQuantity" min="0" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div></div>
-        <div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">🍓 Вкусы</label><textarea id="itemFlavors" rows="2" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px;resize:vertical"></textarea></div>
-        <div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div>
-        <div style="margin-bottom:12px"><label style="font-size:0.85rem;opacity:0.7">📸 Ссылка на фото</label><input type="text" id="itemImage" placeholder="https://..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px"></div>
-        <div style="display:flex;gap:10px"><button onclick="closeShopModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer">Отмена</button><button onclick="saveShopItem()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700">💾 Сохранить</button></div>
-    </div>
-</div>
-
 <div class="modal-overlay" id="upsellOverlay">
     <div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span><span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div></div>
 </div>
@@ -328,72 +317,8 @@ function removeStaff(code){const s=JSON.parse(localStorage.getItem('shopStaff')|
 function notifyAdmin(h){const n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n.push({id:Date.now(),type:'promotion',message:`${h.username} достиг 👑 Легенда!`,helperCode:h.code,time:new Date().toLocaleString('ru-RU'),read:false});localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncAll();}
 function promoteToModer(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h)return;const nc='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();h.role='moder';h.code=nc;h.promotedAt=new Date().toLocaleString('ru-RU');h.promotedFrom='helper';delete h.moderatorCode;localStorage.setItem('shopStaff',JSON.stringify(s));let n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n=n.filter(x=>x.helperCode!==code);localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncAll();alert(`✅ ${h.username} повышен до модера!\nНовый код: ${nc}`);if(document.getElementById('staffModal'))refreshStaffPanel();logAction('admin','повысил до модера',h.username);return nc;}
 
-function addModerQuick(){
-    const un = prompt('Введите @username для модератора:');
-    if(!un || !un.trim()) return;
-    const s = JSON.parse(localStorage.getItem('shopStaff') || '[]');
-    const code = 'MOD_' + Math.random().toString(36).substr(2,8).toUpperCase();
-    s.push({username: un.trim(), code, role: 'moder', createdBy: 'admin', createdAt: new Date().toLocaleString('ru-RU'), blocked: false});
-    localStorage.setItem('shopStaff', JSON.stringify(s));
-    alert('✅ Модератор создан!\n\nИмя: ' + un + '\nКод: ' + code);
-    logAction('admin', 'создал модератора', un);
-    // Автосинхронизация через 2 секунды
-    setTimeout(() => { autoSyncAll(); }, 2000);
-}
-
-function addHelperQuick(){
-    const staff = JSON.parse(localStorage.getItem('shopStaff') || '[]');
-    const moders = staff.filter(s => s.role === 'moder' && !s.blocked);
-    if(moders.length === 0){ alert('❌ Сначала создайте модератора!'); return; }
-    let modList = 'Выберите модератора (введите номер или 0 для отмены):\n';
-    moders.forEach((m, i) => { modList += (i+1) + '. ' + m.username + ' (' + m.code + ')\n'; });
-    const modNum = parseInt(prompt(modList));
-    if(modNum === 0 || isNaN(modNum) || modNum < 1 || modNum > moders.length) return;
-    const un = prompt('Введите @username для хелпера (или нажмите Отмена):');
-    if(!un || !un.trim()) return;
-    const s = JSON.parse(localStorage.getItem('shopStaff') || '[]');
-    const code = 'HLP_' + Math.random().toString(36).substr(2,8).toUpperCase();
-    s.push({username: un.trim(), code, role: 'helper', createdBy: 'admin', moderatorCode: moders[modNum-1].code, createdAt: new Date().toLocaleString('ru-RU'), blocked: false});
-    localStorage.setItem('shopStaff', JSON.stringify(s));
-    alert('✅ Хелпер создан!\n\nИмя: ' + un + '\nКод: ' + code + '\nМодератор: ' + moders[modNum-1].username);
-    logAction('admin', 'создал хелпера', un);
-    // Автосинхронизация через 2 секунды
-    setTimeout(() => { autoSyncAll(); }, 2000);
-}
-
-function saveShopItem(){
-    const editId = document.getElementById('editItemId').value;
-    const name = document.getElementById('itemName').value.trim();
-    const cat = document.getElementById('itemCategory').value;
-    const mg = document.getElementById('itemMg').value.trim();
-    const fl = document.getElementById('itemFlavors').value.trim();
-    const qty = parseInt(document.getElementById('itemQuantity').value) || 10;
-    const price = document.getElementById('itemPrice').value.trim();
-    
-    if(!name || !price){ alert('❌ Заполните название и цену!'); return; }
-    
-    const img = currentImage || (editId ? items.find(i => String(i.id) === String(editId))?.image : '') || 'https://via.placeholder.com/300';
-    
-    if(editId){
-        const idx = items.findIndex(i => String(i.id) === String(editId));
-        if(idx !== -1){
-            items[idx].name = name; items[idx].category = cat; items[idx].mg = mg;
-            items[idx].flavors = fl; items[idx].quantity = qty; items[idx].price = price; items[idx].image = img;
-        }
-    } else {
-        items.push({id: Date.now(), name, category: cat, mg, flavors: fl, quantity: qty, price, image: img});
-    }
-    
-    saveAllData();
-    renderShop();
-    buildCategories();
-    closeShopModal();
-    showShopStatus('✅ Сохранено!');
-    currentImage = null;
-    // Автосинхронизация через 2 секунды
-    setTimeout(() => { autoSyncAll(); }, 2000);
-}
-function addHelperQuick(){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),moders=staff.filter(s=>s.role==='moder'&&!s.blocked);if(moders.length===0){alert('❌ Сначала создайте модератора!');return;}let modList='Выберите модератора (введите номер или 0 для отмены):\n';moders.forEach((m,i)=>{modList+=(i+1)+'. '+m.username+' ('+m.code+')\n';});const modNum=parseInt(prompt(modList));if(modNum===0||isNaN(modNum)||modNum<1||modNum>moders.length)return;const un=prompt('Введите @username для хелпера (или нажмите Отмена):');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'helper',createdBy:'admin',moderatorCode:moders[modNum-1].code,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncAll();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code+'\nМодератор: '+moders[modNum-1].username);logAction('admin','создал хелпера',un);}
+function addModerQuick(){const un=prompt('Введите @username для модератора:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'moder',createdBy:'admin',createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));alert('✅ Модератор создан!\n\nИмя: '+un+'\nКод: '+code);logAction('admin','создал модератора',un);setTimeout(()=>{autoSyncAll();},2000);}
+function addHelperQuick(){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),moders=staff.filter(s=>s.role==='moder'&&!s.blocked);if(moders.length===0){alert('❌ Сначала создайте модератора!');return;}let modList='Выберите модератора (введите номер или 0 для отмены):\n';moders.forEach((m,i)=>{modList+=(i+1)+'. '+m.username+' ('+m.code+')\n';});const modNum=parseInt(prompt(modList));if(modNum===0||isNaN(modNum)||modNum<1||modNum>moders.length)return;const un=prompt('Введите @username для хелпера (или нажмите Отмена):');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'helper',createdBy:'admin',moderatorCode:moders[modNum-1].code,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code+'\nМодератор: '+moders[modNum-1].username);logAction('admin','создал хелпера',un);setTimeout(()=>{autoSyncAll();},2000);}
 
 function showStaffPanel(){if(currentRole!=='admin'&&currentRole!=='moder')return;const modal=document.createElement('div');modal.className='modal-overlay show';modal.id='staffModal';const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),pending=JSON.parse(localStorage.getItem('pendingApprovals')||'[]');let myStaff=staff,myPending=pending;if(currentRole==='moder'){myStaff=staff.filter(s=>s.moderatorCode===currentCode||s.code===currentCode);myPending=pending.filter(p=>{const u=staff.find(x=>x.code===p.code);return u&&u.moderatorCode===currentCode;});}const pc=myPending.filter(p=>p.status==='pending').length;modal.innerHTML=`<div class="modal-content" style="max-width:650px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3>👥 ${currentRole==='admin'?'Управление персоналом':'Мои хелперы'}</h3><span style="cursor:pointer;font-size:1.5rem" onclick="document.getElementById('staffModal').remove()">✕</span></div>${pc>0?`<h4 style="margin:15px 0 10px;color:#ff9800">🔔 Запросы (${pc})</h4><div id="approvalList">${myPending.filter(p=>p.status==='pending').map(p=>`<div class="staff-card" style="border-color:#ff9800"><div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${p.username}</strong><span class="role-badge ${p.role==='moder'?'role-moder':'role-helper'}">${p.role==='moder'?'Модер':'Хелпер'}</span><div style="font-size:0.8rem;opacity:0.7">${p.time}</div><div class="code">${p.code}</div></div><div style="display:flex;gap:8px"><button class="confirm-btn" onclick="approveDevice(${p.id},'${currentRole}');refreshStaffPanel()">✅</button><button class="cancel-btn" onclick="rejectDevice(${p.id});refreshStaffPanel()">❌</button></div></div></div>`).join('')}</div>`:''}${currentRole==='admin'?`<h4 style="margin:20px 0 10px">👑 Создать модератора</h4><div style="display:flex;gap:10px"><input class="ga-input" id="newModUsername" placeholder="@username" style="flex:1"><button class="ga-btn btn-magenta" onclick="createStaff('moder')" style="width:auto;padding:12px 20px">Создать</button></div><div id="newStaffCode" style="text-align:center;margin-top:10px;display:none"></div>`:''}${currentRole==='moder'?`<h4 style="margin:20px 0 10px">🤝 Создать хелпера</h4><div style="display:flex;gap:10px"><input class="ga-input" id="newHelperUsername" placeholder="@username" style="flex:1"><button class="ga-btn" onclick="createStaff('helper')" style="width:auto;padding:12px 20px;background:linear-gradient(135deg,#2196F3,#1976D2)">Создать</button></div><div id="newStaffCode" style="text-align:center;margin-top:10px;display:none"></div>`:''}<h4 style="margin:20px 0 10px">📋 Список</h4><div id="staffList"></div></div>`;document.body.appendChild(modal);renderStaffList();}
 function createStaff(role){const id=role==='moder'?'newModUsername':'newHelperUsername';const un=document.getElementById(id)?.value.trim();if(!un)return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code=(role==='moder'?'MOD':'HLP')+'_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un,code,role,createdBy:currentRole==='admin'?'admin':currentCode,moderatorCode:role==='helper'?currentCode:null,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncAll();const ce=document.getElementById('newStaffCode');ce.style.display='block';ce.innerHTML=`✅ Код для ${un}: <span class="code" style="font-size:1.2rem">${code}</span>`;document.getElementById(id).value='';renderStaffList();logAction(currentRole==='admin'?'admin':currentCode,'создал '+(role==='moder'?'модератора':'хелпера'),un);}
@@ -430,40 +355,44 @@ function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quant
 function confirmSale(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);saveAllData();if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories()},1500)}renderShop();buildCategories();autoSyncAll();showShopStatus('✅ Продажа! +'+item.price+'₽')}
 function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendingSales[id]<0)pendingSales[id]=0;saveAllData();renderShop();autoSyncAll()}
 
-function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle');document.getElementById('editItemId').value='';document.getElementById('itemName').value='';document.getElementById('itemCategory').value='Жижи';document.getElementById('itemMg').value='';document.getElementById('itemFlavors').value='';document.getElementById('itemQuantity').value='10';document.getElementById('itemPrice').value='';document.getElementById('itemImage').value='';if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||10;document.getElementById('itemPrice').value=editItem.price||'';document.getElementById('itemImage').value=editItem.image||''}else{title.textContent='✨ Добавить товар'}modal.classList.add('show')}
-function closeShopModal(){document.getElementById('shopModal').classList.remove('show')}
-function saveShopItem(){
-    const editId = document.getElementById('editItemId').value;
-    const name = document.getElementById('itemName').value.trim();
-    const cat = document.getElementById('itemCategory').value;
-    const mg = document.getElementById('itemMg').value.trim();
-    const fl = document.getElementById('itemFlavors').value.trim();
-    const qty = parseInt(document.getElementById('itemQuantity').value) || 10;
-    const price = document.getElementById('itemPrice').value.trim();
-    
-    if(!name || !price){ alert('❌ Заполните название и цену!'); return; }
-    
-    const img = currentImage || (editId ? items.find(i => String(i.id) === String(editId))?.image : '') || 'https://via.placeholder.com/300';
-    
-    if(editId){
-        const idx = items.findIndex(i => String(i.id) === String(editId));
+// НОВЫЕ ФУНКЦИИ ДЛЯ ТОВАРОВ (prompt вместо модалки)
+function openShopModal(editItem = null){
+    if(editItem){
+        const name = prompt('Название:', editItem.name);
+        if(!name) return;
+        const cat = prompt('Категория (Жижи/Одноразки/Снюсы/Поды):', editItem.category);
+        const mg = prompt('МГ:', editItem.mg);
+        const fl = prompt('Вкусы:', editItem.flavors);
+        const qty = parseInt(prompt('Количество:', editItem.quantity)) || 10;
+        const price = prompt('Цена:', editItem.price);
+        const img = prompt('Ссылка на фото:', editItem.image);
+        if(!name || !price) return;
+        const idx = items.findIndex(i => String(i.id) === String(editItem.id));
         if(idx !== -1){
             items[idx].name = name; items[idx].category = cat; items[idx].mg = mg;
-            items[idx].flavors = fl; items[idx].quantity = qty; items[idx].price = price; items[idx].image = img;
+            items[idx].flavors = fl; items[idx].quantity = qty; items[idx].price = price;
+            items[idx].image = img || editItem.image;
         }
     } else {
+        const name = prompt('Название:');
+        if(!name) return;
+        const cat = prompt('Категория (Жижи/Одноразки/Снюсы/Поды):', 'Жижи');
+        const mg = prompt('МГ:', '20мг');
+        const fl = prompt('Вкусы:', 'Клубника');
+        const qty = parseInt(prompt('Количество:', '10')) || 10;
+        const price = prompt('Цена:', '600');
+        const img = prompt('Ссылка на фото:', 'https://via.placeholder.com/300');
+        if(!name || !price) return;
         items.push({id: Date.now(), name, category: cat, mg, flavors: fl, quantity: qty, price, image: img});
     }
-    
-    saveAllData();      // Сохраняем в localStorage
-    renderShop();       // Обновляем карточки
-    buildCategories();  // Обновляем категории
-    closeShopModal();   // Закрываем модалку
-    autoSyncAll();      // 🔥 ОТПРАВЛЯЕМ В NPOINT!
+    saveAllData(); renderShop(); buildCategories();
     showShopStatus('✅ Сохранено!');
-    currentImage = null;
+    setTimeout(() => { autoSyncAll(); }, 2000);
 }
-function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item)}
+function editShopItem(id){ const item = items.find(i => i.id == id); if(item) openShopModal(item); }
+function closeShopModal(){}
+function saveShopItem(){}
+
 function deleteShopItem(id){if(currentRole!=='admin')return;if(confirm('Удалить?')){items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();showShopStatus('✅ Удалено!')}}
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000)}
 function showShopHistory(){const m=document.getElementById('historyModal'),l=document.getElementById('historyList');l.innerHTML=salesHistory.length===0?'<p style="text-align:center;opacity:0.5">Нет истории</p>':salesHistory.slice(0,30).map(h=>`<div class="cart-item"><span>${h.name}</span><span>${h.date}</span><span style="font-weight:700">${h.price}₽</span></div>`).join('');m.classList.add('show')}
