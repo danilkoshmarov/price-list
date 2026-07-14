@@ -5,155 +5,313 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SN | Smoky Notes</title>
     <meta name="theme-color" content="#e91e63">
+    <meta name="description" content="Smoky Notes — прайс-лист и розыгрыши">
+    <meta property="og:title" content="Smoky Notes">
+    <meta property="og:description" content="Прайс-лист с доставкой и розыгрыши 🚗🎰">
+    <meta property="og:image" content="SN.jpg">
+    <meta property="og:url" content="https://danilkoshmarov.github.io/price-list/">
+    <meta property="og:type" content="website">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-        @keyframes neonFlicker{0%,100%{text-shadow:0 0 10px #ff69b4,0 0 20px #ff69b4}50%{text-shadow:0 0 5px #ff69b4,0 0 10px #ff69b4}}
+        @keyframes neonFlicker{0%,100%{text-shadow:0 0 10px #ff69b4,0 0 20px #ff69b4,0 0 40px #ff69b4}50%{text-shadow:0 0 5px #ff69b4,0 0 10px #ff69b4,0 0 20px #ff69b4}}
         @keyframes particleFloat{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:0.8}90%{opacity:0.8}100%{transform:translateY(-100vh) rotate(720deg);opacity:0}}
+        @keyframes particleFloatReverse{0%{transform:translateY(-100vh) rotate(720deg);opacity:0}10%{opacity:0.6}90%{opacity:0.6}100%{transform:translateY(100vh) rotate(0deg);opacity:0}}
         @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
         @keyframes cartBounce{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.03)}}
         @keyframes winPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
         @keyframes borderFlow{0%{border-color:#ff69b4}50%{border-color:#c440ff}100%{border-color:#ff69b4}}
         @keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
         @keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+        @keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(233,30,99,0.3)}50%{box-shadow:0 0 40px rgba(233,30,99,0.6)}}
         
-        :root{--bg:linear-gradient(135deg,#ffd1dc,#f8e8ff,#ffe4e1,#fff0f5);--text:#5c2d91;--card:rgba(255,255,255,0.3);--card-border:rgba(255,182,193,0.3);--btn-bg:rgba(255,255,255,0.4);--modal-bg:white;--input-bg:white;--stat-bg:rgba(255,255,255,0.25);--stat-gradient:linear-gradient(135deg,#e91e63,#9c27b0);--accent:#e91e63}
-        body.dark{--bg:linear-gradient(135deg,#0a0015,#1a0030,#0d0020,#050010);--text:#e0d0f0;--card:rgba(30,10,40,0.7);--card-border:rgba(255,105,180,0.2);--btn-bg:rgba(40,20,50,0.6);--modal-bg:#1a0a25;--input-bg:#150820;--stat-bg:rgba(30,10,40,0.6);--stat-gradient:linear-gradient(135deg,#ff69b4,#c440ff);--accent:#ff69b4}
-        body{font-family:'Segoe UI',sans-serif;background:var(--bg);min-height:100vh;padding:15px;transition:all 0.5s ease;color:var(--text);overflow-x:hidden}
+        :root{
+            --bg:linear-gradient(135deg,#ffd1dc,#f8e8ff,#ffe4e1,#fff0f5);
+            --text:#5c2d91;--card:rgba(255,255,255,0.35);--card-border:rgba(255,182,193,0.3);
+            --btn-bg:rgba(255,255,255,0.45);--modal-bg:white;--input-bg:white;
+            --stat-bg:rgba(255,255,255,0.3);--stat-gradient:linear-gradient(135deg,#e91e63,#9c27b0);
+            --accent:#e91e63;--shadow:0 4px 20px rgba(233,30,99,0.1);
+        }
+        body.dark{
+            --bg:linear-gradient(135deg,#0a0015,#1a0030,#0d0020,#050010);
+            --text:#e0d0f0;--card:rgba(30,10,40,0.75);--card-border:rgba(255,105,180,0.2);
+            --btn-bg:rgba(40,20,50,0.65);--modal-bg:#1a0a25;--input-bg:#150820;
+            --stat-bg:rgba(30,10,40,0.65);--stat-gradient:linear-gradient(135deg,#ff69b4,#c440ff);
+            --accent:#ff69b4;--shadow:0 4px 30px rgba(255,105,180,0.15);
+        }
+        body.dark .header h1{animation:neonFlicker 3s infinite}
+        body.dark .logo{box-shadow:0 0 30px rgba(255,105,180,0.4)}
+        body.dark .cart-panel{box-shadow:0 10px 40px rgba(255,105,180,0.3)}
+        body.dark .price-card:hover{box-shadow:0 15px 40px rgba(255,105,180,0.2)}
+        
+        body{
+            font-family:'Segoe UI',system-ui,sans-serif;
+            background:var(--bg);min-height:100vh;padding:15px;
+            transition:all 0.5s ease;color:var(--text);overflow-x:hidden;
+        }
+        
         .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
         .particle{position:absolute;border-radius:50%;pointer-events:none;animation:particleFloat 8s linear infinite}
-        .particle.snow{width:4px;height:4px;background:#fff;box-shadow:0 0 6px #fff,0 0 12px rgba(255,105,180,0.5)}
-        .particle.circle{width:8px;height:8px;background:radial-gradient(circle,#ff69b4,#ff1493);box-shadow:0 0 8px #ff69b4}
+        .particle.snow{width:4px;height:4px;background:#fff;box-shadow:0 0 6px #fff,0 0 12px rgba(255,105,180,0.5),0 0 24px rgba(200,100,255,0.3);animation-name:particleFloatReverse;animation-duration:10s}
+        .particle.circle{width:8px;height:8px;background:radial-gradient(circle,#ff69b4,#ff1493);box-shadow:0 0 8px #ff69b4,0 0 16px rgba(255,105,180,0.5);animation-duration:7s}
+        .particle.star{font-size:1rem;animation-duration:9s;border-radius:0;background:none;box-shadow:none}
         
         .container{max-width:1200px;margin:0 auto;position:relative;z-index:1}
-        .nav-bar{display:flex;justify-content:center;gap:8px;margin-bottom:15px;background:var(--card);backdrop-filter:blur(15px);border-radius:20px;padding:8px;border:1px solid var(--card-border);position:sticky;top:10px;z-index:100;flex-wrap:wrap}
-        .nav-tab{padding:12px 20px;border-radius:16px;cursor:pointer;font-weight:700;font-size:0.9rem;transition:all 0.3s;border:none;background:transparent;color:var(--text)}
-        .nav-tab.active{background:var(--stat-gradient);color:white;box-shadow:0 4px 20px rgba(233,30,99,0.3);animation:pulse 2s ease-in-out infinite}
+        
+        .nav-bar{
+            display:flex;justify-content:center;gap:10px;margin-bottom:20px;
+            background:var(--card);backdrop-filter:blur(20px);border-radius:20px;
+            padding:10px;border:1px solid var(--card-border);
+            position:sticky;top:10px;z-index:100;box-shadow:var(--shadow);
+        }
+        .nav-tab{
+            padding:14px 28px;border-radius:16px;cursor:pointer;font-weight:700;
+            font-size:1rem;transition:all 0.3s;border:none;background:transparent;color:var(--text);
+        }
+        .nav-tab:hover{background:rgba(233,30,99,0.1);transform:translateY(-1px)}
+        .nav-tab.active{
+            background:var(--stat-gradient);color:white;
+            box-shadow:0 4px 25px rgba(233,30,99,0.4);animation:pulse 2s ease-in-out infinite;
+        }
+        
         .page{display:none}.page.active{display:block;animation:fadeIn 0.5s ease}
         
-        .theme-toggle{width:40px;height:40px;border-radius:50%;cursor:pointer;background:var(--card);border:1px solid var(--card-border);font-size:1.2rem;display:flex;align-items:center;justify-content:center;position:fixed;top:10px;right:10px;z-index:500}
-        .header{text-align:center;margin-bottom:20px}
-        .logo{width:70px;height:70px;border-radius:50%;margin:0 auto 8px;object-fit:cover;box-shadow:0 4px 15px rgba(233,30,99,0.3)}
-        .header h1{font-size:2rem;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .header p{opacity:0.7;font-size:0.85rem}
+        .theme-toggle{
+            width:45px;height:45px;border-radius:50%;cursor:pointer;
+            background:var(--card);border:1px solid var(--card-border);
+            font-size:1.3rem;display:flex;align-items:center;justify-content:center;
+            position:fixed;top:15px;right:15px;z-index:500;transition:all 0.3s;
+            box-shadow:var(--shadow);
+        }
+        .theme-toggle:hover{transform:scale(1.1)}
         
-        .login-bar{display:flex;gap:6px;justify-content:center;align-items:center;margin-bottom:15px;flex-wrap:wrap}
-        .login-bar input{padding:8px 14px;border-radius:25px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.85rem;width:130px}
-        .login-bar button{padding:8px 16px;border-radius:25px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:600;font-size:0.85rem}
+        .header{text-align:center;margin-bottom:25px}
+        .logo{width:80px;height:80px;border-radius:50%;margin:0 auto 10px;object-fit:cover;box-shadow:0 4px 20px rgba(233,30,99,0.3);transition:all 0.3s}
+        .logo:hover{transform:scale(1.05)}
+        .header h1{
+            font-size:2.5rem;background:var(--stat-gradient);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-size:200% auto;animation:shimmer 3s linear infinite;
+        }
+        .header p{opacity:0.7;font-size:0.95rem}
         
-        .role-badge{font-size:0.75rem;font-weight:600;padding:5px 10px;border-radius:15px;display:inline-block}
+        .login-bar{display:flex;gap:8px;justify-content:center;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+        .login-bar input{
+            padding:12px 18px;border-radius:25px;border:1px solid var(--card-border);
+            background:var(--input-bg);color:var(--text);font-size:0.9rem;width:160px;
+            transition:all 0.3s;box-shadow:inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .login-bar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,30,99,0.1)}
+        .login-bar button{
+            padding:12px 24px;border-radius:25px;border:none;
+            background:var(--stat-gradient);color:white;cursor:pointer;
+            font-weight:600;transition:all 0.3s;box-shadow:0 4px 15px rgba(233,30,99,0.3);
+        }
+        .login-bar button:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(233,30,99,0.4)}
+        
+        .role-badge{font-size:0.8rem;font-weight:600;padding:6px 12px;border-radius:15px;display:inline-block}
         .role-admin{background:rgba(233,30,99,0.2);color:#e91e63;border:1px solid rgba(233,30,99,0.3)}
         .role-moder{background:rgba(76,175,80,0.2);color:#4CAF50;border:1px solid rgba(76,175,80,0.3)}
         .role-helper{background:rgba(33,150,243,0.2);color:#2196F3;border:1px solid rgba(33,150,243,0.3)}
         
-        .quick-actions{display:none;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:15px}
+        .quick-actions{display:none;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
         .quick-actions.show{display:flex}
-        .quick-btn{padding:8px 14px;border-radius:20px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.8rem;font-weight:600;transition:all 0.3s}
-        .quick-btn:hover{transform:translateY(-2px)}
+        .quick-btn{
+            padding:10px 18px;border-radius:20px;border:1px solid var(--card-border);
+            background:var(--btn-bg);color:var(--text);cursor:pointer;
+            font-size:0.85rem;font-weight:600;transition:all 0.3s;box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        }
+        .quick-btn:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(233,30,99,0.15)}
         .quick-btn.danger{border-color:#f44336;color:#f44336}
         .quick-btn.success{border-color:#4CAF50;color:#4CAF50}
         .quick-btn.mod-btn{border-color:#4CAF50;color:#4CAF50;background:rgba(76,175,80,0.1)}
         .quick-btn.helper-btn{border-color:#2196F3;color:#2196F3;background:rgba(33,150,243,0.1)}
         
-        .status-message{text-align:center;padding:8px;border-radius:10px;background:var(--stat-bg);color:var(--text);display:none;margin-bottom:12px;font-size:0.85rem}
+        .status-message{
+            text-align:center;padding:10px;border-radius:10px;
+            background:var(--stat-bg);color:var(--text);display:none;
+            margin-bottom:15px;animation:fadeIn 0.3s ease;font-size:0.9rem;
+        }
         .status-message.show{display:block}
         
-        .search-container{display:flex;justify-content:center;margin-bottom:12px}
-        .search-input{width:100%;max-width:350px;padding:10px 16px;border-radius:25px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.85rem;outline:none}
+        .search-container{display:flex;justify-content:center;margin-bottom:15px}
+        .search-wrapper{position:relative;width:100%;max-width:400px}
+        .search-input{
+            width:100%;padding:12px 40px 12px 18px;border-radius:25px;
+            border:1px solid var(--card-border);background:var(--input-bg);
+            color:var(--text);font-size:0.9rem;outline:none;
+            transition:all 0.3s;box-shadow:inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(233,30,99,0.1)}
+        .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none}
         
-        .sort-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
-        .sort-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.75rem}
-        .sort-btn.active{background:white;color:#e91e63;border-color:#e91e63}
+        .sort-bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:15px}
+        .sort-btn{
+            padding:8px 14px;border-radius:20px;border:1px solid var(--card-border);
+            background:var(--btn-bg);color:var(--text);cursor:pointer;
+            font-size:0.8rem;transition:all 0.3s;
+        }
+        .sort-btn.active{background:white;color:#e91e63;border-color:#e91e63;box-shadow:0 4px 15px rgba(233,30,99,0.2)}
         
-        .categories-nav{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
-        .cat-tab{padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;background:var(--btn-bg);color:var(--text);border:2px solid transparent}
+        .categories-nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:15px}
+        .cat-tab{
+            padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:600;
+            font-size:0.85rem;background:var(--btn-bg);color:var(--text);
+            border:2px solid transparent;transition:all 0.3s;
+        }
         .cat-tab.active{background:white;color:#e91e63;border-color:#e91e63}
-        .cat-tab .count{background:#e91e63;color:white;padding:2px 6px;border-radius:12px;margin-left:4px;font-size:0.65rem}
+        .cat-tab .count{background:#e91e63;color:white;padding:2px 8px;border-radius:12px;margin-left:6px;font-size:0.7rem}
         
-        .stats-panel{display:none;gap:10px;margin-bottom:15px;flex-wrap:wrap;justify-content:center}
+        .stats-panel{display:none;gap:15px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
         .stats-panel.show{display:flex}
-        .stat-card{background:var(--stat-bg);border-radius:15px;padding:12px 16px;text-align:center;min-width:100px;flex:1;border:1px solid var(--card-border)}
-        .stat-value{font-size:1.3rem;font-weight:bold;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .stat-label{font-size:0.7rem;opacity:0.7;margin-top:3px}
+        .stat-card{
+            background:var(--stat-bg);backdrop-filter:blur(15px);border-radius:20px;
+            padding:18px 22px;text-align:center;min-width:140px;flex:1;
+            border:1px solid var(--card-border);transition:all 0.3s;box-shadow:var(--shadow);
+        }
+        .stat-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(233,30,99,0.15)}
+        .stat-value{font-size:1.8rem;font-weight:bold;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .stat-label{font-size:0.8rem;opacity:0.7;margin-top:4px}
         
-        .chart-container{display:none;background:var(--stat-bg);border-radius:15px;padding:15px;margin-bottom:15px;border:1px solid var(--card-border)}
+        .chart-container{display:none;background:var(--stat-bg);backdrop-filter:blur(15px);border-radius:20px;padding:20px;margin-bottom:20px;border:1px solid var(--card-border);box-shadow:var(--shadow)}
         .chart-container.show{display:block}
-        .chart-title{text-align:center;font-size:0.9rem;margin-bottom:10px}
-        .chart-bars{display:flex;align-items:flex-end;gap:5px;height:120px}
-        .chart-bar-wrapper{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-        .chart-bar{width:100%;background:var(--stat-gradient);border-radius:6px 6px 0 0;min-height:3px;max-width:35px}
-        .chart-bar-label{font-size:0.6rem;opacity:0.7}
-        .chart-bar-value{font-size:0.65rem;font-weight:bold;color:var(--accent)}
+        .chart-title{text-align:center;font-size:1rem;margin-bottom:15px;color:var(--text)}
+        .chart-bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding:0 10px}
+        .chart-bar-wrapper{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+        .chart-bar{width:100%;background:var(--stat-gradient);border-radius:8px 8px 0 0;min-height:4px;transition:height 0.5s ease;max-width:40px}
+        .chart-bar-label{font-size:0.65rem;color:var(--text);opacity:0.7}
+        .chart-bar-value{font-size:0.7rem;font-weight:bold;color:var(--accent)}
         
-        .demand-panel{display:none;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:15px}
+        .demand-panel{display:none;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
         .demand-panel.show{display:flex}
         
-        .price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:15px;margin-top:12px;padding-bottom:90px}
-        .price-card{background:var(--card);backdrop-filter:blur(20px);border-radius:18px;overflow:hidden;border:1px solid var(--card-border);animation:fadeIn 0.4s ease;transition:all 0.3s}
-        .card-image{width:100%;height:180px;object-fit:cover}
-        .card-content{padding:12px}
-        .card-category{font-size:0.65rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600}
-        .card-title{font-size:1.1rem;font-weight:700;margin-bottom:5px}
-        .card-details{display:flex;gap:5px;margin-bottom:6px}
-        .card-badge{padding:3px 8px;border-radius:12px;font-size:0.7rem;color:white}
+        .price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:15px;padding-bottom:100px}
+        .price-card{
+            background:var(--card);backdrop-filter:blur(20px);border-radius:20px;
+            overflow:hidden;border:1px solid var(--card-border);
+            animation:fadeIn 0.4s ease;transition:all 0.3s;box-shadow:var(--shadow);
+        }
+        .price-card:hover{transform:translateY(-5px);box-shadow:0 15px 40px rgba(0,0,0,0.15)}
+        .card-image{width:100%;height:220px;object-fit:cover}
+        .card-content{padding:15px}
+        .card-category{font-size:0.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:600}
+        .card-title{font-size:1.2rem;font-weight:700;margin-bottom:6px}
+        .card-details{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+        .card-badge{padding:4px 10px;border-radius:15px;font-size:0.75rem;color:white}
         .card-badge.mg{background:#e91e63}.card-badge.quantity{background:#7b1fa2}
-        .card-flavors{margin-bottom:6px;font-size:0.8rem;opacity:0.8}
-        .card-price{font-size:1.2rem;font-weight:700;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
-        .card-sales-info{display:none;background:rgba(255,182,193,0.2);border-radius:8px;padding:5px 8px;margin-bottom:6px;font-size:0.7rem}
-        .card-sales-info.show{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:3px}
+        .card-flavors{margin-bottom:8px;font-size:0.85rem;opacity:0.8}
+        .card-price{font-size:1.4rem;font-weight:700;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+        .card-sales-info{display:none;background:rgba(255,182,193,0.2);border-radius:10px;padding:6px 10px;margin-bottom:8px;font-size:0.8rem}
+        .card-sales-info.show{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
         .card-sales-info.pending{background:rgba(255,152,0,0.2);animation:pulse 1.5s infinite}
-        .buy-btn,.cart-btn{width:100%;padding:8px;color:white;border:none;border-radius:10px;font-size:0.85rem;font-weight:700;cursor:pointer;margin-bottom:5px}
-        .buy-btn{background:var(--stat-gradient)}.cart-btn{background:linear-gradient(135deg,#ff9800,#ff5722)}
-        .confirm-btn,.cancel-btn{padding:4px 8px;border-radius:12px;border:none;cursor:pointer;font-size:0.65rem;font-weight:700;color:white}
+        .buy-btn,.cart-btn{width:100%;padding:10px;color:white;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.3s;margin-bottom:6px}
+        .buy-btn{background:var(--stat-gradient)}.buy-btn:hover{transform:scale(1.02);box-shadow:0 5px 20px rgba(233,30,99,0.3)}
+        .cart-btn{background:linear-gradient(135deg,#ff9800,#ff5722)}.cart-btn:hover{transform:scale(1.02)}
+        .confirm-btn,.cancel-btn{padding:5px 10px;border-radius:15px;border:none;cursor:pointer;font-size:0.7rem;font-weight:700;color:white}
         .confirm-btn{background:#4CAF50}.cancel-btn{background:#f44336}
-        .card-buttons{display:none;gap:4px;margin-top:5px}
+        .card-buttons{display:none;gap:6px;margin-top:6px}
         .card-buttons.show{display:flex}
-        .edit-btn,.delete-btn{padding:5px 8px;border-radius:8px;border:none;cursor:pointer;font-size:0.7rem;color:white;flex:1}
+        .edit-btn,.delete-btn{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;font-size:0.75rem;color:white;flex:1}
         .edit-btn{background:#ff9800}.delete-btn{background:#f44336}
         
-        .cart-panel{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:var(--card);backdrop-filter:blur(25px);border-radius:18px;padding:12px 20px;z-index:200;display:none;align-items:center;gap:10px;border:1px solid var(--card-border);box-shadow:0 8px 30px rgba(233,30,99,0.2);animation:slideUp 0.4s ease}
+        .cart-panel{
+            position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+            background:var(--card);backdrop-filter:blur(25px);border-radius:20px;
+            padding:15px 25px;z-index:200;display:none;align-items:center;
+            gap:15px;border:1px solid var(--card-border);
+            box-shadow:0 10px 40px rgba(233,30,99,0.3);animation:slideUp 0.4s ease;
+        }
         .cart-panel.show{display:flex;animation:cartBounce 2s ease-in-out infinite}
-        .cart-count{background:#e91e63;color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:bold}
-        .cart-info{font-weight:600;font-size:0.85rem}
-        .cart-panel-btn{padding:8px 16px;border-radius:12px;border:none;cursor:pointer;font-weight:bold;font-size:0.8rem}
+        .cart-count{background:#e91e63;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:bold}
+        .cart-info{font-weight:600}
+        .cart-panel-btn{padding:10px 20px;border-radius:15px;border:none;cursor:pointer;font-weight:bold;transition:all 0.3s}
         .cart-view-btn{background:#f8e8ff;color:#5c2d91}.cart-order-btn{background:#e91e63;color:white}
+        .cart-panel-btn:hover{transform:scale(1.05)}
         
         .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:3000}
         .modal-overlay.show{display:flex}
-        .modal-content{background:var(--modal-bg);border-radius:18px;padding:20px;max-width:500px;width:95%;max-height:85vh;overflow-y:auto;border:1px solid var(--card-border);animation:popIn 0.3s ease}
+        .modal-content{
+            background:var(--modal-bg);border-radius:20px;padding:25px;
+            max-width:500px;width:90%;max-height:85vh;overflow-y:auto;
+            border:1px solid var(--card-border);animation:popIn 0.3s ease;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);
+        }
         
-        .upsell-popup{background:var(--modal-bg);border-radius:20px;padding:20px;text-align:center;max-width:300px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:popIn 0.3s ease}
-        .upsell-badge{display:inline-block;background:#4CAF50;color:white;padding:3px 8px;border-radius:10px;font-size:0.7rem;font-weight:bold;margin-bottom:8px}
-        .upsell-price{font-size:1.1rem;font-weight:bold;color:#e91e63}
-        .upsell-old-price{text-decoration:line-through;opacity:0.5;font-size:0.8rem;margin-right:6px}
-        .upsell-buttons{display:flex;gap:8px;margin-top:12px}
-        .upsell-yes{flex:2;padding:10px;background:#4CAF50;color:white;border:none;border-radius:12px;cursor:pointer;font-weight:bold}
-        .upsell-no{flex:1;padding:10px;background:#f8e8ff;color:#5c2d91;border:none;border-radius:12px;cursor:pointer}
+        .upsell-popup{
+            background:var(--modal-bg);border-radius:25px;padding:25px;
+            text-align:center;max-width:350px;width:90%;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:popIn 0.3s ease;
+        }
+        .upsell-badge{display:inline-block;background:#4CAF50;color:white;padding:4px 10px;border-radius:12px;font-size:0.75rem;font-weight:bold;margin-bottom:10px}
+        .upsell-price{font-size:1.3rem;font-weight:bold;color:#e91e63}
+        .upsell-old-price{text-decoration:line-through;opacity:0.5;font-size:0.9rem;margin-right:8px}
+        .upsell-buttons{display:flex;gap:10px;margin-top:15px}
+        .upsell-yes{flex:2;padding:12px;background:#4CAF50;color:white;border:none;border-radius:15px;cursor:pointer;font-weight:bold}
+        .upsell-no{flex:1;padding:12px;background:#f8e8ff;color:#5c2d91;border:none;border-radius:15px;cursor:pointer}
         
-        .ga-card{background:var(--card);border-radius:18px;padding:15px;margin-bottom:12px;border:1px solid var(--card-border)}
-        .ga-input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.85rem;margin-bottom:8px}
-        .ga-btn{width:100%;padding:10px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-size:0.85rem;margin-bottom:6px;color:white}
+        .ga-card{
+            background:var(--card);backdrop-filter:blur(20px);border-radius:20px;
+            padding:20px;margin-bottom:15px;border:1px solid var(--card-border);
+            animation:fadeIn 0.4s ease;box-shadow:var(--shadow);
+        }
+        .ga-card h3{margin-bottom:12px}
+        .ga-input{
+            width:100%;padding:12px;border-radius:12px;
+            border:1px solid var(--card-border);background:var(--input-bg);
+            color:var(--text);font-size:0.9rem;margin-bottom:10px;
+        }
+        .ga-btn{
+            width:100%;padding:12px;border-radius:12px;border:none;
+            font-weight:700;cursor:pointer;transition:all 0.3s;
+            font-size:0.9rem;margin-bottom:8px;color:white;
+        }
         .btn-cyan{background:linear-gradient(135deg,#00e5ff,#0099cc);color:#000}
         .btn-gold{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a1a}
         .btn-magenta{background:linear-gradient(135deg,#ff00ff,#cc0099)}
-        .winner-card{border-color:#ffd700;animation:borderFlow 4s infinite;text-align:center;padding:25px}
-        .winner-name{font-size:1.5rem;font-weight:800;color:#ffd700;animation:winPulse 1s infinite}
-        .ga-participant{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.85rem}
-        .tab-bar{display:flex;gap:4px;margin-bottom:12px}
-        .tab-btn{flex:1;padding:8px;border-radius:10px;border:1px solid var(--card-border);background:transparent;color:var(--text);cursor:pointer;font-size:0.75rem}
+        .winner-card{border-color:#ffd700;animation:borderFlow 4s infinite;text-align:center;padding:30px}
+        .winner-name{font-size:2rem;font-weight:800;color:#ffd700;animation:winPulse 1s infinite}
+        .ga-participant{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.9rem}
+        .tab-bar{display:flex;gap:5px;margin-bottom:15px}
+        .tab-btn{
+            flex:1;padding:10px;border-radius:12px;
+            border:1px solid var(--card-border);background:transparent;
+            color:var(--text);cursor:pointer;font-size:0.8rem;transition:all 0.3s;
+        }
         .tab-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
         
-        .cart-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid var(--card-border);font-size:0.85rem}
-        .cart-total{font-size:1.1rem;font-weight:700;margin:12px 0}
-        .cart-remove-btn{background:#f44336;color:white;border:none;padding:4px 8px;border-radius:8px;cursor:pointer}
+        .cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid var(--card-border)}
+        .cart-item:last-child{border-bottom:none}
+        .cart-total{font-size:1.3rem;font-weight:700;margin:15px 0}
+        .cart-remove-btn{background:#f44336;color:white;border:none;padding:5px 10px;border-radius:10px;cursor:pointer}
         
-        .staff-card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--card-border);font-size:0.85rem}
-        .staff-card .code{font-family:monospace;background:rgba(0,0,0,0.2);padding:3px 6px;border-radius:6px;font-size:0.8rem;display:inline-block;margin:4px 0}
+        .staff-card{
+            background:var(--card);border-radius:15px;padding:15px;
+            margin-bottom:10px;border:1px solid var(--card-border);
+        }
+        .staff-card .code{font-family:monospace;background:rgba(0,0,0,0.2);padding:4px 8px;border-radius:8px;font-size:0.9rem}
         
-        @media(max-width:768px){.price-grid{grid-template-columns:1fr}.nav-tab{padding:10px 14px;font-size:0.8rem}.cart-panel{flex-wrap:wrap;justify-content:center;width:90%}.stats-panel{flex-direction:column}}
+        @media(max-width:768px){
+            body{padding:10px}
+            .header h1{font-size:1.8rem}
+            .logo{width:60px;height:60px}
+            .nav-tab{padding:10px 16px;font-size:0.85rem}
+            .price-grid{grid-template-columns:1fr;gap:12px}
+            .card-image{height:180px}
+            .cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:12px 15px;gap:8px}
+            .stats-panel{flex-direction:column;gap:10px}
+            .stat-card{min-width:auto;padding:14px 16px}
+            .stat-value{font-size:1.4rem}
+            .quick-btn{padding:8px 12px;font-size:0.75rem}
+            .login-bar input{width:120px;padding:10px 14px}
+            .modal-content{width:95%;padding:18px}
+            .chart-bars{height:100px}
+        }
     </style>
 </head>
 <body>
@@ -174,7 +332,8 @@
                 <button class="quick-btn" onclick="openShopModal()">✨ Товар</button>
                 <button class="quick-btn mod-btn admin-only" onclick="addModerQuick()">👑 Модер</button>
                 <button class="quick-btn helper-btn admin-only" onclick="addHelperQuick()">🤝 Хелпер</button>
-                <button class="quick-btn" onclick="showStaffPanel()">👥 Персонал</button>
+                <button class="quick-btn admin-only" onclick="showStaffPanel()">👥 Персонал</button>
+                <button class="quick-btn admin-only" onclick="showActionLogs()" style="border-color:#9c27b0;color:#9c27b0;">📋 Логи</button>
                 <button class="quick-btn success" onclick="uploadAllToNpoint()">📥 Выгрузить</button>
                 <button class="quick-btn" onclick="loadAllFromNpoint()">📤 Загрузить</button>
                 <button class="quick-btn" onclick="restoreBackup()">🔄 Бэкап</button>
@@ -184,7 +343,7 @@
                 <button class="quick-btn danger admin-only" onclick="resetAllItems()">⚠️ Сброс</button>
             </div>
             <div class="status-message" id="shopStatus"></div>
-            <div class="search-container"><input type="text" class="search-input" id="shopSearch" placeholder="🔍 Поиск товаров..." oninput="renderShop()"></div>
+            <div class="search-container"><div class="search-wrapper"><input type="text" class="search-input" id="shopSearch" placeholder="🔍 Поиск товаров..." oninput="renderShop()"><span class="search-icon">🔍</span></div></div>
             <div class="sort-bar">
                 <button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button>
                 <button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button>
@@ -211,15 +370,15 @@
     </div>
     <div class="cart-panel" id="cartPanel">
         <span class="cart-count" id="cartCountBadge">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span>
-        <button class="cart-panel-btn cart-view-btn" onclick="openCartModal()">🛒</button>
+        <button class="cart-panel-btn cart-view-btn" onclick="openCartModal()">🛒 Корзина</button>
         <button class="cart-panel-btn cart-order-btn" onclick="checkout()">💬 Заказать</button>
     </div>
     <div class="modal-overlay" id="cartModal">
         <div class="modal-content">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeCartModal()">✕</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeCartModal()">✕</span></div>
             <div id="cartItemsList"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div>
-            <input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:6px;">
-            <input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:8px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:10px;">
+            <input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:8px;">
+            <input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px;">
             <button class="buy-btn" onclick="checkout()" style="width:100%;background:linear-gradient(135deg,#4CAF50,#2E7D32);">💬 Оформить заказ</button>
         </div>
     </div>
@@ -239,7 +398,7 @@
             <div style="margin-bottom:12px;"><label style="font-size:0.85rem;opacity:0.7;">🍓 Вкусы</label><textarea id="itemFlavors" rows="2" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px;resize:vertical;"></textarea></div>
             <div style="margin-bottom:12px;"><label style="font-size:0.85rem;opacity:0.7;">💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px;"></div>
             <div style="margin-bottom:12px;"><label style="font-size:0.85rem;opacity:0.7;">📸 Ссылка на фото</label><input type="text" id="itemImage" placeholder="https://..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.9rem;margin-top:4px;"></div>
-            <div id="imagePreview" style="width:100%;height:180px;border:2px dashed var(--card-border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background-size:cover;background-position:center;color:var(--text);opacity:0.5;font-size:0.9rem;">Предпросмотр фото</div>
+            <div id="imagePreview" style="width:100%;height:180px;border:2px dashed var(--card-border);border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;background-size:cover;background-position:center;color:var(--text);opacity:0.6;font-size:0.9rem;cursor:pointer;transition:all 0.3s;">Предпросмотр фото</div>
             <div style="display:flex;gap:10px;">
                 <button onclick="closeShopModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;font-weight:600;">Отмена</button>
                 <button onclick="saveShopItem()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;">💾 Сохранить</button>
@@ -250,7 +409,7 @@
         <div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span><span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да, добавить!</button></div></div>
     </div>
     <div class="modal-overlay" id="historyModal">
-        <div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h3>📋 История продаж</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeHistoryModal()">✕</span></div><div id="historyList"></div></div>
+        <div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>📋 История продаж</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="closeHistoryModal()">✕</span></div><div id="historyList"></div></div>
     </div>
 <script>
 const NP_SHOP='https://api.npoint.io/55674e9c91b4698843d7',NP_STAFF='https://api.npoint.io/1abcc5ce30b4b648262e',NP_GIVEAWAY='https://api.npoint.io/694197bd444d17925431';
@@ -263,18 +422,19 @@ let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=
 let gaDeadline=localStorage.getItem('ga_deadline')||'2026-12-31T23:59',gaBlocked=JSON.parse(localStorage.getItem('ga_blocked')||'[]');
 let gaRegOpen=localStorage.getItem('ga_regOpen')!=='false',gaFilter='pending';
 
-function createParticles(){const c=document.getElementById('particles');c.innerHTML='';if(isDark){for(let i=0;i<35;i++){const p=document.createElement('div');p.className='particle snow';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*10+'s';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.width=p.style.height=(2+Math.random()*4)+'px';if(Math.random()>0.7){p.style.background='#ff69b4';p.style.boxShadow='0 0 6px #ff69b4';}c.appendChild(p);}for(let i=0;i<10;i++){const p=document.createElement('span');p.className='particle snow';p.textContent=['✨','💫','⭐','🌟'][Math.floor(Math.random()*4)];p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*8+'s';p.style.animationDuration=(6+Math.random()*8)+'s';p.style.background='none';p.style.boxShadow='none';c.appendChild(p);}}else{for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle circle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*7+'s';p.style.animationDuration=(5+Math.random()*8)+'s';p.style.width=p.style.height=(6+Math.random()*10)+'px';c.appendChild(p);}for(let i=0;i<8;i++){const p=document.createElement('span');p.className='particle circle';p.textContent=['🌸','💮','🌺','🩷'][Math.floor(Math.random()*4)];p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*6+'s';p.style.animationDuration=(7+Math.random()*6)+'s';p.style.background='none';p.style.boxShadow='none';c.appendChild(p);}}}
+function createParticles(){const c=document.getElementById('particles');c.innerHTML='';if(isDark){for(let i=0;i<35;i++){const p=document.createElement('div');p.className='particle snow';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*10+'s';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.width=p.style.height=(2+Math.random()*4)+'px';if(Math.random()>0.7){p.style.background='#ff69b4';p.style.boxShadow='0 0 6px #ff69b4, 0 0 12px rgba(255,105,180,0.5)';}c.appendChild(p);}for(let i=0;i<10;i++){const p=document.createElement('span');p.className='particle star';p.textContent=['✨','💫','⭐','🌟'][Math.floor(Math.random()*4)];p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*8+'s';p.style.animationDuration=(6+Math.random()*8)+'s';c.appendChild(p);}}else{for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle circle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*7+'s';p.style.animationDuration=(5+Math.random()*8)+'s';p.style.width=p.style.height=(6+Math.random()*10)+'px';c.appendChild(p);}for(let i=0;i<8;i++){const p=document.createElement('span');p.className='particle star';p.textContent=['🌸','💮','🌺','🩷'][Math.floor(Math.random()*4)];p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*6+'s';p.style.animationDuration=(7+Math.random()*6)+'s';c.appendChild(p);}}}
 function toggleTheme(){isDark=!isDark;document.body.classList.toggle('dark',isDark);document.getElementById('themeToggle').textContent=isDark?'🌙':'🌸';localStorage.setItem('darkTheme',isDark);createParticles();}
 function switchPage(page){currentPage=page;document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page'+page.charAt(0).toUpperCase()+page.slice(1)).classList.add('active');event.target.classList.add('active');if(page==='shop')renderShop();if(page==='giveaway')renderGa();}
 
-// СИНХРОНИЗАЦИЯ
-function uploadAllToNpoint(){if(shopRole!=='admin')return;showShopStatus('⏳ Выгружаю...');let done=0,errors=0;function check(){done++;if(done===3)showShopStatus(errors===0?'✅ Всё выгружено!':'❌ Ошибок: '+errors+'/3');}fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items,salesData,salesHistory,pendingSales})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});fetch(NP_STAFF,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]')})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});fetch(NP_GIVEAWAY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({participants:gaParticipants,winner:gaWinner,history:gaHistory,secretCode:gaSecretCode,deadline:gaDeadline,blocked:gaBlocked,regOpen:gaRegOpen})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});}
-function loadAllFromNpoint(){if(shopRole!=='admin')return;showShopStatus('⏳ Загружаю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};saveAllData();renderShop();buildCategories();updateStats();}).catch(()=>{});fetch(NP_STAFF).then(r=>r.json()).then(d=>{if(d.shopStaff)localStorage.setItem('shopStaff',JSON.stringify(d.shopStaff));if(d.approvedDevices)localStorage.setItem('approvedDevices',JSON.stringify(d.approvedDevices));if(d.pendingApprovals)localStorage.setItem('pendingApprovals',JSON.stringify(d.pendingApprovals));}).catch(()=>{});fetch(NP_GIVEAWAY).then(r=>r.json()).then(d=>{if(d.participants){gaParticipants=d.participants;localStorage.setItem('ga_participants',JSON.stringify(d.participants));}if(d.winner){gaWinner=d.winner;localStorage.setItem('ga_winner',JSON.stringify(d.winner));}if(d.secretCode){gaSecretCode=d.secretCode;localStorage.setItem('ga_secretCode',d.secretCode);}if(d.deadline){gaDeadline=d.deadline;localStorage.setItem('ga_deadline',d.deadline);}}).catch(()=>{});setTimeout(()=>showShopStatus('✅ Загружено!'),1500);}
+function logAction(user,action,details){const logs=JSON.parse(localStorage.getItem('actionLogs')||'[]');logs.unshift({user:user,role:shopRole,action:action,details:details,time:new Date().toLocaleString('ru-RU')});if(logs.length>100)logs=logs.slice(0,100);localStorage.setItem('actionLogs',JSON.stringify(logs));}
+function showActionLogs(){const logs=JSON.parse(localStorage.getItem('actionLogs')||'[]');if(logs.length===0){alert('Логи пусты');return;}let text='📋 Последние действия:\n\n';logs.slice(0,20).forEach(l=>{text+=`[${l.time}] ${l.role}: ${l.user} - ${l.action} - ${l.details}\n`;});alert(text);}
+
+function uploadAllToNpoint(){if(shopRole!=='admin')return;showShopStatus('⏳ Выгружаю...');let done=0,errors=0;function check(){done++;if(done===3)showShopStatus(errors===0?'✅ Всё выгружено!':'❌ Ошибок: '+errors+'/3');}fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items,salesData,salesHistory,pendingSales})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});fetch(NP_STAFF,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]')})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});fetch(NP_GIVEAWAY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({participants:gaParticipants,winner:gaWinner,history:gaHistory,secretCode:gaSecretCode,deadline:gaDeadline,blocked:gaBlocked,regOpen:gaRegOpen})}).then(r=>{if(!r.ok)errors++;check();}).catch(()=>{errors++;check();});}
+function loadAllFromNpoint(){if(shopRole!=='admin')return;showShopStatus('⏳ Загружаю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};saveAllData();renderShop();buildCategories();updateStats();}).catch(()=>{});fetch(NP_STAFF).then(r=>r.json()).then(d=>{if(d.shopStaff)localStorage.setItem('shopStaff',JSON.stringify(d.shopStaff));if(d.approvedDevices)localStorage.setItem('approvedDevices',JSON.stringify(d.approvedDevices));if(d.pendingApprovals)localStorage.setItem('pendingApprovals',JSON.stringify(d.pendingApprovals));if(d.actionLogs)localStorage.setItem('actionLogs',JSON.stringify(d.actionLogs));}).catch(()=>{});fetch(NP_GIVEAWAY).then(r=>r.json()).then(d=>{if(d.participants){gaParticipants=d.participants;localStorage.setItem('ga_participants',JSON.stringify(d.participants));}if(d.winner){gaWinner=d.winner;localStorage.setItem('ga_winner',JSON.stringify(d.winner));}if(d.secretCode){gaSecretCode=d.secretCode;localStorage.setItem('ga_secretCode',d.secretCode);}if(d.deadline){gaDeadline=d.deadline;localStorage.setItem('ga_deadline',d.deadline);}}).catch(()=>{});setTimeout(()=>showShopStatus('✅ Загружено!'),1500);}
 function autoSyncShop(){if(shopRole==='admin'||shopRole==='moder')fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items,salesData,salesHistory,pendingSales})}).catch(()=>{});}
-function autoSyncStaff(){if(shopRole==='admin'||shopRole==='moder')fetch(NP_STAFF,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]')})}).catch(()=>{});}
+function autoSyncStaff(){if(shopRole==='admin'||shopRole==='moder')fetch(NP_STAFF,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]')})}).catch(()=>{});}
 function autoSyncGiveaway(){if(gaRole==='admin'||gaRole==='moder')fetch(NP_GIVEAWAY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({participants:gaParticipants,winner:gaWinner,history:gaHistory,secretCode:gaSecretCode,deadline:gaDeadline,blocked:gaBlocked,regOpen:gaRegOpen})}).catch(()=>{});}
 
-// КОРЗИНА
 function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.quantity>0);if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
 function acceptUpsell(){if(upsellItem){cart.push({id:'upsell_'+Date.now(),name:upsellItem.name+' (-10%)',price:Math.round(upsellItem.price*0.9),qty:1,flavors:upsellItem.flavors,mg:upsellItem.mg});saveCart();updateCartPanel();showShopStatus('✅ Добавлено!');}closeUpsell();}
 function closeUpsell(){document.getElementById('upsellOverlay').classList.remove('show');upsellItem=null;}
@@ -286,30 +446,28 @@ function closeCartModal(){document.getElementById('cartModal').classList.remove(
 function renderCartItems(){const el=document.getElementById('cartItemsList'),te=document.getElementById('cartTotal');if(cart.length===0){el.innerHTML='<p style="text-align:center;opacity:0.7;padding:20px;">Корзина пуста</p>';te.textContent='Итого: 0₽';return;}let t=0;el.innerHTML=cart.map((c,i)=>{t+=c.price*c.qty;return`<div class="cart-item"><div><strong>${c.name}</strong><br><small>${c.flavors||''} | ${c.mg||''} | ${c.price}₽ × ${c.qty}</small></div><div style="display:flex;gap:5px;align-items:center;"><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${i})">✕</button></div></div>`;}).join('');te.textContent='Итого: '+t+'₽';}
 function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.quantity>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}if(shopRole==='helper'&&shopCode)updateHelperRating(shopCode,'order_created',s);});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncShop();showShopStatus('✅ Заказ отправлен!');}
 
-// ПЕРСОНАЛ
 function getDeviceId(){let d=localStorage.getItem('deviceId');if(!d){d='dev_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('deviceId',d);}return d;}
 function isDeviceApproved(code){return(JSON.parse(localStorage.getItem('approvedDevices')||'[]')).find(d=>d.deviceId===getDeviceId()&&d.code===code);}
 function requestApproval(role,code,username){let p=JSON.parse(localStorage.getItem('pendingApprovals')||'[]');p=p.filter(x=>!(x.deviceId===getDeviceId()&&x.code===code));const r={id:Date.now(),deviceId:getDeviceId(),role,code,username:username||'Неизвестный',time:new Date().toLocaleString('ru-RU'),status:'pending'};p.push(r);localStorage.setItem('pendingApprovals',JSON.stringify(p));autoSyncStaff();return r;}
 function approveDevice(id,approver){let p=JSON.parse(localStorage.getItem('pendingApprovals')||'[]');const r=p.find(x=>x.id===id);if(r){let a=JSON.parse(localStorage.getItem('approvedDevices')||'[]');a.push({deviceId:r.deviceId,role:r.role,code:r.code,username:r.username,approvedBy:approver,approvedAt:new Date().toLocaleString('ru-RU')});localStorage.setItem('approvedDevices',JSON.stringify(a));p=p.filter(x=>x.id!==id);localStorage.setItem('pendingApprovals',JSON.stringify(p));autoSyncStaff();return true;}return false;}
 function rejectDevice(id){let p=JSON.parse(localStorage.getItem('pendingApprovals')||'[]');p=p.filter(x=>x.id!==id);localStorage.setItem('pendingApprovals',JSON.stringify(p));autoSyncStaff();}
-function toggleBlockStaff(code){if(shopRole!=='admin')return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const u=s.find(x=>x.code===code);if(!u)return;u.blocked=!u.blocked;localStorage.setItem('shopStaff',JSON.stringify(s));if(u.blocked){let a=JSON.parse(localStorage.getItem('approvedDevices')||'[]');a=a.filter(d=>d.code!==code);localStorage.setItem('approvedDevices',JSON.stringify(a));}autoSyncStaff();renderStaffList();}
-function removeStaff(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const u=s.find(x=>x.code===code);if(!u)return;if(shopRole==='moder'&&u.moderatorCode!==shopCode){alert('❌ Только своих хелперов!');return;}if(!confirm('Удалить '+u.username+'?'))return;let ns=s;if(u.role==='moder')ns=s.filter(x=>x.code!==code&&x.moderatorCode!==code);else ns=s.filter(x=>x.code!==code);localStorage.setItem('shopStaff',JSON.stringify(ns));let a=JSON.parse(localStorage.getItem('approvedDevices')||'[]');a=a.filter(d=>d.code!==code);localStorage.setItem('approvedDevices',JSON.stringify(a));autoSyncStaff();renderStaffList();}
+function toggleBlockStaff(code){if(shopRole!=='admin')return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const u=s.find(x=>x.code===code);if(!u)return;u.blocked=!u.blocked;localStorage.setItem('shopStaff',JSON.stringify(s));if(u.blocked){let a=JSON.parse(localStorage.getItem('approvedDevices')||'[]');a=a.filter(d=>d.code!==code);localStorage.setItem('approvedDevices',JSON.stringify(a));}autoSyncStaff();renderStaffList();logAction('admin',u.blocked?'заблокировал':'разблокировал',u.username);}
+function removeStaff(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const u=s.find(x=>x.code===code);if(!u)return;if(shopRole==='moder'&&u.moderatorCode!==shopCode){alert('❌ Только своих хелперов!');return;}if(!confirm('Удалить '+u.username+'?'))return;let ns=s;if(u.role==='moder')ns=s.filter(x=>x.code!==code&&x.moderatorCode!==code);else ns=s.filter(x=>x.code!==code);localStorage.setItem('shopStaff',JSON.stringify(ns));let a=JSON.parse(localStorage.getItem('approvedDevices')||'[]');a=a.filter(d=>d.code!==code);localStorage.setItem('approvedDevices',JSON.stringify(a));autoSyncStaff();renderStaffList();logAction(shopRole==='admin'?'admin':shopCode,'удалил',u.username);}
 function updateHelperRating(code,action,amount){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h||h.role!=='helper')return;if(!h.rating)h.rating={points:0,ordersCount:0,totalAmount:0,level:'🌱 Новичок',history:[]};let pts=0;if(action==='order_created'){pts=1;h.rating.ordersCount++;h.rating.totalAmount+=amount;}else if(action==='order_confirmed'){pts=3;if(amount>1000)pts+=2;}else if(action==='order_cancelled')pts=-2;h.rating.points+=pts;h.rating.history.unshift({action,points:pts,amount,time:new Date().toLocaleString('ru-RU')});if(h.rating.history.length>50)h.rating.history=h.rating.history.slice(0,50);const pnt=h.rating.points;if(pnt>=100){h.rating.level='👑 Легенда';notifyAdmin(h);}else if(pnt>=61)h.rating.level='⭐ Мастер';else if(pnt>=31)h.rating.level='🌳 Профи';else if(pnt>=11)h.rating.level='🌿 Опытный';else h.rating.level='🌱 Новичок';localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();}
 function notifyAdmin(h){const n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n.push({id:Date.now(),type:'promotion',message:`${h.username} достиг 👑 Легенда!`,helperCode:h.code,time:new Date().toLocaleString('ru-RU'),read:false});localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncStaff();}
-function promoteToModer(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h)return;const nc='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();h.role='moder';h.code=nc;h.promotedAt=new Date().toLocaleString('ru-RU');h.promotedFrom='helper';delete h.moderatorCode;localStorage.setItem('shopStaff',JSON.stringify(s));let n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n=n.filter(x=>x.helperCode!==code);localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncStaff();alert(`✅ ${h.username} повышен до модера!\nНовый код: ${nc}`);if(document.getElementById('staffModal'))refreshStaffPanel();return nc;}
+function promoteToModer(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h)return;const nc='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();h.role='moder';h.code=nc;h.promotedAt=new Date().toLocaleString('ru-RU');h.promotedFrom='helper';delete h.moderatorCode;localStorage.setItem('shopStaff',JSON.stringify(s));let n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n=n.filter(x=>x.helperCode!==code);localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncStaff();alert(`✅ ${h.username} повышен до модера!\nНовый код: ${nc}`);if(document.getElementById('staffModal'))refreshStaffPanel();logAction('admin','повысил до модера',h.username);return nc;}
 
-function addModerQuick(){const un=prompt('Введите @username для модератора:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'moder',createdBy:'admin',createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Модератор создан!\n\nИмя: '+un+'\nКод: '+code);}
-function addHelperQuick(){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),moders=staff.filter(s=>s.role==='moder'&&!s.blocked);if(moders.length===0){alert('❌ Сначала создайте модератора!');return;}let modList='Выберите модератора (введите номер):\n';moders.forEach((m,i)=>{modList+=(i+1)+'. '+m.username+' ('+m.code+')\n';});const modNum=parseInt(prompt(modList))-1;if(modNum<0||modNum>=moders.length)return;const un=prompt('Введите @username для хелпера:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'helper',createdBy:'admin',moderatorCode:moders[modNum].code,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code+'\nМодератор: '+moders[modNum].username);}
+function addModerQuick(){const un=prompt('Введите @username для модератора:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'moder',createdBy:'admin',createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Модератор создан!\n\nИмя: '+un+'\nКод: '+code);logAction('admin','создал модератора',un);}
+function addHelperQuick(){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),moders=staff.filter(s=>s.role==='moder'&&!s.blocked);if(moders.length===0){alert('❌ Сначала создайте модератора!');return;}let modList='Выберите модератора (введите номер или 0 для отмены):\n';moders.forEach((m,i)=>{modList+=(i+1)+'. '+m.username+' ('+m.code+')\n';});const modNum=parseInt(prompt(modList));if(modNum===0||isNaN(modNum)||modNum<1||modNum>moders.length)return;const un=prompt('Введите @username для хелпера (или нажмите Отмена):');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'helper',createdBy:'admin',moderatorCode:moders[modNum-1].code,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code+'\nМодератор: '+moders[modNum-1].username);logAction('admin','создал хелпера',un+' у модера '+moders[modNum-1].username);}
 
 function showStaffPanel(){if(shopRole!=='admin'&&shopRole!=='moder')return;const modal=document.createElement('div');modal.className='modal-overlay show';modal.id='staffModal';const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),pending=JSON.parse(localStorage.getItem('pendingApprovals')||'[]');let myStaff=staff,myPending=pending;if(shopRole==='moder'){myStaff=staff.filter(s=>s.moderatorCode===shopCode||s.code===shopCode);myPending=pending.filter(p=>{const u=staff.find(x=>x.code===p.code);return u&&u.moderatorCode===shopCode;});}const pc=myPending.filter(p=>p.status==='pending').length;modal.innerHTML=`<div class="modal-content" style="max-width:650px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>👥 ${shopRole==='admin'?'Управление персоналом':'Мои хелперы'}</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="document.getElementById('staffModal').remove()">✕</span></div>${pc>0?`<h4 style="margin:15px 0 10px;color:#ff9800;">🔔 Запросы (${pc})</h4><div id="approvalList">${myPending.filter(p=>p.status==='pending').map(p=>`<div class="staff-card" style="border-color:#ff9800;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><strong>${p.username}</strong><span class="role-badge ${p.role==='moder'?'role-moder':'role-helper'}">${p.role==='moder'?'Модер':'Хелпер'}</span><div style="font-size:0.8rem;opacity:0.7;">${p.time}</div><div class="code">${p.code}</div></div><div style="display:flex;gap:8px;"><button class="confirm-btn" onclick="approveDevice(${p.id},'${shopRole}');refreshStaffPanel();">✅</button><button class="cancel-btn" onclick="rejectDevice(${p.id});refreshStaffPanel();">❌</button></div></div></div>`).join('')}</div>`:''}${shopRole==='admin'?`<h4 style="margin:20px 0 10px;">👑 Создать модератора</h4><div style="display:flex;gap:10px;"><input class="ga-input" id="newModUsername" placeholder="@username" style="flex:1;"><button class="ga-btn btn-magenta" onclick="createStaff('moder')" style="width:auto;padding:12px 20px;">Создать</button></div><div id="newStaffCode" style="text-align:center;margin-top:10px;display:none;"></div>`:''}${shopRole==='moder'?`<h4 style="margin:20px 0 10px;">🤝 Создать хелпера</h4><div style="display:flex;gap:10px;"><input class="ga-input" id="newHelperUsername" placeholder="@username" style="flex:1;"><button class="ga-btn" onclick="createStaff('helper')" style="width:auto;padding:12px 20px;background:linear-gradient(135deg,#2196F3,#1976D2);">Создать</button></div><div id="newStaffCode" style="text-align:center;margin-top:10px;display:none;"></div>`:''}<h4 style="margin:20px 0 10px;">📋 Список</h4><div id="staffList"></div></div>`;document.body.appendChild(modal);renderStaffList();}
-function createStaff(role){const id=role==='moder'?'newModUsername':'newHelperUsername';const un=document.getElementById(id)?.value.trim();if(!un)return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code=(role==='moder'?'MOD':'HLP')+'_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un,code,role,createdBy:shopRole==='admin'?'admin':shopCode,moderatorCode:role==='helper'?shopCode:null,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();const ce=document.getElementById('newStaffCode');ce.style.display='block';ce.innerHTML=`✅ Код для ${un}: <span class="code" style="font-size:1.2rem;">${code}</span>`;document.getElementById(id).value='';renderStaffList();}
-function createStaffForModer(modCode){const un=prompt('Введите @username для хелпера:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code:code,role:'helper',createdBy:shopRole==='admin'?'admin':shopCode,moderatorCode:modCode,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code);renderStaffList();}
+function createStaff(role){const id=role==='moder'?'newModUsername':'newHelperUsername';const un=document.getElementById(id)?.value.trim();if(!un)return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code=(role==='moder'?'MOD':'HLP')+'_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un,code,role,createdBy:shopRole==='admin'?'admin':shopCode,moderatorCode:role==='helper'?shopCode:null,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();const ce=document.getElementById('newStaffCode');ce.style.display='block';ce.innerHTML=`✅ Код для ${un}: <span class="code" style="font-size:1.2rem;">${code}</span>`;document.getElementById(id).value='';renderStaffList();logAction(shopRole==='admin'?'admin':shopCode,'создал '+(role==='moder'?'модератора':'хелпера'),un);}
+function createStaffForModer(modCode){const un=prompt('Введите @username для хелпера:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code:code,role:'helper',createdBy:shopRole==='admin'?'admin':shopCode,moderatorCode:modCode,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncStaff();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code);renderStaffList();logAction(shopRole==='admin'?'admin':shopCode,'создал хелпера',un);}
 function renderStaffList(){const el=document.getElementById('staffList');if(!el)return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');let ms=s;if(shopRole==='moder')ms=s.filter(x=>x.moderatorCode===shopCode||x.code===shopCode);if(ms.length===0){el.innerHTML='<p style="opacity:0.5;text-align:center;">Нет сотрудников</p>';return;}const mods=ms.filter(x=>x.role==='moder'),hlps=ms.filter(x=>x.role==='helper');let h='';mods.forEach(m=>{const mh=hlps.filter(x=>x.moderatorCode===m.code);h+=`<div class="staff-card" style="border-left:3px solid ${m.blocked?'#f44336':'#4CAF50'};${m.blocked?'opacity:0.7;':''}"><div><strong>👑 ${m.username}</strong>${m.blocked?' 🚫':''} <span class="role-badge role-moder">Модер</span>${m.promotedFrom?' ⬆️':''}</div><div class="code" style="margin:8px 0;">${m.code}</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">${(shopRole==='admin'||shopRole==='moder')?`<button onclick="createStaffForModer('${m.code}')" style="padding:10px 16px;background:#2196F3;color:white;border:none;border-radius:10px;cursor:pointer;font-size:0.9rem;font-weight:bold;">+ Хелпер</button>`:''}${shopRole==='admin'?`<button onclick="toggleBlockStaff('${m.code}')" style="padding:10px 16px;background:${m.blocked?'#4CAF50':'#ff9800'};color:white;border:none;border-radius:10px;cursor:pointer;font-size:0.9rem;">${m.blocked?'🔓':'🚫'}</button>`:''}${shopRole==='admin'?`<button onclick="removeStaff('${m.code}')" style="padding:10px 16px;background:#f44336;color:white;border:none;border-radius:10px;cursor:pointer;font-size:0.9rem;">🗑️</button>`:''}</div>${mh.length>0?`<div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;"><div style="font-size:0.9rem;margin-bottom:8px;">🤝 Хелперы (${mh.length}):</div>${mh.map(x=>renderHelperCard(x)).join('')}</div>`:'<div style="margin-top:8px;opacity:0.5;font-size:0.85rem;">Нет хелперов</div>'}</div>`;});el.innerHTML=h||'<p style="opacity:0.5;text-align:center;">Нет сотрудников</p>';}
 function renderHelperCard(h){const r=h.rating||{points:0,level:'🌱 Новичок',ordersCount:0,totalAmount:0};const canPromote=shopRole==='admin'&&r.points>=100;return`<div style="margin:8px 0;padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;"><div><strong>🤝 ${h.username}</strong>${h.blocked?' 🚫':''} <span style="font-size:0.85rem;">${r.level}</span></div><div style="font-size:0.8rem;opacity:0.7;margin:5px 0;">⭐${r.points} баллов | 📦${r.ordersCount} зак. | 💰${r.totalAmount}₽</div><div class="code" style="margin:5px 0;">${h.code}</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">${canPromote?`<button onclick="promoteToModer('${h.code}');refreshStaffPanel();" style="padding:8px 14px;background:#FFD700;color:#000;border:none;border-radius:10px;cursor:pointer;font-size:0.85rem;font-weight:bold;">⬆️ Повысить</button>`:''}${shopRole==='admin'?`<button onclick="toggleBlockStaff('${h.code}')" style="padding:8px 14px;background:${h.blocked?'#4CAF50':'#ff9800'};color:white;border:none;border-radius:10px;cursor:pointer;font-size:0.85rem;">${h.blocked?'🔓':'🚫'}</button>`:''}${(shopRole==='admin'||shopRole==='moder')?`<button onclick="removeStaff('${h.code}')" style="padding:8px 14px;background:#f44336;color:white;border:none;border-radius:10px;cursor:pointer;font-size:0.85rem;">🗑️</button>`:''}</div></div>`;}
 function refreshStaffPanel(){renderStaffList();const al=document.getElementById('approvalList');if(al){const pending=JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),staff=JSON.parse(localStorage.getItem('shopStaff')||'[]');let mp=pending;if(shopRole==='moder')mp=pending.filter(p=>{const u=staff.find(s=>s.code===p.code);return u&&u.moderatorCode===shopCode;});else if(shopRole==='admin')mp=pending.filter(p=>staff.find(s=>s.code===p.code));const pl=mp.filter(p=>p.status==='pending');al.innerHTML=pl.length===0?'<p style="opacity:0.5;text-align:center;">Нет запросов</p>':pl.map(p=>`<div class="staff-card" style="border-color:#ff9800;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><strong>${p.username}</strong><span class="role-badge ${p.role==='moder'?'role-moder':'role-helper'}">${p.role==='moder'?'Модер':'Хелпер'}</span><div style="font-size:0.8rem;opacity:0.7;">${p.time}</div><div class="code">${p.code}</div></div><div style="display:flex;gap:8px;"><button class="confirm-btn" onclick="approveDevice(${p.id},'${shopRole}');refreshStaffPanel();">✅</button><button class="cancel-btn" onclick="rejectDevice(${p.id});refreshStaffPanel();">❌</button></div></div></div>`).join('');}}
 function checkAdminNotifications(){if(shopRole!=='admin')return;const n=JSON.parse(localStorage.getItem('adminNotifications')||'[]'),ur=n.filter(x=>!x.read);if(ur.length>0){const ne=document.createElement('div');ne.style.cssText='position:fixed;top:20px;right:80px;z-index:1000;background:var(--modal-bg);border-radius:15px;padding:15px;border:2px solid #FFD700;animation:slideUp 0.3s ease;max-width:300px;cursor:pointer;';ne.innerHTML=`<strong>🔔 Уведомления (${ur.length})</strong>${ur.slice(0,3).map(x=>`<div style="font-size:0.8rem;margin-top:8px;padding:8px;background:rgba(255,215,0,0.1);border-radius:8px;">${x.message}${x.type==='promotion'?`<br><button onclick="promoteToModer('${x.helperCode}');this.closest('div').remove();" style="margin-top:5px;padding:4px 8px;background:#FFD700;color:#000;border:none;border-radius:6px;cursor:pointer;font-size:0.7rem;">⬆️ Повысить</button>`:''}</div>`).join('')}`;ne.onclick=function(){this.remove();};document.body.appendChild(ne);setTimeout(()=>ne.remove(),10000);}}
 
-// МАГАЗИН
 function shopLogin(){const pass=document.getElementById('shopPass').value.trim();if(pass==='150420'){shopRole='admin';shopCode=null;updateShopUI();checkAdminNotifications();return;}const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),user=staff.find(s=>s.code===pass);if(!user){alert('❌ Неверный пароль или код!');return;}if(user.blocked){alert('🚫 Доступ заблокирован!');return;}if(isDeviceApproved(pass)){shopRole=user.role;shopCode=pass;updateShopUI();return;}requestApproval(user.role,pass,user.username);alert('🔔 Ожидание подтверждения.\n'+(user.role==='moder'?'Админ должен одобрить вход.':'Модер или админ должен одобрить вход.'));}
 function updateShopUI(){const actions=document.getElementById('shopActions'),roleEl=document.getElementById('shopRole'),stats=document.getElementById('statsPanel'),chart=document.getElementById('chartContainer'),demand=document.getElementById('demandPanel');if(shopRole==='admin'||shopRole==='moder'){actions.classList.add('show');stats.classList.add('show');chart.classList.add('show');demand.classList.add('show');}else{actions.classList.remove('show');stats.classList.remove('show');chart.classList.remove('show');demand.classList.remove('show');}if(shopRole==='admin'){roleEl.innerHTML='<span class="role-badge role-admin">👑 Админ</span>';document.querySelectorAll('.admin-only').forEach(b=>b.style.display='');localStorage.setItem('adminLoggedIn','true');checkAdminNotifications();}else if(shopRole==='moder'){roleEl.innerHTML='<span class="role-badge role-moder">👑 Модер</span>';document.querySelectorAll('.admin-only').forEach(b=>b.style.display='none');}else if(shopRole==='helper'){roleEl.innerHTML='<span class="role-badge role-helper">🤝 Хелпер</span>';}document.getElementById('shopPass').style.display='none';const btn=document.querySelector('#pageShop .login-bar button');btn.textContent='🔓 Выйти';btn.onclick=shopLogout;renderShop();buildCategories();}
 function shopLogout(){shopRole=null;shopCode=null;localStorage.removeItem('adminLoggedIn');document.getElementById('shopActions').classList.remove('show');document.getElementById('statsPanel').classList.remove('show');document.getElementById('chartContainer').classList.remove('show');document.getElementById('demandPanel').classList.remove('show');document.getElementById('shopRole').innerHTML='';document.getElementById('shopPass').style.display='';const btn=document.querySelector('#pageShop .login-bar button');btn.textContent='🔐 Войти';btn.onclick=shopLogin;renderShop();buildCategories();}
@@ -321,27 +479,25 @@ function setSort(m){shopSort=m;document.querySelectorAll('.sort-btn').forEach(b=
 function buildCategories(){const n=document.getElementById('categoriesNav');let h='<div class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\',this)">Все</div>';categories.forEach(c=>{const cnt=items.filter(i=>i.category===c).length;if(cnt>0)h+=`<div class="cat-tab" data-cat="${c}" onclick="filterCategory('${c}',this)">${catEmojis[c]||'📦'} ${c}<span class="count">${cnt}</span></div>`;});n.innerHTML=h;}
 function filterCategory(cat,btn){shopCategory=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderShop();}
 function updateStats(){if(shopRole!=='admin'&&shopRole!=='moder')return;const ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);let st=0,sr=0;items.forEach(i=>{const s=salesData[i.id];if(s){st+=s.count||0;sr+=s.revenue||0;}});document.getElementById('totalItems').textContent=ci.length;document.getElementById('totalValue').textContent=ci.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0)+'₽';document.getElementById('totalSold').textContent=st;document.getElementById('totalRevenue').textContent=sr+'₽';document.getElementById('avgCheck').textContent=(st>0?Math.round(sr/st):0)+'₽';renderChart();updateDemandAnalysis();}
-function renderChart(){if(shopRole!=='admin'&&shopRole!=='moder')return;const c=document.getElementById('chartBars'),days=[],today=new Date();for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push({label:d.toLocaleDateString('ru-RU',{weekday:'short'}),date:d.toLocaleDateString('ru-RU'),total:0});}salesHistory.forEach(s=>{const sd=s.date.split(',')[0],day=days.find(d=>d.date===sd);if(day)day.total+=s.price;});const mx=Math.max(...days.map(d=>d.total),1);c.innerHTML=days.map(d=>{const h=Math.max((d.total/mx)*120,4);return`<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${h}px"></div><div class="chart-bar-label">${d.label}</div></div>`;}).join('');}
+function renderChart(){if(shopRole!=='admin'&&shopRole!=='moder')return;const c=document.getElementById('chartBars'),days=[],today=new Date();for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push({label:d.toLocaleDateString('ru-RU',{weekday:'short'}),date:d.toLocaleDateString('ru-RU'),total:0});}salesHistory.forEach(s=>{const sd=s.date.split(',')[0],day=days.find(d=>d.date===sd);if(day)day.total+=s.price;});const mx=Math.max(...days.map(d=>d.total),1);c.innerHTML=days.map(d=>{const h=Math.max((d.total/mx)*130,4);return`<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${h}px"></div><div class="chart-bar-label">${d.label}</div></div>`;}).join('');}
 function updateDemandAnalysis(){if(shopRole!=='admin'&&shopRole!=='moder')return;const p=document.getElementById('demandPanel'),ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);if(ci.length===0){p.innerHTML='';return;}const ws=ci.map(i=>({name:i.name,sold:salesData[i.id]?.count||0})).filter(i=>i.sold>0),ns=ci.filter(i=>(salesData[i.id]?.count||0)===0);let h='';if(ws.length>0){const srt=ws.sort((a,b)=>b.sold-a.sold),tc=Math.max(1,Math.ceil(srt.length*0.3)),hd=srt.slice(0,tc),ld=srt.slice(-tc);if(hd.length>0)h+=`<div class="stat-card" style="border:1px solid #4CAF50;"><div class="stat-label" style="color:#4CAF50;">🔥 Высокий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${hd.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;if(ld.length>0&&ld[0].sold>0)h+=`<div class="stat-card" style="border:1px solid #f44336;"><div class="stat-label" style="color:#f44336;">📉 Низкий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ld.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;}if(ns.length>0)h+=`<div class="stat-card" style="border:1px solid #FF9800;"><div class="stat-label" style="color:#FF9800;">🆕 Без продаж</div><div style="font-size:0.85rem;margin-top:8px;text-align:left;">${ns.slice(0,5).map(i=>'• '+i.name).join('<br>')}${ns.length>5?'<br>...и ещё '+(ns.length-5):''}</div></div>`;p.innerHTML=h||'<div class="stat-card" style="text-align:center;">📊 Пока нет продаж</div>';}
-function renderShop(){const grid=document.getElementById('priceGrid'),filtered=getFilteredItems();if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">🌸 Товары не добавлены</div>';updateStats();return;}if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">📂 Ничего не найдено</div>';updateStats();return;}const showAdmin=(shopRole==='admin'||shopRole==='moder');grid.innerHTML=filtered.map(item=>{const sold=salesData[item.id]||{count:0,revenue:0},pending=pendingSales[item.id]||0,hasPending=pending>0;return`<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x180?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800;">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}${!showAdmin?`<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`:''}${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${shopRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`;}).join('');updateStats();}
-function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;const msg=encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);window.open('https://t.me/'+tgUsername+'?text='+msg,'_blank');if(!pendingSales[id])pendingSales[id]=0;pendingSales[id]++;if(shopRole==='helper'&&shopCode)updateHelperRating(shopCode,'order_created',parseInt(item.price));saveAllData();renderShop();autoSyncShop();showShopStatus('🔔 Новый заказ!');}
-function confirmSale(id){const item=items.find(i=>i.id==id);if(!item){alert('Товар не найден!');return;}if(item.quantity<=0){alert('Товар закончился!');return;}item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);saveAllData();if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();},1500);}renderShop();buildCategories();autoSyncShop();showShopStatus('✅ Продажа! +'+item.price+'₽');}
-function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendingSales[id]<0)pendingSales[id]=0;saveAllData();renderShop();autoSyncShop();}
+function renderShop(){const grid=document.getElementById('priceGrid'),filtered=getFilteredItems();if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">🌸 Товары не добавлены</div>';updateStats();return;}if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">📂 Ничего не найдено</div>';updateStats();return;}const showAdmin=(shopRole==='admin'||shopRole==='moder');grid.innerHTML=filtered.map(item=>{const sold=salesData[item.id]||{count:0,revenue:0},pending=pendingSales[item.id]||0,hasPending=pending>0;return`<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800;">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}${!showAdmin?`<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`:''}${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${shopRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`;}).join('');updateStats();}
+function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;const msg=encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);window.open('https://t.me/'+tgUsername+'?text='+msg,'_blank');if(!pendingSales[id])pendingSales[id]=0;pendingSales[id]++;if(shopRole==='helper'&&shopCode)updateHelperRating(shopCode,'order_created',parseInt(item.price));saveAllData();renderShop();autoSyncShop();showShopStatus('🔔 Новый заказ!');logAction(shopRole==='helper'?shopCode:'клиент','заказал',item.name);}
+function confirmSale(id){const item=items.find(i=>i.id==id);if(!item){alert('Товар не найден!');return;}if(item.quantity<=0){alert('Товар закончился!');return;}item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);saveAllData();if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();},1500);}renderShop();buildCategories();autoSyncShop();showShopStatus('✅ Продажа! +'+item.price+'₽');logAction(shopCode||'admin','подтвердил заказ',item.name+' - '+item.price+'₽');}
+function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendingSales[id]<0)pendingSales[id]=0;saveAllData();renderShop();autoSyncShop();logAction(shopCode||'admin','отменил заказ','ID: '+id);}
 
-// МОДАЛКА ТОВАРА
-function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle'),preview=document.getElementById('imagePreview');if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||0;document.getElementById('itemPrice').value=editItem.price||'';document.getElementById('itemImage').value=editItem.image||'';preview.style.backgroundImage=editItem.image?'url('+editItem.image+')':'';preview.style.opacity=editItem.image?'1':'0.5';preview.textContent=editItem.image?'':'Предпросмотр фото';}else{title.textContent='✨ Добавить товар';document.getElementById('editItemId').value='';['itemName','itemMg','itemFlavors','itemQuantity','itemPrice','itemImage'].forEach(id=>document.getElementById(id).value='');document.getElementById('itemCategory').value='Жижи';preview.style.backgroundImage='';preview.style.opacity='0.5';preview.textContent='Предпросмотр фото';}modal.classList.add('show');document.getElementById('itemImage').addEventListener('input',function(){const url=this.value.trim();preview.style.backgroundImage=url?'url('+url+')':'';preview.style.opacity=url?'1':'0.5';preview.textContent=url?'':'Предпросмотр фото';});}
+function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle'),preview=document.getElementById('imagePreview');if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||0;document.getElementById('itemPrice').value=editItem.price||'';document.getElementById('itemImage').value=editItem.image||'';preview.style.backgroundImage=editItem.image?'url('+editItem.image+')':'';preview.style.opacity=editItem.image?'1':'0.6';preview.textContent=editItem.image?'':'Предпросмотр фото';}else{title.textContent='✨ Добавить товар';document.getElementById('editItemId').value='';['itemName','itemMg','itemFlavors','itemQuantity','itemPrice','itemImage'].forEach(id=>document.getElementById(id).value='');document.getElementById('itemCategory').value='Жижи';preview.style.backgroundImage='';preview.style.opacity='0.6';preview.textContent='Предпросмотр фото';}modal.classList.add('show');}
 function closeShopModal(){document.getElementById('shopModal').classList.remove('show');}
-function saveShopItem(){const editId=document.getElementById('editItemId').value,name=document.getElementById('itemName').value.trim(),cat=document.getElementById('itemCategory').value,mg=document.getElementById('itemMg').value.trim(),fl=document.getElementById('itemFlavors').value.trim(),qty=parseInt(document.getElementById('itemQuantity').value)||0,price=document.getElementById('itemPrice').value.trim(),img=document.getElementById('itemImage').value.trim();if(!name||!price||!img){alert('Заполните все поля!');return;}if(editId){const idx=items.findIndex(i=>i.id==editId);if(idx!==-1){items[idx].name=name;items[idx].category=cat;items[idx].mg=mg;items[idx].flavors=fl;items[idx].quantity=qty;items[idx].price=price;items[idx].image=img;}}else{items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img});}saveAllData();renderShop();buildCategories();autoSyncShop();closeShopModal();showShopStatus('✅ Сохранено!');}
+function saveShopItem(){const editId=document.getElementById('editItemId').value,name=document.getElementById('itemName').value.trim(),cat=document.getElementById('itemCategory').value,mg=document.getElementById('itemMg').value.trim(),fl=document.getElementById('itemFlavors').value.trim(),qty=parseInt(document.getElementById('itemQuantity').value)||0,price=document.getElementById('itemPrice').value.trim(),img=document.getElementById('itemImage').value.trim();if(!name||!price||!img){alert('Заполните все поля!');return;}if(editId){const idx=items.findIndex(i=>i.id==editId);if(idx!==-1){items[idx].name=name;items[idx].category=cat;items[idx].mg=mg;items[idx].flavors=fl;items[idx].quantity=qty;items[idx].price=price;items[idx].image=img;}}else{items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img});}saveAllData();renderShop();buildCategories();autoSyncShop();closeShopModal();showShopStatus('✅ Сохранено!');logAction(shopCode||'admin',editId?'редактировал':'добавил товар',name);}
 function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item);}
-function deleteShopItem(id){if(shopRole!=='admin')return;if(confirm('Удалить?')){items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();autoSyncShop();}}
+function deleteShopItem(id){if(shopRole!=='admin')return;if(confirm('Удалить?')){const item=items.find(i=>i.id==id);items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();autoSyncShop();logAction('admin','удалил товар',item?item.name:'ID: '+id);}}
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000);}
 function showShopHistory(){const m=document.getElementById('historyModal'),l=document.getElementById('historyList');l.innerHTML=salesHistory.length===0?'<p style="text-align:center;opacity:0.5;">Нет истории</p>':salesHistory.slice(0,30).map(h=>`<div class="cart-item"><span>${h.name}</span><span>${h.date}</span><span style="font-weight:700;">${h.price}₽</span></div>`).join('');m.classList.add('show');}
 function closeHistoryModal(){document.getElementById('historyModal').classList.remove('show');}
 function exportCSV(){let csv='Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n';items.forEach(i=>{const s=salesData[i.id]||{count:0,revenue:0};csv+=`"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue}\n`;});const b=new Blob(['\uFEFF'+csv],{type:'text/csv'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='price.csv';l.click();}
-function resetHistory(){if(confirm('Сбросить историю?')){salesData={};salesHistory=[];pendingSales={};saveAllData();renderShop();autoSyncShop();showShopStatus('🗑️ Сброшено');}}
-function resetAllItems(){if(confirm('Удалить ВСЕ товары?')){items=[];saveAllData();renderShop();buildCategories();autoSyncShop();showShopStatus('⚠️ Удалено');}}
+function resetHistory(){if(confirm('Сбросить историю?')){salesData={};salesHistory=[];pendingSales={};saveAllData();renderShop();autoSyncShop();showShopStatus('🗑️ Сброшено');logAction('admin','сбросил историю','');}}
+function resetAllItems(){if(confirm('Удалить ВСЕ товары?')){items=[];saveAllData();renderShop();buildCategories();autoSyncShop();showShopStatus('⚠️ Удалено');logAction('admin','удалил все товары','');}}
 
-// РОЗЫГРЫШ
 function gaLogin(){const pass=document.getElementById('gaPass').value.trim();if(pass==='150420'){gaRole='admin';gaCode=null;updateGaUI();return;}const staff=JSON.parse(localStorage.getItem('gaStaff')||'[]'),user=staff.find(s=>s.code===pass);if(!user){alert('❌ Неверный пароль или код!');return;}if(user.blocked){alert('🚫 Доступ заблокирован!');return;}if(isDeviceApproved(pass)){gaRole=user.role;gaCode=pass;updateGaUI();return;}requestApproval(user.role,pass,user.username);alert('🔔 Ожидание подтверждения.');}
 function updateGaUI(){const roleEl=document.getElementById('gaRole');if(gaRole==='admin')roleEl.innerHTML='<span class="role-badge role-admin">👑 Админ</span>';else if(gaRole==='moder')roleEl.innerHTML='<span class="role-badge role-moder">👑 Модер</span>';else if(gaRole==='helper')roleEl.innerHTML='<span class="role-badge role-helper">🤝 Хелпер</span>';document.getElementById('gaPass').style.display='none';const btn=document.querySelector('#pageGiveaway .login-bar button');btn.textContent='🔓 Выйти';btn.onclick=gaLogout;renderGa();}
 function gaLogout(){gaRole=null;gaCode=null;document.getElementById('gaRole').innerHTML='';document.getElementById('gaPass').style.display='';const btn=document.querySelector('#pageGiveaway .login-bar button');btn.textContent='🔐 Войти';btn.onclick=gaLogin;renderGa();}
