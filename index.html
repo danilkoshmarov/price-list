@@ -127,7 +127,7 @@
         .buy-btn,.cart-btn{width:100%;padding:10px;color:white;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.3s;margin-bottom:6px}
         .buy-btn{background:var(--stat-gradient)}.buy-btn:hover{transform:scale(1.02);box-shadow:0 5px 20px rgba(233,30,99,0.3)}
         .cart-btn{background:linear-gradient(135deg,#ff9800,#ff5722)}.cart-btn:hover{transform:scale(1.02)}
-        .confirm-btn,.cancel-btn{padding:5px 10px;border-radius:15px;border:none;cursor:pointer;font-size:0.7rem;font-weight:700;color:white}
+        .confirm-btn,.cancel-btn{padding:8px 14px;border-radius:15px;border:none;cursor:pointer;font-size:0.9rem;font-weight:700;color:white;min-width:40px;min-height:40px}
         .confirm-btn{background:#4CAF50}.cancel-btn{background:#f44336}
         .card-buttons{display:none;gap:6px;margin-top:6px}
         .card-buttons.show{display:flex}
@@ -178,7 +178,7 @@
         
         #connectionStatus{position:fixed;top:70px;right:15px;z-index:1000;font-size:0.75rem;padding:6px 12px;border-radius:15px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--card-border);display:none;align-items:center;gap:6px}
         
-        @media(max-width:768px){body{padding:10px}.header h1{font-size:1.8rem}.logo{width:60px;height:60px}.nav-tab{padding:10px 16px;font-size:0.85rem}.price-grid{grid-template-columns:1fr;gap:12px}.card-image{height:180px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:12px 15px;gap:8px}.stats-panel{flex-direction:column;gap:10px}.stat-card{min-width:auto;padding:14px 16px}.stat-value{font-size:1.4rem}.quick-btn{padding:8px 12px;font-size:0.75rem}.login-bar input{width:120px;padding:10px 14px}.modal-content{width:95%;padding:18px}.chart-bars{height:100px}#connectionStatus{top:60px;right:10px;font-size:0.7rem}}
+        @media(max-width:768px){body{padding:10px}.header h1{font-size:1.8rem}.logo{width:60px;height:60px}.nav-tab{padding:10px 16px;font-size:0.85rem}.price-grid{grid-template-columns:1fr;gap:12px}.card-image{height:180px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:12px 15px;gap:8px}.stats-panel{flex-direction:column;gap:10px}.stat-card{min-width:auto;padding:14px 16px}.stat-value{font-size:1.4rem}.quick-btn{padding:8px 12px;font-size:0.75rem}.login-bar input{width:120px;padding:10px 14px}.modal-content{width:95%;padding:18px}.chart-bars{height:100px}#connectionStatus{top:60px;right:10px;font-size:0.7rem}.confirm-btn,.cancel-btn{padding:10px 16px;font-size:1rem;min-width:44px;min-height:44px}}
     </style>
 </head>
 <body>
@@ -198,6 +198,7 @@
         <button class="quick-btn admin-only" onclick="showStaffPanel()">👥 Персонал</button>
         <button class="quick-btn admin-only" style="border-color:#FFD700;color:#FFD700" onclick="showFinanceTable()">💰 Доходы</button>
         <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showActionLogs()">📋 Логи</button>
+        <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showFullStats()">📊 Статистика</button>
         <button class="quick-btn success" onclick="uploadAllToNpoint()">📥 Выгрузить</button>
         <button class="quick-btn" onclick="loadAllFromNpoint()">📤 Загрузить</button>
         <button class="quick-btn" onclick="restoreBackup()">🔄 Бэкап</button>
@@ -315,75 +316,26 @@ function getFilteredItems(){let f=shopCategory==='all'?items.slice():items.filte
 function setSort(m){shopSort=m;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderShop()}
 function buildCategories(){const n=document.getElementById('categoriesNav');let h='<div class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\',this)">Все</div>';categories.forEach(c=>{const cnt=items.filter(i=>i.category===c).length;if(cnt>0)h+=`<div class="cat-tab" data-cat="${c}" onclick="filterCategory('${c}',this)">${catEmojis[c]||'📦'} ${c} <span class="count">${cnt}</span></div>`});n.innerHTML=h}
 function filterCategory(cat,btn){shopCategory=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderShop()}
-function updateStats(){
-    if(currentRole !== 'admin' && currentRole !== 'moder') return;
-    const ci = shopCategory === 'all' ? items : items.filter(i => i.category === shopCategory);
-    let st = 0, sr = 0;
-    
-    // Считаем по ВСЕМ товарам
-    for(let key in salesData){
-        st += salesData[key].count || 0;
-        sr += salesData[key].revenue || 0;
-    }
-    
-    document.getElementById('totalItems').textContent = ci.length;
-    document.getElementById('totalValue').textContent = ci.reduce((s,i) => s + (parseInt(i.price) * (i.quantity || 0)), 0) + '₽';
-    document.getElementById('totalSold').textContent = st;
-    document.getElementById('totalRevenue').textContent = sr + '₽';
-    document.getElementById('avgCheck').textContent = (st > 0 ? Math.round(sr / st) : 0) + '₽';
-    renderChart();
-    updateDemandAnalysis();
-}
+function updateStats(){if(currentRole!=='admin'&&currentRole!=='moder')return;const ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);let st=0,sr=0;for(let key in salesData){st+=salesData[key].count||0;sr+=salesData[key].revenue||0;}document.getElementById('totalItems').textContent=ci.length;document.getElementById('totalValue').textContent=ci.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0)+'₽';document.getElementById('totalSold').textContent=st;document.getElementById('totalRevenue').textContent=sr+'₽';document.getElementById('avgCheck').textContent=(st>0?Math.round(sr/st):0)+'₽';renderChart();updateDemandAnalysis()}
 function renderChart(){if(currentRole!=='admin'&&currentRole!=='moder')return;const c=document.getElementById('chartBars'),days=[],today=new Date();for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push({label:d.toLocaleDateString('ru-RU',{weekday:'short'}),date:d.toLocaleDateString('ru-RU'),total:0})}salesHistory.forEach(s=>{const sd=s.date.split(',')[0],day=days.find(d=>d.date===sd);if(day)day.total+=s.price});const mx=Math.max(...days.map(d=>d.total),1);c.innerHTML=days.map(d=>{const h=Math.max((d.total/mx)*130,4);return`<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${h}px"></div><div class="chart-bar-label">${d.label}</div></div>`}).join('')}
 function updateDemandAnalysis(){if(currentRole!=='admin'&&currentRole!=='moder')return;const p=document.getElementById('demandPanel'),ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);if(ci.length===0){p.innerHTML='';return}const ws=ci.map(i=>({name:i.name,sold:salesData[i.id]?.count||0})).filter(i=>i.sold>0),ns=ci.filter(i=>(salesData[i.id]?.count||0)===0);let h='';if(ws.length>0){const srt=ws.sort((a,b)=>b.sold-a.sold),tc=Math.max(1,Math.ceil(srt.length*0.3)),hd=srt.slice(0,tc),ld=srt.slice(-tc);if(hd.length>0)h+=`<div class="stat-card" style="border:1px solid #4CAF50"><div class="stat-label" style="color:#4CAF50">🔥 Высокий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${hd.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;if(ld.length>0&&ld[0].sold>0)h+=`<div class="stat-card" style="border:1px solid #f44336"><div class="stat-label" style="color:#f44336">📉 Низкий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${ld.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`}if(ns.length>0)h+=`<div class="stat-card" style="border:1px solid #FF9800"><div class="stat-label" style="color:#FF9800">🆕 Без продаж</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${ns.slice(0,5).map(i=>'• '+i.name).join('<br>')}${ns.length>5?'<br>...и ещё '+(ns.length-5):''}</div></div>`;p.innerHTML=h||'<div class="stat-card" style="text-align:center">📊 Пока нет продаж</div>'}
 function renderShop(){const grid=document.getElementById('priceGrid'),filtered=getFilteredItems();if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">🌸 Товары не добавлены</div>';updateStats();return}if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">📂 Ничего не найдено</div>';updateStats();return}const showAdmin=(currentRole==='admin'||currentRole==='moder');grid.innerHTML=filtered.map(item=>{const sold=salesData[item.id]||{count:0,revenue:0},pending=pendingSales[item.id]||0,hasPending=pending>0;return`<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}${!showAdmin?`<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`:''}${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${currentRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`}).join('');updateStats()}
 function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;const msg=encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);window.open('https://t.me/'+tgUsername+'?text='+msg,'_blank');if(!pendingSales[id])pendingSales[id]=0;pendingSales[id]++;if(currentRole==='helper'&&currentCode)updateHelperRating(currentCode,'order_created',parseInt(item.price));saveAllData();renderShop();autoSyncAll();showShopStatus('🔔 Новый заказ!')}
 
-function confirmSale(id){
-    const item = items.find(i => i.id == id);
-    if(!item || item.quantity <= 0) return;
-    item.quantity--;
-    if(pendingSales[id] && pendingSales[id] > 0) pendingSales[id]--;
-    if(!pendingSales[id] || pendingSales[id] < 0) pendingSales[id] = 0;
-    if(!salesData[id]) salesData[id] = {count: 0, revenue: 0, name: item.name};
-    salesData[id].count++;
-    salesData[id].revenue += parseInt(item.price);
-    salesHistory.unshift({date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price)});
-    if(salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
-    saveAllData();
-    if(item.quantity <= 0){setTimeout(() => {items = items.filter(i => i.id != id);saveAllData();renderShop();buildCategories();}, 1500);}
-    renderShop();buildCategories();showShopStatus('✅ Продажа! +' + item.price + '₽');
-}
+function confirmSale(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);saveAllData();if(item.quantity<=0){setTimeout(()=>{items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();},1500);}renderShop();buildCategories();saveDailyStats();autoSyncAll();showShopStatus('✅ Продажа! +'+item.price+'₽');logAction(currentCode||'admin','подтвердил заказ',item.name+' - '+item.price+'₽');}
 
-function cancelSale(id){
-    if(!pendingSales[id]) return;
-    pendingSales[id]--;
-    if(pendingSales[id] < 0) pendingSales[id] = 0;
-    saveAllData();renderShop();
-}
+function cancelSale(id){if(!pendingSales[id])return;pendingSales[id]--;if(pendingSales[id]<0)pendingSales[id]=0;saveAllData();renderShop();}
+
+function saveDailyStats(){const today=new Date().toLocaleDateString('ru-RU');const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');dailyStats[today]={revenue:Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0),sold:Object.values(salesData).reduce((s,d)=>s+(d.count||0),0),orders:salesHistory.length};const keys=Object.keys(dailyStats);if(keys.length>90){delete dailyStats[keys[0]];}localStorage.setItem('dailyStats',JSON.stringify(dailyStats));}
+
+function getWeekNumber(d){d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
+
+function showFullStats(){const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');const currentRevenue=Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0);const currentSold=Object.values(salesData).reduce((s,d)=>s+(d.count||0),0);saveDailyStats();const days=Object.keys(dailyStats).sort().reverse();if(days.length===0){alert('Нет данных за прошлые дни');return;}let html=`<div class="modal-content" style="max-width:700px;max-height:80vh;overflow-y:auto;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>📊 Полная статистика</h3><span style="cursor:pointer;font-size:1.5rem" onclick="this.closest('.modal-overlay').remove()">✕</span></div><div style="background:rgba(76,175,80,0.1);padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;"><strong>🟢 Сегодня:</strong> ${currentRevenue}₽ | ${currentSold} продаж</div>`;let weekNumber=1,weekRevenue=0,weekSold=0,weekDays=0,monthRevenue=0,monthSold=0,currentWeek='',weekStart='';days.forEach((day,index)=>{const stats=dailyStats[day];const date=new Date(day.split('.').reverse().join('-'));const weekOfYear=getWeekNumber(date);const weekKey=weekOfYear+'_'+date.getFullYear();if(currentWeek!==weekKey){if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber} (${weekStart} - ${day})</strong>: ${weekRevenue}₽ | ${weekSold} продаж</div>`;monthRevenue+=weekRevenue;monthSold+=weekSold;weekNumber++;}currentWeek=weekKey;weekRevenue=0;weekSold=0;weekDays=0;weekStart=day;}weekRevenue+=stats.revenue||0;weekSold+=stats.sold||0;weekDays++;monthRevenue+=stats.revenue||0;monthSold+=stats.sold||0;});if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber}:</strong> ${weekRevenue}₽ | ${weekSold} продаж</div>`;}html+=`<div style="background:rgba(255,215,0,0.1);padding:12px;border-radius:10px;margin:15px 0;text-align:center;font-size:1.1rem;"><strong>📅 ИТОГО ЗА МЕСЯЦ:</strong> ${monthRevenue}₽ | ${monthSold} продаж</div><h4 style="margin-top:15px;">📋 По дням:</h4>`;days.forEach(day=>{const stats=dailyStats[day];html+=`<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;"><span>${day}</span><span>${stats.revenue||0}₽ | ${stats.sold||0} прод.</span></div>`;});html+=`<button onclick="this.closest('.modal-overlay').remove()" style="width:100%;padding:10px;margin-top:15px;border-radius:10px;border:1px solid #ccc;background:var(--btn-bg);color:var(--text);cursor:pointer;">Закрыть</button></div>`;const modal=document.createElement('div');modal.className='modal-overlay show';modal.innerHTML=html;document.body.appendChild(modal);}
 
 function openShopModal(editItem=null){const modal=document.getElementById('shopModal'),title=document.getElementById('shopModalTitle');document.getElementById('editItemId').value='';document.getElementById('itemName').value='';document.getElementById('itemCategory').value='Жижи';document.getElementById('itemMg').value='';document.getElementById('itemFlavors').value='';document.getElementById('itemQuantity').value='10';document.getElementById('itemPrice').value='';document.getElementById('itemImage').value='https://via.placeholder.com/300';if(editItem){title.textContent='✏️ Редактировать';document.getElementById('editItemId').value=editItem.id;document.getElementById('itemName').value=editItem.name||'';document.getElementById('itemCategory').value=editItem.category||'Жижи';document.getElementById('itemMg').value=editItem.mg||'';document.getElementById('itemFlavors').value=editItem.flavors||'';document.getElementById('itemQuantity').value=editItem.quantity||10;document.getElementById('itemPrice').value=editItem.price||'';document.getElementById('itemImage').value=editItem.image||'https://via.placeholder.com/300'}else{title.textContent='✨ Добавить товар'}modal.classList.add('show')}
 function closeShopModal(){document.getElementById('shopModal').classList.remove('show')}
 
-function saveShopItem(){
-    const editId = document.getElementById('editItemId').value;
-    const name = document.getElementById('itemName').value.trim();
-    const cat = document.getElementById('itemCategory').value;
-    const mg = document.getElementById('itemMg').value.trim();
-    const fl = document.getElementById('itemFlavors').value.trim();
-    const qty = parseInt(document.getElementById('itemQuantity').value) || 10;
-    const price = document.getElementById('itemPrice').value.trim();
-    const img = document.getElementById('itemImage').value.trim() || 'https://via.placeholder.com/300';
-    if(!name || !price){ alert('❌ Заполните название и цену!'); return; }
-    if(editId){
-        const idx = items.findIndex(i => String(i.id) === String(editId));
-        if(idx !== -1){items[idx].name = name; items[idx].category = cat; items[idx].mg = mg; items[idx].flavors = fl; items[idx].quantity = qty; items[idx].price = price; items[idx].image = img;}
-    } else {
-        items.push({id: Date.now(), name, category: cat, mg, flavors: fl, quantity: qty, price, image: img});
-    }
-    saveAllData();renderShop();buildCategories();closeShopModal();showShopStatus('✅ Сохранено!');
-}
-
+function saveShopItem(){const editId=document.getElementById('editItemId').value;const name=document.getElementById('itemName').value.trim();const cat=document.getElementById('itemCategory').value;const mg=document.getElementById('itemMg').value.trim();const fl=document.getElementById('itemFlavors').value.trim();const qty=parseInt(document.getElementById('itemQuantity').value)||10;const price=document.getElementById('itemPrice').value.trim();const img=document.getElementById('itemImage').value.trim()||'https://via.placeholder.com/300';if(!name||!price){alert('❌ Заполните название и цену!');return}if(editId){const idx=items.findIndex(i=>String(i.id)===String(editId));if(idx!==-1){items[idx].name=name;items[idx].category=cat;items[idx].mg=mg;items[idx].flavors=fl;items[idx].quantity=qty;items[idx].price=price;items[idx].image=img}}else{items.push({id:Date.now(),name,category:cat,mg,flavors:fl,quantity:qty,price,image:img})}saveAllData();renderShop();buildCategories();closeShopModal();showShopStatus('✅ Сохранено!')}
 function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item)}
 function deleteShopItem(id){if(currentRole!=='admin')return;if(confirm('Удалить?')){items=items.filter(i=>i.id!=id);saveAllData();renderShop();buildCategories();showShopStatus('✅ Удалено!')}}
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000)}
@@ -411,7 +363,9 @@ function gaToggleReg(){gaRegOpen=!gaRegOpen;localStorage.setItem('ga_regOpen',ga
 function gaSaveSettings(){gaSecretCode=document.getElementById('gaCodeInput')?.value.trim()||'WIN2024';gaDeadline=document.getElementById('gaDeadlineInput')?.value||'2026-12-31T23:59';localStorage.setItem('ga_secretCode',gaSecretCode);localStorage.setItem('ga_deadline',gaDeadline);alert('✅ Сохранено!');autoSyncAll()}
 function renderGaHistory(){const el=document.getElementById('gaHistoryList');if(!el)return;el.innerHTML=gaHistory.length===0?'<p style="opacity:0.5">Пусто</p>':gaHistory.map(h=>`<div class="ga-participant"><span>${h.name} (${h.tg})</span><span style="opacity:0.5">${h.date}</span></div>`).join('')}
 
-document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙'}createParticles();loadShopData();updateCartPanel();checkNpointConnection();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}))},3600000)});
+function autoSaveDaily(){const today=new Date().toLocaleDateString('ru-RU');const lastSave=localStorage.getItem('lastDailySave');if(lastSave!==today){saveDailyStats();localStorage.setItem('lastDailySave',today);}}
+
+document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙'}createParticles();loadShopData();updateCartPanel();checkNpointConnection();autoSaveDaily();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}));},3600000);setInterval(autoSaveDaily,3600000);});
 </script>
 </body>
 </html>
