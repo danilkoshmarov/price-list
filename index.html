@@ -199,24 +199,34 @@ setInterval(checkNpointConnection,5000);
 function uploadAllToNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Выгружаю...');const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]'),gaParticipants,gaWinner,gaHistory,gaSecretCode,gaDeadline,gaBlocked,gaRegOpen};fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.ok?showShopStatus('✅ Выгружено!'):showShopStatus('❌ Ошибка')).catch(()=>showShopStatus('❌ Нет связи'));}
 function loadAllFromNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Загружаю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{if(d.items)items=d.items;if(d.salesData)salesData=d.salesData;if(d.salesHistory)salesHistory=d.salesHistory;if(d.pendingSales)pendingSales=d.pendingSales;if(d.shopStaff)localStorage.setItem('shopStaff',JSON.stringify(d.shopStaff));if(d.gaParticipants){gaParticipants=d.gaParticipants;localStorage.setItem('ga_participants',JSON.stringify(d.gaParticipants));}saveAllData();renderShop();buildCategories();updateStats();showShopStatus('✅ Загружено!');}).catch(()=>{showShopStatus('❌ Сервер не отвечает');});}
 function refreshShop(){
-    showShopStatus('⏳ Загружаю из облака...');
+    showShopStatus('⏳ Загружаю...');
     
-    fetch(NP_SHOP)
-        .then(r => r.json())
-        .then(d => {
-            if(d.items) items = d.items;
-            if(d.salesData) salesData = d.salesData;
-            if(d.salesHistory) salesHistory = d.salesHistory || [];
-            if(d.pendingSales) pendingSales = d.pendingSales || {};
-            saveAllData();
-            renderShop();
-            buildCategories();
-            updateStats();
-            showShopStatus('✅ Загружено из облака!');
-        })
-        .catch(() => {
-            showShopStatus('❌ Облако недоступно');
-        });
+    function tryFetch(retries){
+        fetch(NP_SHOP)
+            .then(r => {
+                if(!r.ok) throw new Error('Server error');
+                return r.json();
+            })
+            .then(d => {
+                if(d.items) items = d.items;
+                if(d.salesData) salesData = d.salesData;
+                saveAllData();
+                renderShop();
+                buildCategories();
+                updateStats();
+                showShopStatus('✅ Обновлено!');
+            })
+            .catch(e => {
+                if(retries > 0){
+                    showShopStatus('⏳ Повторная попытка...');
+                    setTimeout(() => tryFetch(retries - 1), 2000);
+                } else {
+                    showShopStatus('❌ Облако недоступно');
+                }
+            });
+    }
+    
+    tryFetch(2); // 3 попытки всего
 }
 function autoSyncAll(){if(currentRole!=='admin'&&currentRole!=='moder')return;const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),gaParticipants,gaWinner,gaHistory};navigator.sendBeacon(NP_SHOP,JSON.stringify(d));}
 
