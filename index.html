@@ -273,7 +273,47 @@ function updateGaUI(){const roleEl=document.getElementById('gaRole');if(currentR
 function shopLogout(){currentRole=null;currentCode=null;shopRole=null;gaRole=null;document.getElementById('connectionStatus').style.display='none';document.getElementById('shopActions').classList.remove('show');document.getElementById('statsPanel').classList.remove('show');document.getElementById('chartContainer').classList.remove('show');document.getElementById('demandPanel').classList.remove('show');document.getElementById('shopRole').innerHTML='';document.getElementById('gaRole').innerHTML='';document.getElementById('shopPass').style.display='';document.getElementById('gaPass').style.display='';document.querySelector('#pageShop .login-bar button').textContent='🔐 Войти';document.querySelector('#pageShop .login-bar button').onclick=shopLogin;document.querySelector('#pageGiveaway .login-bar button').textContent='🔐 Войти';document.querySelector('#pageGiveaway .login-bar button').onclick=gaLogin;renderShop();renderGa();buildCategories()}
 function gaLogout(){shopLogout()}
 
-function loadShopData(){const saved=localStorage.getItem('priceData');if(saved){try{const d=JSON.parse(saved);items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{}}catch(e){}}renderShop();buildCategories();updateStats();const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),30000);fetch(NP_SHOP,{signal:ctrl.signal}).then(r=>{clearTimeout(t);if(!r.ok)throw new Error('err');return r.json()}).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};localStorage.setItem('priceData',JSON.stringify(d));renderShop();buildCategories();updateStats()}).catch(()=>{clearTimeout(t)})}
+function loadShopData(){
+    // Сначала быстро показываем что есть в localStorage
+    const saved = localStorage.getItem('priceData');
+    if(saved){
+        try {
+            const d = JSON.parse(saved);
+            items = d.items || [];
+            salesData = d.salesData || {};
+            salesHistory = d.salesHistory || [];
+            pendingSales = d.pendingSales || {};
+        } catch(e) {}
+    }
+    renderShop();
+    buildCategories();
+    updateStats();
+    
+    // Потом грузим из облака (с повторными попытками)
+    function tryLoad(retries){
+        fetch(NP_SHOP)
+            .then(r => r.json())
+            .then(d => {
+                if(d.items && d.items.length > 0){
+                    items = d.items;
+                    salesData = d.salesData || {};
+                    salesHistory = d.salesHistory || [];
+                    pendingSales = d.pendingSales || {};
+                    localStorage.setItem('priceData', JSON.stringify(d));
+                }
+                renderShop();
+                buildCategories();
+                updateStats();
+            })
+            .catch(() => {
+                if(retries > 0){
+                    setTimeout(() => tryLoad(retries - 1), 3000);
+                }
+            });
+    }
+    
+    tryLoad(3); // 4 попытки с интервалом 3 секунды
+}
 function saveAllData(){localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}))}
 function restoreBackup(){const b=localStorage.getItem('autoBackup');if(b&&confirm('Восстановить бэкап?')){const d=JSON.parse(b);items=d.items;salesData=d.salesData;salesHistory=d.salesHistory;pendingSales=d.pendingSales;saveAllData();updateStats();renderShop();buildCategories();showShopStatus('✅ Восстановлено!')}else showShopStatus('❌ Бэкап не найден')}
 function getFilteredItems(){let f=shopCategory==='all'?items.slice():items.filter(i=>i.category===shopCategory);const q=(document.getElementById('shopSearch')?.value||'').trim().toLowerCase();if(q)f=f.filter(i=>i.name.toLowerCase().includes(q)||i.flavors.toLowerCase().includes(q));if(shopSort==='price-asc')f.sort((a,b)=>parseInt(a.price)-parseInt(b.price));else if(shopSort==='price-desc')f.sort((a,b)=>parseInt(b.price)-parseInt(a.price));else if(shopSort==='popular')f.sort((a,b)=>(salesData[b.id]?.count||0)-(salesData[a.id]?.count||0));return f}
