@@ -315,7 +315,22 @@ function loadShopData(){
         showShopStatus('⚠️ Показаны сохранённые данные');
     });
 }
-function saveAllData(){localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}))}
+function saveAllData(){
+    try {
+        localStorage.setItem('priceData', JSON.stringify({items, salesData, salesHistory, pendingSales}));
+    } catch(e) {
+        // Если место закончилось - чистим старые логи
+        localStorage.removeItem('actionLogs');
+        localStorage.removeItem('dailyStats');
+        localStorage.removeItem('autoBackup');
+        // Пробуем ещё раз
+        try {
+            localStorage.setItem('priceData', JSON.stringify({items, salesData, salesHistory, pendingSales}));
+        } catch(e2) {
+            showShopStatus('⚠️ Мало места! Удалите старые товары.');
+        }
+    }
+}
 function restoreBackup(){const b=localStorage.getItem('autoBackup');if(b&&confirm('Восстановить бэкап?')){const d=JSON.parse(b);items=d.items;salesData=d.salesData;salesHistory=d.salesHistory;pendingSales=d.pendingSales;saveAllData();updateStats();renderShop();buildCategories();showShopStatus('✅ Восстановлено!')}else showShopStatus('❌ Бэкап не найден')}
 function getFilteredItems(){let f=shopCategory==='all'?items.slice():items.filter(i=>i.category===shopCategory);const q=(document.getElementById('shopSearch')?.value||'').trim().toLowerCase();if(q)f=f.filter(i=>i.name.toLowerCase().includes(q)||i.flavors.toLowerCase().includes(q));if(shopSort==='price-asc')f.sort((a,b)=>parseInt(a.price)-parseInt(b.price));else if(shopSort==='price-desc')f.sort((a,b)=>parseInt(b.price)-parseInt(a.price));else if(shopSort==='popular')f.sort((a,b)=>(salesData[b.id]?.count||0)-(salesData[a.id]?.count||0));return f}
 function setSort(m){shopSort=m;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderShop()}
