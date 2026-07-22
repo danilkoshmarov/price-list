@@ -274,29 +274,31 @@ function shopLogout(){currentRole=null;currentCode=null;shopRole=null;gaRole=nul
 function gaLogout(){shopLogout()}
 
 function loadShopData(){
-    // Показываем "загрузка..."
+    // Показываем загрузку
     document.getElementById('priceGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">🌸 Загрузка товаров...</div>';
     
-    // Пробуем загрузить из облака
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+    // Пробуем загрузить из облака (ждём до 8 секунд)
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
     
     Promise.race([
         fetch(NP_SHOP).then(r => r.json()),
         timeout
     ])
     .then(d => {
-        // Облако ответило — показываем свежие данные
+        // Облако ответило — берём свежие данные
         items = d.items || [];
         salesData = d.salesData || {};
         salesHistory = d.salesHistory || [];
         pendingSales = d.pendingSales || {};
-        localStorage.setItem('priceData', JSON.stringify(d));
+        // СОХРАНЯЕМ В КЭШ
+        saveAllData();
+        // ОТОБРАЖАЕМ
         renderShop();
         buildCategories();
         updateStats();
     })
     .catch(() => {
-        // Облако не ответило за 5 секунд — грузим из кэша
+        // Облако не ответило — грузим из кэша
         const saved = localStorage.getItem('priceData');
         if(saved){
             try {
