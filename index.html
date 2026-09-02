@@ -189,6 +189,12 @@
         <span class="hero-pill">🔥 Работаем 24/7</span>
     </div>
     <div class="login-bar"><input type="password" id="shopPass" placeholder="Пароль или код"><button onclick="shopLogin()">🔐 Войти</button><span id="shopRole"></span></div>
+    <!-- Скрытая кнопка для загрузки сотрудников -->
+<div style="text-align:center; margin-top:10px;">
+    <button id="forceLoadBtn" onclick="forceLoadStaff()" style="display:none; padding:10px 20px; background:#9c27b0; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
+        📤 Загрузить сотрудников
+    </button>
+</div>
     
     <div style="text-align:center;margin-bottom:12px;">
         <button class="quick-btn" onclick="refreshShop()" style="font-size:0.85rem;padding:8px 20px;display:inline-block;">🔄 Обновить товары</button>
