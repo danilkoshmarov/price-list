@@ -267,7 +267,7 @@ let items=[],salesData={},salesHistory=[],pendingSales={},cart=JSON.parse(localS
 let shopSort='default',shopCategory=localStorage.getItem('shopCategory')||'all',upsellItem=null,currentImage=null;
 const categories=['Жижи','Одноразки','Снюсы','Поды'],catEmojis={'Жижи':'💧','Одноразки':'🚬','Снюсы':'👄','Поды':'💨'};
 let gaParticipants=JSON.parse(localStorage.getItem('ga_participants')||'[]'),gaWinner=JSON.parse(localStorage.getItem('ga_winner')||'null');
-let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=localStorage.getItem('ga_secretCode')||'WIN2024';
+let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=localStorage.getItem('ga_secretCode')||'150420';
 let gaDeadline=localStorage.getItem('ga_deadline')||'2026-12-31T23:59',gaBlocked=JSON.parse(localStorage.getItem('ga_blocked')||'[]');
 let gaRegOpen=localStorage.getItem('ga_regOpen')!=='false',gaFilter='pending';
 
@@ -443,7 +443,7 @@ function gaLogin(){
     if(!pass){showGaStatus('❌ Введите код!');return;}
     
     // Проверка админского пароля
-    if(pass === 'WIN2024'){
+    if(pass === '150420'){
         currentRole = 'admin';
         currentCode = null;
         shopRole = 'admin';
@@ -987,7 +987,7 @@ function gaUnban(i){gaBlocked.splice(i,1);localStorage.setItem('ga_blocked', JSO
 function gaToggleReg(){gaRegOpen = !gaRegOpen;localStorage.setItem('ga_regOpen', gaRegOpen);renderGa();autoSyncAll();}
 
 function gaSaveSettings(){
-    gaSecretCode = document.getElementById('gaCodeInput')?.value.trim() || 'WIN2024';
+    gaSecretCode = document.getElementById('gaCodeInput')?.value.trim() || '150420';
     gaDeadline = document.getElementById('gaDeadlineInput')?.value || '2026-12-31T23:59';
     localStorage.setItem('ga_secretCode', gaSecretCode);
     localStorage.setItem('ga_deadline', gaDeadline);
