@@ -1,10 +1,10 @@
 {
     "name": "Smoky Notes",
-    "short_name": "Smoky Notes",
-    "description": "Прайс-лист Smoky Notes",
+    "short_name": "SN",
+    "description": "Магазин Smoky Notes — доставка в удобное время и место 🚗",
     "start_url": "/price-list/",
     "display": "standalone",
-    "background_color": "#ffd1dc",
+    "background_color": "#0a0b10",
     "theme_color": "#e91e63",
     "orientation": "portrait-primary",
     "icons": [
