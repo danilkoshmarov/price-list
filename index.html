@@ -8,8 +8,46 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+    
+    <!-- FAVICON (иконка во вкладке и на телефоне) -->
+    <link rel="icon" href="https://i.ibb.co/zVz51500/IMG-6067-2.webp" sizes="192x192" type="image/webp">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/zVz51500/IMG-6067-2.webp">
+    
+    <link rel="manifest" href="/price-list/manifest.json">
     <style>
+        /* ============================================================ */
+        /* СЧЁТЧИК ПИНГА (всегда виден) */
+        /* ============================================================ */
+        #connectionStatus {
+            display: flex !important;
+            position: fixed;
+            top: 70px;
+            right: 15px;
+            z-index: 1000;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+        #connectionStatus .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        #connectionStatus .text {
+            margin-left: 4px;
+        }
+        
+        /* ============================================================ */
+        /* ОСТАЛЬНЫЕ СТИЛИ */
+        /* ============================================================ */
         *{margin:0;padding:0;box-sizing:border-box}
         @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
         @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -26,6 +64,7 @@
         
         :root{--bg:#f0f2f5;--text:#5c2d91;--card:rgba(255,255,255,0.85);--card-border:rgba(0,0,0,0.08);--btn-bg:rgba(255,255,255,0.6);--modal-bg:#fff;--input-bg:#fff;--stat-bg:rgba(255,255,255,0.7);--stat-gradient:linear-gradient(135deg,#e91e63,#9c27b0);--accent:#e91e63;--text-muted:#8b95a5}
         body.dark{--bg:#0a0b10;--text:#e0d0f0;--card:rgba(18,20,29,0.85);--card-border:rgba(255,255,255,0.08);--btn-bg:rgba(255,255,255,0.05);--modal-bg:#141628;--input-bg:rgba(255,255,255,0.05);--stat-bg:rgba(18,20,29,0.75);--stat-gradient:linear-gradient(135deg,#ff69b4,#c440ff);--accent:#ff69b4;--text-muted:#8b95a5}
+        body.dark #connectionStatus{background:rgba(18,20,29,0.8);border-color:rgba(255,255,255,0.08);color:#e0d0f0}
         body.dark .header h1{animation:neonFlicker 3s infinite}
         body.dark .logo{box-shadow:0 0 30px rgba(255,105,180,0.4)}
         body.dark .cart-panel{box-shadow:0 10px 40px rgba(255,105,180,0.3);background:rgba(20,22,36,0.9)}
@@ -40,7 +79,7 @@
         
         .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
         .particle{position:absolute;border-radius:50%;pointer-events:none;animation:particleFloat 8s linear infinite}
-        .particle.snow{width:4px;height:4px;background:#fff;box-shadow:0 0 6px #fff,0 0 12px rgba(255,105,180,0.5),0 0 24px rgba(200,100,255,0.3);animation-name:particleFloatReverse;animation-duration:10s}
+        .particle.snow{width:4px;height:4px;background:#fff;box-shadow:0 0 6px #fff,0 0 12px rgba(255,105,180,0.5),0 0 24px rgba(200,100,255,0.3);animation-duration:10s}
         .particle.circle{width:8px;height:8px;background:radial-gradient(circle,#ff69b4,#ff1493);box-shadow:0 0 8px #ff69b4,0 0 16px rgba(255,105,180,0.5);animation-duration:7s}
         
         .container{max-width:1200px;margin:0 auto;position:relative;z-index:10}
@@ -73,7 +112,6 @@
         .role-moder{background:rgba(76,175,80,0.2);color:#4CAF50;border:1px solid rgba(76,175,80,0.3)}
         .role-helper{background:rgba(33,150,243,0.2);color:#2196F3;border:1px solid rgba(33,150,243,0.3)}
         
-        /* Скрытая кнопка для загрузки сотрудников */
         #forceLoadBtn{display:none; padding:10px 20px; background:#9c27b0; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold; margin:10px auto; transition:all 0.3s}
         #forceLoadBtn:hover{transform:scale(1.05); box-shadow:0 4px 20px rgba(156,39,176,0.4)}
         
@@ -111,6 +149,8 @@
         .chart-bars{display:flex;align-items:flex-end;gap:8px;height:150px}
         .chart-bar-wrapper{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
         .chart-bar{width:100%;background:var(--stat-gradient);border-radius:8px 8px 0 0;min-height:4px;max-width:40px;transition:height 0.5s cubic-bezier(0.23,1,0.32,1)}
+        .chart-bar-label{font-size:0.6rem;opacity:0.7;margin-top:2px}
+        .chart-bar-value{font-size:0.65rem;font-weight:bold;color:var(--accent)}
         
         .demand-panel{display:none;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
         .demand-panel.show{display:flex}
@@ -198,8 +238,6 @@
         .terminal-command{color:#e91e63}
         .terminal-response{color:#4af626}
         
-        #connectionStatus{position:fixed;top:70px;right:15px;z-index:1000;font-size:0.75rem;padding:6px 12px;border-radius:15px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--card-border);display:none;align-items:center;gap:6px}
-        
         .scroll-top{position:fixed;bottom:90px;right:20px;z-index:400;width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,#e91e63,#9c27b0);color:white;font-size:20px;cursor:pointer;box-shadow:0 4px 20px rgba(233,30,99,0.4);display:none;transition:all 0.3s}
         .scroll-top:hover{transform:scale(1.1)}
         
@@ -214,11 +252,21 @@
         .upsell-no{flex:1;padding:10px;background:var(--btn-bg);color:var(--text);border:none;border-radius:12px;cursor:pointer}
         .upsell-yes{flex:2;padding:10px;background:#4CAF50;color:white;border:none;border-radius:12px;cursor:pointer;font-weight:bold}
         
+        /* Стили для модалки заказа */
+        #orderModal .modal-content{max-width:400px;}
+        #orderModal label{font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;}
+        #orderItemInfo{background:var(--stat-bg);padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;}
+        .flavor-row{display:flex;gap:6px;margin-bottom:4px;align-items:center;}
+        .flavor-row input{width:60px;padding:6px;border-radius:6px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);}
+        
         @media(max-width:768px){body{padding:10px}.header h1{font-size:1.8rem}.logo{width:60px;height:60px}.nav-tab{padding:10px 16px;font-size:0.85rem}.price-grid{grid-template-columns:1fr;gap:12px}.card-image{height:180px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%}.stats-panel{flex-direction:column}.stat-card{min-width:auto;padding:14px 16px}.stat-value{font-size:1.4rem}.quick-btn{padding:8px 12px;font-size:0.75rem}.login-bar input{width:120px}.modal-content{width:95%;padding:18px}.chart-bars{height:100px}}
     </style>
 </head>
 <body>
-<div id="connectionStatus"><span id="connDot" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span><span id="connText"></span></div>
+<div id="connectionStatus">
+    <span class="dot" id="connDot"></span>
+    <span class="text" id="connText">...</span>
+</div>
 <div class="particles" id="particles"></div>
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌸</button>
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -240,7 +288,7 @@
         <span id="shopRole"></span>
     </div>
     
-    <!-- Скрытая кнопка для загрузки сотрудников (появляется после ввода "invisible") -->
+    <!-- Скрытая кнопка для загрузки сотрудников -->
     <div style="text-align:center;">
         <button id="forceLoadBtn" onclick="forceLoadStaff()">📤 Загрузить сотрудников</button>
     </div>
@@ -255,6 +303,7 @@
         <button class="quick-btn admin-only" style="border-color:#FFD700;color:#FFD700" onclick="showFinanceTable()">💰 Доходы</button>
         <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showActionLogs()">📋 Логи</button>
         <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showFullStats()">📊 Статистика</button>
+        <button class="quick-btn admin-only" style="border-color:#FFD700;color:#FFD700" onclick="showStockAnalysis()">📈 Анализ закупок</button>
         <button class="quick-btn success" onclick="uploadAllToNpoint()">📥 Выгрузить</button>
         <button class="quick-btn admin-only" onclick="loadAllFromNpoint()">📤 Загрузить</button>
         <button class="quick-btn" onclick="restoreBackup()">🔄 Бэкап</button>
@@ -283,10 +332,11 @@
     <div class="categories-nav" id="categoriesNav"></div>
     <div class="stats-panel" id="statsPanel">
         <div class="stat-card"><div class="stat-value" id="totalItems">0</div><div class="stat-label">📦 Товаров</div></div>
-        <div class="stat-card"><div class="stat-value" id="totalValue">0₽</div><div class="stat-label">💰 Стоимость</div></div>
         <div class="stat-card"><div class="stat-value" id="totalSold">0</div><div class="stat-label">🛒 Продано</div></div>
-        <div class="stat-card"><div class="stat-value" id="totalRevenue">0₽</div><div class="stat-label">💵 Прибыль</div></div>
-        <div class="stat-card"><div class="stat-value" id="avgCheck">0₽</div><div class="stat-label">💰 Средний чек</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalRevenue">0₽</div><div class="stat-label">💰 Всего выручка</div></div>
+        <div class="stat-card"><div class="stat-value" id="todayRevenue">0₽</div><div class="stat-label">📆 Сегодня</div></div>
+        <div class="stat-card"><div class="stat-value" id="todayOrders">0</div><div class="stat-label">📦 Заказов сегодня</div></div>
+        <div class="stat-card"><div class="stat-value" id="uniqueBuyers">0</div><div class="stat-label">👤 Уникальных покупателей</div></div>
     </div>
     <div class="chart-container" id="chartContainer"><div class="chart-title">📊 Продажи за 7 дней</div><div class="chart-bars" id="chartBars"></div></div>
     <div class="demand-panel" id="demandPanel"></div>
@@ -307,9 +357,48 @@
 
 <div class="cart-panel" id="cartPanel"><span class="cart-count" id="cartCountBadge">0</span><span class="cart-info" id="cartInfo">0 тов. · 0₽</span><button class="cart-panel-btn cart-view-btn" onclick="openCartModal()">🛒</button><button class="cart-panel-btn cart-order-btn" onclick="checkout()">💬 Заказать</button></div>
 
+<!-- МОДАЛКА КОРЗИНЫ -->
 <div class="modal-overlay" id="cartModal"><div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.3rem" onclick="closeCartModal()">✕</span></div><div id="cartItemsList"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div><input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:6px"><input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:10px"><button class="buy-btn" onclick="checkout()" style="width:100%;background:linear-gradient(135deg,#4CAF50,#2E7D32)">💬 Оформить заказ</button></div></div>
 
-<div class="modal-overlay" id="shopModal"><div class="modal-content" style="max-width:500px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.3rem" onclick="closeShopModal()">✕</span></div><input type="hidden" id="editItemId"><div style="margin-bottom:10px"><label>📛 Название</label><input type="text" id="itemName" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px"></div><div style="margin-bottom:10px"><label>📂 Категория</label><select id="itemCategory" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div><div style="display:flex;gap:8px;margin-bottom:10px"><div style="flex:1"><label>⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px"></div><div style="flex:1"><label>📦 Кол-во</label><input type="number" id="itemQuantity" min="0" value="10" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px"></div></div><div style="margin-bottom:10px"><label>🍓 Вкусы</label><textarea id="itemFlavors" rows="2" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px;resize:vertical"></textarea></div><div style="margin-bottom:10px"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:3px"></div><input type="file" id="itemImageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)"><div id="imagePreview" onclick="document.getElementById('itemImageInput').click()" style="width:100%;height:150px;border:2px dashed var(--card-border);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background-size:cover;background-position:center;color:var(--text);opacity:0.6;cursor:pointer;font-size:0.85rem;">📸 Нажмите для загрузки фото</div><div style="display:flex;gap:8px"><button onclick="closeShopModal()" style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;">Отмена</button><button onclick="saveShopItem()" style="flex:2;padding:10px;border-radius:10px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;">💾 Сохранить</button></div></div></div>
+<!-- МОДАЛКА ДОБАВЛЕНИЯ ТОВАРА -->
+<div class="modal-overlay" id="shopModal"><div class="modal-content" style="max-width:550px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeShopModal()">✕</span></div><input type="hidden" id="editItemId"><div style="margin-bottom:12px"><label>📛 Название</label><input type="text" id="itemName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><div style="margin-bottom:12px"><label>📂 Категория</label><select id="itemCategory" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="flex:1"><label>⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><div style="flex:1"><label>📦 Кол-во</label><input type="number" id="itemQuantity" min="0" value="10" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div></div>
+<div style="margin-bottom:12px;">
+    <label>🍓 Вкусы и количество:</label>
+    <div id="flavorsContainer"></div>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+        <input type="text" id="newFlavorName" placeholder="Название вкуса" style="flex:2;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
+        <input type="number" id="newFlavorQuantity" placeholder="Кол-во" value="1" min="0" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
+        <button onclick="addFlavor()" style="padding:8px 16px;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;">➕</button>
+    </div>
+</div>
+<div style="margin-bottom:12px"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><input type="file" id="itemImageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)"><div id="imagePreview" onclick="document.getElementById('itemImageInput').click()" style="width:100%;height:180px;border:2px dashed var(--card-border);border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;background-size:cover;background-position:center;color:var(--text);opacity:0.6;cursor:pointer;">📸 Нажмите для загрузки фото</div><div style="display:flex;gap:10px"><button onclick="closeShopModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;">Отмена</button><button onclick="saveShopItem()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;">💾 Сохранить</button></div></div></div>
+
+<!-- МОДАЛКА ЗАКАЗА (НОВАЯ) -->
+<div class="modal-overlay" id="orderModal">
+    <div class="modal-content" style="max-width:400px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <h3 id="orderModalTitle">📦 Оформление заказа</h3>
+            <span style="cursor:pointer;font-size:1.5rem;" onclick="closeOrderModal()">✕</span>
+        </div>
+        <div id="orderItemInfo"></div>
+        <label>📦 Количество:</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <button onclick="changeQuantity(-1)" style="padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);background:var(--btn-bg);cursor:pointer;font-size:1.2rem;">−</button>
+            <span id="orderQuantity" style="font-size:1.4rem;font-weight:bold;min-width:40px;text-align:center;">1</span>
+            <button onclick="changeQuantity(1)" style="padding:8px 16px;border-radius:10px;border:1px solid var(--card-border);background:var(--btn-bg);cursor:pointer;font-size:1.2rem;">+</button>
+        </div>
+        <label>🍓 Вкус:</label>
+        <select id="orderFlavor" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px;"></select>
+        <label>🕐 Время:</label>
+        <input type="text" id="orderTime" placeholder="Например: 19:00" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px;">
+        <label>📍 Место:</label>
+        <input type="text" id="orderPlace" placeholder="Где встретиться?" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:12px;">
+        <div style="display:flex;gap:8px;">
+            <button onclick="closeOrderModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;">Отмена</button>
+            <button onclick="sendOrder()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;">💬 Отправить</button>
+        </div>
+    </div>
+</div>
 
 <div class="modal-overlay" id="upsellOverlay"><div class="upsell-popup"><span class="upsell-badge">-10%</span><h3>🛒 Добавить к заказу?</h3><p id="upsellName"></p><span class="upsell-old-price" id="upsellOldPrice"></span> <span class="upsell-price" id="upsellNewPrice"></span><div class="upsell-buttons"><button class="upsell-no" onclick="closeUpsell()">Нет</button><button class="upsell-yes" onclick="acceptUpsell()">Да!</button></div></div></div>
 
@@ -330,8 +419,12 @@ let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=
 let gaDeadline=localStorage.getItem('ga_deadline')||'2026-12-31T23:59',gaBlocked=JSON.parse(localStorage.getItem('ga_blocked')||'[]');
 let gaRegOpen=localStorage.getItem('ga_regOpen')!=='false',gaFilter='pending';
 
+// Переменные для модалки заказа
+let currentOrderItem = null;
+let currentQuantity = 1;
+
 // ============================================================
-// ФУНКЦИЯ ЗАГРУЗКИ СОТРУДНИКОВ (ДЛЯ МОДЕРОВ И ХЕЛПЕРОВ)
+// ФУНКЦИЯ ЗАГРУЗКИ СОТРУДНИКОВ
 // ============================================================
 function forceLoadStaff(){
     if(!confirm('📤 Загрузить данные сотрудников с сервера?')) return;
@@ -394,8 +487,53 @@ function switchPage(page){
 // ============================================================
 // СИНХРОНИЗАЦИЯ С СЕРВЕРОМ
 // ============================================================
-function checkNpointConnection(){const dot=document.getElementById('connDot'),text=document.getElementById('connText'),status=document.getElementById('connectionStatus');if(currentRole!=='admin'){status.style.display='none';document.getElementById('adminTerminal').style.display='none';return;}status.style.display='flex';document.getElementById('adminTerminal').style.display='block';dot.style.background='#ff9800';text.textContent='...';const start=Date.now();fetch(NP_SHOP,{method:'HEAD'}).then(r=>{const ms=Date.now()-start;if(r.ok){if(ms<100){dot.style.background='#00ff88';text.style.color='#00ff88'}else if(ms<300){dot.style.background='#4CAF50';text.style.color='#4CAF50'}else if(ms<600){dot.style.background='#ff9800';text.style.color='#ff9800'}else{dot.style.background='#f44336';text.style.color='#f44336'}text.textContent=ms+'мс';document.getElementById('terminalNpoint').textContent='подключено ('+ms+'мс)';}else{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Ошибка';document.getElementById('terminalNpoint').textContent='ошибка';}}).catch(()=>{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Офлайн';document.getElementById('terminalNpoint').textContent='недоступно';});}
-setInterval(checkNpointConnection,5000);
+function checkNpointConnection(){
+    const dot = document.getElementById('connDot');
+    const text = document.getElementById('connText');
+    const status = document.getElementById('connectionStatus');
+    
+    status.style.display = 'flex';
+    dot.style.background = '#ff9800';
+    text.textContent = '...';
+    
+    const start = Date.now();
+    fetch(NP_SHOP, { method: 'HEAD' })
+        .then(r => {
+            const ms = Date.now() - start;
+            if (r.ok) {
+                if (ms < 100) {
+                    dot.style.background = '#00ff88';
+                    text.textContent = ms + 'мс ✅';
+                } else if (ms < 300) {
+                    dot.style.background = '#4CAF50';
+                    text.textContent = ms + 'мс ✔️';
+                } else if (ms < 600) {
+                    dot.style.background = '#ff9800';
+                    text.textContent = ms + 'мс ⚠️';
+                } else {
+                    dot.style.background = '#f44336';
+                    text.textContent = ms + 'мс ❌';
+                }
+                if (currentRole === 'admin') {
+                    document.getElementById('terminalNpoint').textContent = 'подключено (' + ms + 'мс)';
+                }
+            } else {
+                dot.style.background = '#f44336';
+                text.textContent = '❌ Ошибка';
+                if (currentRole === 'admin') {
+                    document.getElementById('terminalNpoint').textContent = 'ошибка';
+                }
+            }
+        })
+        .catch(() => {
+            dot.style.background = '#f44336';
+            text.textContent = '📡 Офлайн';
+            if (currentRole === 'admin') {
+                document.getElementById('terminalNpoint').textContent = 'недоступно';
+            }
+        });
+}
+setInterval(checkNpointConnection, 5000);
 
 function uploadAllToNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Выгружаю...');const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]'),gaParticipants,gaWinner,gaHistory,gaSecretCode,gaDeadline,gaBlocked,gaRegOpen};fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.ok?showShopStatus('✅ Всё выгружено!'):showShopStatus('❌ Ошибка: '+r.status)).catch(()=>showShopStatus('❌ Нет связи'));}
 
@@ -406,39 +544,190 @@ function refreshShop(){showShopStatus('⏳ Обновляю...');fetch(NP_SHOP).
 function autoSyncAll(){if(currentRole!=='admin'&&currentRole!=='moder')return;const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),gaParticipants,gaWinner,gaHistory};navigator.sendBeacon(NP_SHOP,JSON.stringify(d));}
 
 // ============================================================
-// КОРЗИНА
+// УПРАВЛЕНИЕ ВКУСАМИ В МОДАЛКЕ ТОВАРА
 // ============================================================
-function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.quantity>0);if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
+function addFlavor(){
+    const name = document.getElementById('newFlavorName').value.trim();
+    const qty = parseInt(document.getElementById('newFlavorQuantity').value) || 0;
+    if (!name) return;
+    
+    const container = document.getElementById('flavorsContainer');
+    const existing = container.querySelector(`[data-flavor="${name}"]`);
+    if (existing) {
+        const input = existing.querySelector('.flavor-qty');
+        input.value = parseInt(input.value) + qty;
+        updateFlavorsList();
+        return;
+    }
+    
+    const row = document.createElement('div');
+    row.className = 'flavor-row';
+    row.dataset.flavor = name;
+    row.innerHTML = `
+        <span style="flex:2;font-weight:600;">${name}</span>
+        <input type="number" class="flavor-qty" value="${qty}" min="0" style="flex:1;padding:6px;border-radius:6px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);width:60px;" onchange="updateFlavorsList()">
+        <button onclick="removeFlavor(this)" style="background:#f44336;color:white;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">✕</button>
+    `;
+    container.appendChild(row);
+    
+    document.getElementById('newFlavorName').value = '';
+    document.getElementById('newFlavorQuantity').value = '1';
+    updateFlavorsList();
+}
 
-function acceptUpsell(){if(upsellItem){cart.push({id:'upsell_'+Date.now(),name:upsellItem.name+' (-10%)',price:Math.round(upsellItem.price*0.9),qty:1,flavors:upsellItem.flavors,mg:upsellItem.mg});saveCart();updateCartPanel();showShopStatus('✅ Добавлено!');}closeUpsell();}
+function removeFlavor(btn) {
+    if (!confirm('Удалить вкус?')) return;
+    btn.closest('.flavor-row').remove();
+    updateFlavorsList();
+}
 
-function closeUpsell(){document.getElementById('upsellOverlay').classList.remove('show');upsellItem=null;}
+function getFlavorsList() {
+    const rows = document.querySelectorAll('.flavor-row');
+    const flavors = [];
+    rows.forEach(row => {
+        const name = row.dataset.flavor;
+        const qty = parseInt(row.querySelector('.flavor-qty').value) || 0;
+        if (qty > 0) {
+            flavors.push({ name, quantity: qty });
+        }
+    });
+    return flavors;
+}
 
-function removeFromCart(i){cart.splice(i,1);saveCart();updateCartPanel();renderCartItems();}
+function updateFlavorsList() {
+    // просто обновляем скрытое поле, если нужно
+}
 
-function clearCart(){if(!confirm('Очистить корзину?'))return;cart=[];saveCart();updateCartPanel();renderCartItems();}
-
-function saveCart(){localStorage.setItem('cart',JSON.stringify(cart));}
-
-function updateCartPanel(){const p=document.getElementById('cartPanel');const n=cart.reduce((s,c)=>s+c.qty,0);const t=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('cartCountBadge').textContent=n;document.getElementById('cartInfo').textContent=n+' тов. · '+t+'₽';p.classList.toggle('show',n>0);}
-
-function openCartModal(){document.getElementById('cartModal').classList.add('show');renderCartItems();}
-function closeCartModal(){document.getElementById('cartModal').classList.remove('show');}
-
-function renderCartItems(){const el=document.getElementById('cartItemsList'),te=document.getElementById('cartTotal');if(cart.length===0){el.innerHTML='<p style="text-align:center;opacity:0.7;padding:15px">Корзина пуста</p>';te.innerHTML='Итого: 0₽';return;}let t=0;el.innerHTML=cart.map((c,i)=>{t+=c.price*c.qty;return`<div class="cart-item"><div><strong>${c.name}</strong><br><small>${c.flavors||''} | ${c.mg||''} | ${c.price}₽ × ${c.qty}</small></div><div style="display:flex;gap:4px;align-items:center"><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${i})">✕</button></div></div>`}).join('');te.innerHTML='Итого: '+t+'₽ <button onclick="clearCart()" style="margin-left:10px;padding:5px 12px;background:#f44336;color:white;border:none;border-radius:8px;cursor:pointer;">🗑️ Очистить</button>';}
-
-function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.quantity>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncAll();showShopStatus('✅ Заказ отправлен!');}
+function loadFlavors(flavors) {
+    const container = document.getElementById('flavorsContainer');
+    container.innerHTML = '';
+    if (!flavors || flavors.length === 0) return;
+    flavors.forEach(f => {
+        const row = document.createElement('div');
+        row.className = 'flavor-row';
+        row.dataset.flavor = f.name;
+        row.innerHTML = `
+            <span style="flex:2;font-weight:600;">${f.name}</span>
+            <input type="number" class="flavor-qty" value="${f.quantity}" min="0" style="flex:1;padding:6px;border-radius:6px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);width:60px;" onchange="updateFlavorsList()">
+            <button onclick="removeFlavor(this)" style="background:#f44336;color:white;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;">✕</button>
+        `;
+        container.appendChild(row);
+    });
+    updateFlavorsList();
+}
 
 // ============================================================
-// АВТОРИЗАЦИЯ С INVISIBLE
+// МОДАЛКА ЗАКАЗА
+// ============================================================
+function openOrderModal(itemId) {
+    const item = items.find(i => i.id == itemId);
+    if (!item) return;
+
+    // Авто-конвертация старых товаров
+    if (typeof item.flavors === 'string') {
+        const names = item.flavors.split(',').map(f => f.trim());
+        item.flavors = names.map(name => ({ name, quantity: 999 }));
+        saveAllData();
+    }
+    if (!item.flavors || item.flavors.length === 0) {
+        item.flavors = [{ name: 'Стандартный', quantity: 999 }];
+        saveAllData();
+    }
+
+    const availableFlavors = item.flavors.filter(f => f.quantity > 0);
+    if (availableFlavors.length === 0) {
+        showShopStatus('❌ Нет доступных вкусов!');
+        return;
+    }
+
+    currentOrderItem = item;
+    currentQuantity = 1;
+
+    document.getElementById('orderModalTitle').textContent = '📦 ' + item.name;
+    document.getElementById('orderItemInfo').innerHTML = `
+        <div style="font-weight:bold;">${item.name}</div>
+        <div style="font-size:0.85rem;opacity:0.7;">💰 ${item.price}₽</div>
+    `;
+
+    const flavorSelect = document.getElementById('orderFlavor');
+    flavorSelect.innerHTML = availableFlavors.map(f => 
+        `<option value="${f.name}" data-qty="${f.quantity}">${f.name} (${f.quantity} шт)</option>`
+    ).join('');
+
+    document.getElementById('orderQuantity').textContent = '1';
+    document.getElementById('orderTime').value = '';
+    document.getElementById('orderPlace').value = '';
+
+    document.getElementById('orderModal').classList.add('show');
+}
+
+function closeOrderModal() {
+    document.getElementById('orderModal').classList.remove('show');
+    currentOrderItem = null;
+}
+
+function changeQuantity(delta) {
+    currentQuantity = Math.max(1, currentQuantity + delta);
+    document.getElementById('orderQuantity').textContent = currentQuantity;
+}
+
+function sendOrder() {
+    if (!currentOrderItem) return;
+
+    const quantity = currentQuantity;
+    const flavorName = document.getElementById('orderFlavor').value;
+    const time = document.getElementById('orderTime').value.trim();
+    const place = document.getElementById('orderPlace').value.trim();
+
+    const flavor = currentOrderItem.flavors.find(f => f.name === flavorName);
+    if (!flavor) {
+        showShopStatus('❌ Вкус не найден!');
+        return;
+    }
+
+    if (flavor.quantity < quantity) {
+        showShopStatus(`❌ Доступно только ${flavor.quantity} шт!`);
+        return;
+    }
+
+    const total = quantity * parseInt(currentOrderItem.price);
+
+    let msg = '🛒 НОВЫЙ ЗАКАЗ:\n\n';
+    msg += `📦 Товар: ${currentOrderItem.name}\n`;
+    msg += `🍓 Вкус: ${flavorName}\n`;
+    msg += `📦 Кол-во: ${quantity} шт\n`;
+    msg += `💰 Цена: ${total}₽\n`;
+    if (time) msg += `🕐 Время: ${time}\n`;
+    if (place) msg += `📍 Место: ${place}\n`;
+
+    window.open('https://t.me/' + tgUsername + '?text=' + encodeURIComponent(msg), '_blank');
+
+    // Уменьшаем количество
+    flavor.quantity -= quantity;
+    if (flavor.quantity <= 0) {
+        currentOrderItem.flavors = currentOrderItem.flavors.filter(f => f.quantity > 0);
+    }
+
+    // Сохраняем заказ в pendingSales
+    if (!pendingSales[currentOrderItem.id]) pendingSales[currentOrderItem.id] = 0;
+    pendingSales[currentOrderItem.id] += quantity;
+
+    saveAllData();
+    renderShop();
+    buildCategories();
+    autoSyncAll();
+
+    closeOrderModal();
+    showShopStatus('✅ Заказ отправлен! Остаток обновлён!');
+}
+
+// ============================================================
+// АВТОРИЗАЦИЯ
 // ============================================================
 function shopLogin(){
     const pass = document.getElementById('shopPass').value.trim();
     if(!pass){showShopStatus('❌ Введите код!');return;}
     
-    // ============================================================
-    // СЕКРЕТНОЕ СЛОВО ДЛЯ ЗАГРУЗКИ СОТРУДНИКОВ
-    // ============================================================
     if(pass === 'invisible'){
         document.getElementById('forceLoadBtn').style.display = 'block';
         showShopStatus('🔧 Режим загрузки активирован! Введи свой код после загрузки.');
@@ -446,7 +735,6 @@ function shopLogin(){
         return;
     }
     
-    // Проверка админского пароля
     if(pass === '150420' || pass === 'WIN2024'){
         currentRole = 'admin';
         currentCode = null;
@@ -466,10 +754,10 @@ function shopLogin(){
         document.getElementById('shopPass').style.display = 'none';
         document.getElementById('gaPass').style.display = 'none';
         checkNpointConnection();
+        document.getElementById('adminTerminal').style.display = 'block';
         return;
     }
     
-    // Проверка сотрудников
     const staff = JSON.parse(localStorage.getItem('shopStaff') || '[]');
     const user = staff.find(x => x.code === pass);
     
@@ -572,7 +860,6 @@ function shopLogout(){
     document.getElementById('demandPanel').classList.remove('show');
     document.getElementById('shopRole').innerHTML = '';
     document.getElementById('gaRole').innerHTML = '';
-    document.getElementById('connectionStatus').style.display = 'none';
     document.getElementById('adminTerminal').style.display = 'none';
     
     document.querySelector('#pageShop .login-bar button').textContent = '🔐 Войти';
@@ -619,10 +906,13 @@ function updateShopUI(){
     if(currentRole === 'admin'){
         roleEl.innerHTML = '<span class="role-badge role-admin">👑 Админ</span>';
         checkNpointConnection();
+        document.getElementById('adminTerminal').style.display = 'block';
     } else if(currentRole === 'moder'){
         roleEl.innerHTML = '<span class="role-badge role-moder">👑 Модер</span>';
+        document.getElementById('adminTerminal').style.display = 'none';
     } else if(currentRole === 'helper'){
         roleEl.innerHTML = '<span class="role-badge role-helper">🤝 Хелпер</span>';
+        document.getElementById('adminTerminal').style.display = 'none';
     }
     
     renderShop();
@@ -657,7 +947,7 @@ function restoreBackup(){const b=localStorage.getItem('autoBackup');if(b&&confir
 function getFilteredItems(){
     let f = shopCategory === 'all' ? items.slice() : items.filter(i => i.category === shopCategory);
     const q = (document.getElementById('shopSearch')?.value || '').trim().toLowerCase();
-    if(q) f = f.filter(i => i.name.toLowerCase().includes(q) || (i.flavors && i.flavors.toLowerCase().includes(q)));
+    if(q) f = f.filter(i => i.name.toLowerCase().includes(q) || (i.flavors && i.flavors.some(f => f.name.toLowerCase().includes(q))));
     if(shopSort === 'price-asc') f.sort((a,b) => parseInt(a.price) - parseInt(b.price));
     else if(shopSort === 'price-desc') f.sort((a,b) => parseInt(b.price) - parseInt(a.price));
     else if(shopSort === 'popular') f.sort((a,b) => (salesData[b.id]?.count||0) - (salesData[a.id]?.count||0));
@@ -690,11 +980,23 @@ function updateStats(){
     const filtered = shopCategory === 'all' ? items : items.filter(i => i.category === shopCategory);
     let totalSold = 0, totalRevenue = 0;
     for(let key in salesData){totalSold += salesData[key].count||0; totalRevenue += salesData[key].revenue||0;}
+    
+    // Сегодня
+    const today = new Date().toLocaleDateString('ru-RU');
+    const todayOrders = salesHistory.filter(s => s.date && s.date.includes(today));
+    const todayRevenue = todayOrders.reduce((sum, s) => sum + (s.price || 0), 0);
+    
+    // Уникальные покупатели (если есть buyer в истории)
+    const uniqueBuyers = new Set();
+    salesHistory.forEach(s => { if (s.buyer) uniqueBuyers.add(s.buyer); });
+    
     document.getElementById('totalItems').textContent = filtered.length;
-    document.getElementById('totalValue').textContent = filtered.reduce((s,i) => s + (parseInt(i.price) * (i.quantity||0)), 0) + '₽';
     document.getElementById('totalSold').textContent = totalSold;
     document.getElementById('totalRevenue').textContent = totalRevenue + '₽';
-    document.getElementById('avgCheck').textContent = totalSold > 0 ? Math.round(totalRevenue/totalSold) + '₽' : '0₽';
+    document.getElementById('todayRevenue').textContent = todayRevenue + '₽';
+    document.getElementById('todayOrders').textContent = todayOrders.length;
+    document.getElementById('uniqueBuyers').textContent = uniqueBuyers.size || '—';
+    
     renderChart();
     updateDemandAnalysis();
 }
@@ -710,9 +1012,10 @@ function renderChart(){
         days.push({label: d.toLocaleDateString('ru-RU', {weekday:'short'}), date: d.toLocaleDateString('ru-RU'), total: 0});
     }
     salesHistory.forEach(s => {
+        if (!s.date) return;
         const sd = s.date.split(',')[0];
         const day = days.find(d => d.date === sd);
-        if(day) day.total += s.price;
+        if(day) day.total += s.price || 0;
     });
     const mx = Math.max(...days.map(d => d.total), 1);
     c.innerHTML = days.map(d => {
@@ -750,7 +1053,8 @@ function renderShop(){
         const sold = salesData[item.id] || {count:0, revenue:0};
         const pending = pendingSales[item.id] || 0;
         const hasPending = pending > 0;
-        const isOutOfStock = item.quantity <= 0;
+        const isOutOfStock = !item.flavors || item.flavors.every(f => f.quantity <= 0);
+        const flavorsText = item.flavors ? item.flavors.map(f => `${f.name} (${f.quantity} шт)`).join(', ') : 'Нет вкусов';
         return `<div class="price-card" style="${isOutOfStock ? 'opacity:0.5;' : ''}">
             ${item.image && item.image !== 'https://via.placeholder.com/300' ? `<img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'">` : `<div style="width:100%;height:180px;background:linear-gradient(135deg,#f8e8ff,#e0d0f0);display:flex;align-items:center;justify-content:center;font-size:3rem;">🌸</div>`}
             <div class="card-content">
@@ -758,100 +1062,18 @@ function renderShop(){
                 <h3 class="card-title">${item.name}</h3>
                 <div class="card-details">
                     <span class="card-badge mg">⚡ ${item.mg}</span>
-                    <span class="card-badge quantity">📦 ${item.quantity} шт</span>
+                    <span class="card-badge quantity">📦 ${item.flavors ? item.flavors.reduce((sum, f) => sum + f.quantity, 0) : 0} шт</span>
                     ${isOutOfStock ? '<span class="card-badge" style="background:#f44336;">❌ Нет</span>' : ''}
                 </div>
-                <div class="card-flavors">🍓 ${item.flavors || ''}</div>
+                <div class="card-flavors">🍓 ${flavorsText}</div>
                 <div class="card-price">${item.price} ₽</div>
                 ${showAdmin ? `<div class="card-sales-info show${hasPending ? ' pending' : ''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending ? `<span style="color:#ff9800">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>` : ''}</div>` : ''}
-                ${!showAdmin ? (isOutOfStock ? '<span style="color:#f44336;display:block;text-align:center;padding:10px;">❌ Нет в наличии</span>' : `<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`) : ''}
+                ${!showAdmin ? (isOutOfStock ? '<span style="color:#f44336;display:block;text-align:center;padding:10px;">❌ Нет в наличии</span>' : `<button class="buy-btn" onclick="openOrderModal(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`) : ''}
                 ${showAdmin ? `<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${currentRole === 'admin' ? `<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>` : ''}</div>` : ''}
             </div>
         </div>`;
     }).join('');
     updateStats();
-}
-
-// ============================================================
-// ПОКУПКА ТОВАРА С АВТОВЫГРУЗКОЙ
-// ============================================================
-function buyShopItem(id){
-    const item = items.find(i => i.id == id);
-    if(!item || item.quantity <= 0) return;
-    
-    // Отправляем сообщение в Telegram
-    const msg = encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);
-    window.open('https://t.me/' + tgUsername + '?text=' + msg, '_blank');
-    
-    // Сохраняем заказ локально
-    if(!pendingSales[id]) pendingSales[id] = 0;
-    pendingSales[id]++;
-    saveAllData();
-    
-    // ============================================================
-    // АВТО-ВЫГРУЗКА НА СЕРВЕР (чтобы ты увидел на своём устройстве)
-    // ============================================================
-    if(navigator.onLine){
-        const d = {
-            items: items,
-            salesData: salesData,
-            salesHistory: salesHistory,
-            pendingSales: pendingSales,
-            shopStaff: JSON.parse(localStorage.getItem('shopStaff') || '[]'),
-            approvedDevices: JSON.parse(localStorage.getItem('approvedDevices') || '[]'),
-            pendingApprovals: JSON.parse(localStorage.getItem('pendingApprovals') || '[]'),
-            actionLogs: JSON.parse(localStorage.getItem('actionLogs') || '[]'),
-            gaParticipants: gaParticipants,
-            gaWinner: gaWinner,
-            gaHistory: gaHistory,
-            gaSecretCode: gaSecretCode,
-            gaDeadline: gaDeadline,
-            gaBlocked: gaBlocked,
-            gaRegOpen: gaRegOpen
-        };
-        fetch(NP_SHOP, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(d)
-        }).catch(() => {});
-    }
-    // ============================================================
-    
-    renderShop();
-    showShopStatus('🔔 Заказ отправлен!');
-    
-    if(currentRole === 'helper' && currentCode){
-        updateHelperRating(currentCode, 'order_created', parseInt(item.price));
-    }
-}
-
-function confirmSale(id){
-    const item = items.find(i => i.id == id);
-    if(!item || item.quantity <= 0) return;
-    item.quantity--;
-    if(pendingSales[id] && pendingSales[id] > 0) pendingSales[id]--;
-    if(!pendingSales[id] || pendingSales[id] < 0) pendingSales[id] = 0;
-    if(!salesData[id]) salesData[id] = {count:0, revenue:0, name: item.name};
-    salesData[id].count++;
-    salesData[id].revenue += parseInt(item.price);
-    salesHistory.unshift({date: new Date().toLocaleString('ru-RU'), name: item.name, price: parseInt(item.price)});
-    if(salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
-    if(item.quantity <= 0){items = items.filter(i => i.id != id);}
-    saveAllData();
-    renderShop();
-    buildCategories();
-    saveDailyStats();
-    autoSyncAll();
-    showShopStatus('✅ Продажа! +'+item.price+'₽');
-    logAction(currentCode || 'admin', 'подтвердил заказ', item.name+' - '+item.price+'₽');
-}
-
-function cancelSale(id){
-    if(!pendingSales[id]) return;
-    pendingSales[id]--;
-    if(pendingSales[id] < 0) pendingSales[id] = 0;
-    saveAllData();
-    renderShop();
 }
 
 function editShopItem(id){const item=items.find(i=>i.id==id);if(item)openShopModal(item);}
@@ -875,31 +1097,38 @@ function saveShopItem(){
     const name = document.getElementById('itemName').value.trim();
     const cat = document.getElementById('itemCategory').value;
     const mg = document.getElementById('itemMg').value.trim();
-    const fl = document.getElementById('itemFlavors').value.trim();
-    const qty = parseInt(document.getElementById('itemQuantity').value) || 10;
     const price = document.getElementById('itemPrice').value.trim();
-    if(!name || !price){showShopStatus('❌ Заполните название и цену!');return;}
-    if(price < 0){showShopStatus('❌ Цена не может быть отрицательной!');return;}
+    
+    const flavors = getFlavorsList();
+    
+    if (!name || !price) { showShopStatus('❌ Заполните название и цену!'); return; }
+    if (flavors.length === 0) { showShopStatus('❌ Добавьте хотя бы один вкус!'); return; }
+    if (price < 0) { showShopStatus('❌ Цена не может быть отрицательной!'); return; }
+    
     const img = currentImage || (editId ? items.find(i => String(i.id) === String(editId))?.image : '') || 'https://via.placeholder.com/300';
     
-    if(!editId && items.find(i => i.name.toLowerCase() === name.toLowerCase())){
-        if(!confirm('Товар с таким названием уже есть. Добавить всё равно?')) return;
-    }
-    
-    if(editId){
+    if (editId) {
         const idx = items.findIndex(i => String(i.id) === String(editId));
-        if(idx !== -1){
+        if (idx !== -1) {
             items[idx].name = name;
             items[idx].category = cat;
             items[idx].mg = mg;
-            items[idx].flavors = fl;
-            items[idx].quantity = qty;
             items[idx].price = price;
             items[idx].image = img;
+            items[idx].flavors = flavors;
         }
     } else {
-        items.push({id: Date.now(), name, category: cat, mg, flavors: fl, quantity: qty, price, image: img});
+        items.push({
+            id: Date.now(),
+            name,
+            category: cat,
+            mg,
+            price,
+            image: img,
+            flavors: flavors
+        });
     }
+    
     saveAllData();
     renderShop();
     buildCategories();
@@ -915,8 +1144,6 @@ function openShopModal(editItem = null){
     document.getElementById('itemName').value = '';
     document.getElementById('itemCategory').value = 'Жижи';
     document.getElementById('itemMg').value = '';
-    document.getElementById('itemFlavors').value = '';
-    document.getElementById('itemQuantity').value = '10';
     document.getElementById('itemPrice').value = '';
     document.getElementById('itemImageInput').value = '';
     currentImage = null;
@@ -925,20 +1152,25 @@ function openShopModal(editItem = null){
     preview.style.opacity = '0.6';
     preview.textContent = '📸 Нажмите для загрузки фото';
     
+    // Очищаем контейнер вкусов
+    document.getElementById('flavorsContainer').innerHTML = '';
+    
     if(editItem){
         document.getElementById('shopModalTitle').textContent = '✏️ Редактировать';
         document.getElementById('editItemId').value = editItem.id;
         document.getElementById('itemName').value = editItem.name || '';
         document.getElementById('itemCategory').value = editItem.category || 'Жижи';
         document.getElementById('itemMg').value = editItem.mg || '';
-        document.getElementById('itemFlavors').value = editItem.flavors || '';
-        document.getElementById('itemQuantity').value = editItem.quantity || 10;
         document.getElementById('itemPrice').value = editItem.price || '';
         if(editItem.image && editItem.image !== 'https://via.placeholder.com/300'){
             currentImage = editItem.image;
             preview.style.backgroundImage = 'url(' + editItem.image + ')';
             preview.style.opacity = '1';
             preview.textContent = '';
+        }
+        // Загружаем вкусы
+        if (editItem.flavors && editItem.flavors.length > 0) {
+            loadFlavors(editItem.flavors);
         }
     } else {
         document.getElementById('shopModalTitle').textContent = '✨ Добавить товар';
@@ -954,7 +1186,7 @@ function showShopHistory(){const m=document.getElementById('historyModal'),l=doc
 
 function closeHistoryModal(){document.getElementById('historyModal').classList.remove('show');}
 
-function exportCSV(){let csv='Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n';items.forEach(i=>{const s=salesData[i.id]||{count:0,revenue:0};csv+=`"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue}\n`});const b=new Blob(['\uFEFF'+csv],{type:'text/csv'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='price.csv';l.click();}
+function exportCSV(){let csv='Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n';items.forEach(i=>{const s=salesData[i.id]||{count:0,revenue:0};const flavorsText = i.flavors ? i.flavors.map(f => f.name + '(' + f.quantity + ')').join(';') : '';csv+=`"${i.name}";"${i.category||''}";"${i.mg}";"${flavorsText}";${i.flavors ? i.flavors.reduce((sum, f) => sum + f.quantity, 0) : 0};${i.price};${s.count};${s.revenue}\n`});const b=new Blob(['\uFEFF'+csv],{type:'text/csv'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='price.csv';l.click();}
 
 function resetHistory(){if(confirm('Сбросить историю?')){salesData={};salesHistory=[];pendingSales={};saveAllData();renderShop();showShopStatus('🗑️ Сброшено');}}
 
@@ -962,14 +1194,225 @@ function resetAllItems(){if(confirm('Удалить ВСЕ товары?')){item
 
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2500);}
 
-function saveDailyStats(){const today=new Date().toLocaleDateString('ru-RU');const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');dailyStats[today]={revenue:Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0),sold:Object.values(salesData).reduce((s,d)=>s+(d.count||0),0),orders:salesHistory.length};const keys=Object.keys(dailyStats);if(keys.length>90){delete dailyStats[keys[0]];}localStorage.setItem('dailyStats',JSON.stringify(dailyStats));}
+// ============================================================
+// АНАЛИЗ ЗАКУПОК (ДЛЯ ВЛАДЕЛЬЦА)
+// ============================================================
+function showStockAnalysis(){
+    const data = analyzeStock();
+    if (!data) {
+        alert('❌ Нет данных для анализа! Добавьте товары.');
+        return;
+    }
 
-function showFullStats(){const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');const currentRevenue=Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0);const currentSold=Object.values(salesData).reduce((s,d)=>s+(d.count||0),0);saveDailyStats();const days=Object.keys(dailyStats).sort().reverse();if(days.length===0){alert('Нет данных за прошлые дни');return;}let html=`<div class="modal-content" style="max-width:700px;max-height:80vh;overflow-y:auto;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>📊 Полная статистика</h3><span style="cursor:pointer;font-size:1.5rem" onclick="this.closest('.modal-overlay').remove()">✕</span></div><div style="background:rgba(76,175,80,0.1);padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;"><strong>🟢 Сегодня:</strong> ${currentRevenue}₽ | ${currentSold} продаж</div>`;let weekNumber=1,weekRevenue=0,weekSold=0,weekDays=0,monthRevenue=0,monthSold=0,currentWeek='',weekStart='';days.forEach((day,index)=>{const stats=dailyStats[day];const date=new Date(day.split('.').reverse().join('-'));const weekOfYear=getWeekNumber(date);const weekKey=weekOfYear+'_'+date.getFullYear();if(currentWeek!==weekKey){if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber} (${weekStart} - ${day})</strong>: ${weekRevenue}₽ | ${weekSold} продаж</div>`;monthRevenue+=weekRevenue;monthSold+=weekSold;weekNumber++;}currentWeek=weekKey;weekRevenue=0;weekSold=0;weekDays=0;weekStart=day;}weekRevenue+=stats.revenue||0;weekSold+=stats.sold||0;weekDays++;monthRevenue+=stats.revenue||0;monthSold+=stats.sold||0;});if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber}:</strong> ${weekRevenue}₽ | ${weekSold} продаж</div>`;}html+=`<div style="background:rgba(255,215,0,0.1);padding:12px;border-radius:10px;margin:15px 0;text-align:center;font-size:1.1rem;"><strong>📅 ИТОГО ЗА МЕСЯЦ:</strong> ${monthRevenue}₽ | ${monthSold} продаж</div><h4 style="margin-top:15px;">📋 По дням:</h4>`;days.forEach(day=>{const stats=dailyStats[day];html+=`<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;"><span>${day}</span><span>${stats.revenue||0}₽ | ${stats.sold||0} прод.</span></div>`;});html+=`<button onclick="this.closest('.modal-overlay').remove()" style="width:100%;padding:10px;margin-top:15px;border-radius:10px;border:1px solid #ccc;background:var(--btn-bg);color:var(--text);cursor:pointer;">Закрыть</button></div>`;const modal=document.createElement('div');modal.className='modal-overlay show';modal.innerHTML=html;document.body.appendChild(modal);}
+    let html = `
+    <div class="modal-content" style="max-width:700px;max-height:80vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+            <h3>📈 Анализ закупок</h3>
+            <span style="cursor:pointer;font-size:1.5rem;" onclick="this.closest('.modal-overlay').remove()">✕</span>
+        </div>
+    `;
 
-function getWeekNumber(d){d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
+    // 🔥 Срочно заказать
+    if (data.critical && data.critical.length > 0) {
+        html += `<h4 style="color:#f44336;margin-top:12px;">🔥 СРОЧНО ЗАКАЗАТЬ (закончится через 0-3 дня)</h4>`;
+        data.critical.slice(0, 10).forEach(c => {
+            html += `<div style="background:rgba(244,67,54,0.1);padding:8px;border-radius:8px;margin-bottom:4px;border-left:3px solid #f44336;">
+                <strong>${c.itemName}</strong> — ${c.flavorName} (осталось ${c.quantity} шт, продаётся ${c.speedPerDay.toFixed(1)} шт/день → ${Math.round(c.daysLeft)} дн.)
+            </div>`;
+        });
+    }
+
+    // ⚠️ Скоро закончится
+    if (data.warning && data.warning.length > 0) {
+        html += `<h4 style="color:#ff9800;margin-top:12px;">⚠️ СКОРО ЗАКОНЧИТСЯ (через 4-7 дней)</h4>`;
+        data.warning.slice(0, 10).forEach(c => {
+            html += `<div style="background:rgba(255,152,0,0.1);padding:8px;border-radius:8px;margin-bottom:4px;border-left:3px solid #ff9800;">
+                <strong>${c.itemName}</strong> — ${c.flavorName} (осталось ${c.quantity} шт, продаётся ${c.speedPerDay.toFixed(1)} шт/день → ${Math.round(c.daysLeft)} дн.)
+            </div>`;
+        });
+    }
+
+    // ✅ Есть запас
+    if (data.ok && data.ok.length > 0) {
+        html += `<h4 style="color:#4CAF50;margin-top:12px;">✅ ЕСТЬ ЗАПАС (больше 7 дней)</h4>`;
+        data.ok.slice(0, 5).forEach(c => {
+            html += `<div style="background:rgba(76,175,80,0.05);padding:6px 8px;border-radius:6px;margin-bottom:2px;border-left:2px solid #4CAF50;font-size:0.85rem;">
+                ${c.itemName} — ${c.flavorName} (${c.quantity} шт, продаётся ${c.speedPerDay.toFixed(1)} шт/день → ${Math.round(c.daysLeft)} дн.)
+            </div>`;
+        });
+        if (data.ok.length > 5) {
+            html += `<div style="font-size:0.75rem;opacity:0.5;text-align:center;">...и ещё ${data.ok.length - 5} позиций</div>`;
+        }
+    }
+
+    // 📊 Топ продаж
+    if (data.topSelling && data.topSelling.length > 0) {
+        html += `<h4 style="margin-top:12px;">📊 ТОП-5 САМЫХ ПОПУЛЯРНЫХ</h4>`;
+        const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+        data.topSelling.slice(0, 5).forEach((t, i) => {
+            html += `<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05);">
+                <span>${emojis[i] || ''} ${t.name}</span>
+                <span style="font-weight:bold;">${t.sold} шт</span>
+            </div>`;
+        });
+    }
+
+    // 📋 Рекомендации
+    if (data.recommendations && data.recommendations.length > 0) {
+        html += `<h4 style="margin-top:12px;color:#FFD700;">📋 РЕКОМЕНДУЕМЫЙ СПИСОК ЗАКУПКИ</h4>`;
+        data.recommendations.slice(0, 10).forEach(r => {
+            html += `<div style="background:rgba(255,215,0,0.1);padding:8px;border-radius:8px;margin-bottom:4px;border-left:3px solid #FFD700;">
+                <strong>${r.name}</strong> — заказать <strong>${r.qty} шт</strong> (${r.reason})
+            </div>`;
+        });
+    }
+
+    // Итоги за месяц
+    if (data.monthRevenue !== undefined) {
+        html += `<div style="margin-top:15px;padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;">
+            <div><strong>💰 За месяц:</strong> ${data.monthRevenue}₽</div>
+            <div><strong>📦 Заказов:</strong> ${data.monthOrders || 0}</div>
+            <div><strong>📈 Динамика:</strong> ${data.growth || '—'}</div>
+        </div>`;
+    }
+
+    html += `<button onclick="this.closest('.modal-overlay').remove()" style="width:100%;padding:10px;margin-top:15px;border-radius:10px;border:none;background:#2196F3;color:white;cursor:pointer;font-weight:700;">Закрыть</button>`;
+    html += `</div>`;
+
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay show';
+    modal.innerHTML = html;
+    modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+    document.body.appendChild(modal);
+}
+
+function analyzeStock() {
+    if (!items || items.length === 0) return null;
+
+    const results = {
+        critical: [],
+        warning: [],
+        ok: [],
+        topSelling: [],
+        recommendations: [],
+        monthRevenue: 0,
+        monthOrders: 0,
+        growth: '—'
+    };
+
+    const now = Date.now();
+    const dayMs = 86400000;
+    const monthAgo = now - 30 * dayMs;
+
+    // Считаем продажи за месяц
+    const monthSales = salesHistory.filter(s => {
+        if (!s.date) return false;
+        const d = new Date(s.date).getTime();
+        return d > monthAgo;
+    });
+    results.monthRevenue = monthSales.reduce((sum, s) => sum + (s.price || 0), 0);
+    results.monthOrders = monthSales.length;
+
+    // Сравнение с прошлым месяцем
+    const twoMonthsAgo = now - 60 * dayMs;
+    const prevMonthSales = salesHistory.filter(s => {
+        if (!s.date) return false;
+        const d = new Date(s.date).getTime();
+        return d > twoMonthsAgo && d < monthAgo;
+    });
+    const prevMonthRevenue = prevMonthSales.reduce((sum, s) => sum + (s.price || 0), 0);
+    results.growth = results.monthRevenue > prevMonthRevenue ? '📈 рост' : '📉 падение';
+
+    // Анализ каждого товара и вкуса
+    items.forEach(item => {
+        if (!item.flavors || item.flavors.length === 0) return;
+
+        item.flavors.forEach(flavor => {
+            const key = item.id + '_' + flavor.name;
+            const sales = salesData[key] || { count: 0, firstSale: null, lastSale: null };
+
+            let speedPerDay = 0;
+            if (sales.firstSale && sales.count > 1) {
+                const firstDate = new Date(sales.firstSale).getTime();
+                const daysDiff = (now - firstDate) / dayMs;
+                if (daysDiff > 0) {
+                    speedPerDay = sales.count / daysDiff;
+                }
+            } else if (sales.count === 1 && sales.firstSale) {
+                // Если только одна продажа, считаем что продано за 1 день
+                speedPerDay = 1;
+            }
+
+            let daysLeft = Infinity;
+            if (speedPerDay > 0 && flavor.quantity > 0) {
+                daysLeft = flavor.quantity / speedPerDay;
+            }
+
+            const status = {
+                itemName: item.name,
+                flavorName: flavor.name,
+                quantity: flavor.quantity,
+                speedPerDay: speedPerDay,
+                daysLeft: daysLeft,
+                totalSold: sales.count || 0,
+                category: item.category
+            };
+
+            if (flavor.quantity <= 0 || daysLeft < 3) {
+                results.critical.push(status);
+            } else if (daysLeft < 7) {
+                results.warning.push(status);
+            } else {
+                results.ok.push(status);
+            }
+        });
+    });
+
+    // Топ продаж (по всем вкусам)
+    const allFlavors = [];
+    items.forEach(item => {
+        if (!item.flavors) return;
+        item.flavors.forEach(flavor => {
+            const key = item.id + '_' + flavor.name;
+            const sales = salesData[key] || { count: 0 };
+            allFlavors.push({
+                name: item.name + ' (' + flavor.name + ')',
+                sold: sales.count || 0,
+                itemId: item.id,
+                flavorName: flavor.name
+            });
+        });
+    });
+    results.topSelling = allFlavors.sort((a, b) => b.sold - a.sold).slice(0, 10);
+
+    // Рекомендации к закупке
+    results.critical.forEach(c => {
+        const recommendedQty = Math.ceil(c.speedPerDay * 14) + 5; // На 2 недели + запас
+        results.recommendations.push({
+            name: c.itemName + ' (' + c.flavorName + ')',
+            qty: Math.max(recommendedQty, 5),
+            reason: 'Продаётся ' + c.speedPerDay.toFixed(1) + ' шт/день, осталось ' + c.quantity + ' шт'
+        });
+    });
+
+    // Добавляем предупреждения в рекомендации
+    results.warning.forEach(c => {
+        const recommendedQty = Math.ceil(c.speedPerDay * 10) + 3;
+        results.recommendations.push({
+            name: c.itemName + ' (' + c.flavorName + ')',
+            qty: Math.max(recommendedQty, 3),
+            reason: 'Скоро закончится, продаётся ' + c.speedPerDay.toFixed(1) + ' шт/день, осталось ' + c.quantity + ' шт'
+        });
+    });
+
+    // Сортируем рекомендации по важности (сначала те, что закончатся быстрее)
+    results.recommendations.sort((a, b) => b.qty - a.qty);
+
+    return results;
+}
 
 // ============================================================
-// УПРАВЛЕНИЕ ПЕРСОНАЛОМ (сокращённо, но всё работает)
+// УПРАВЛЕНИЕ ПЕРСОНАЛОМ
 // ============================================================
 function getDeviceId(){let d=localStorage.getItem('deviceId');if(!d){d='dev_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('deviceId',d);}return d;}
 
@@ -1010,7 +1453,7 @@ function showFinanceTable(){if(currentRole!=='admin')return;const staff=JSON.par
 function payoutStaff(code){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),user=staff.find(s=>s.code===code);if(!user||!user.finance?.pendingPayout||user.finance.pendingPayout<=0){alert('Нет средств к выплате');return}const amount=user.finance.pendingPayout;if(!confirm(`Выплатить ${user.username} ${amount}₽?`))return;user.finance.paidOut=(user.finance.paidOut||0)+amount;user.finance.pendingPayout=0;localStorage.setItem('shopStaff',JSON.stringify(staff));autoSyncAll();logAction('admin','выплатил зарплату',`${user.username} - ${amount}₽`);alert(`✅ ${user.username} выплачено ${amount}₽`);showFinanceTable();}
 
 // ============================================================
-// РОЗЫГРЫШ С НОВЫМИ КНОПКАМИ
+// РОЗЫГРЫШ
 // ============================================================
 function renderGa(){
     const c = document.getElementById('gaContent');
@@ -1224,6 +1667,97 @@ function renderGaHistory(){
 function showGaStatus(msg){const el=document.getElementById('gaStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2500);}
 
 // ============================================================
+// КОРЗИНА
+// ============================================================
+function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.quantity>0);if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
+
+function acceptUpsell(){if(upsellItem){cart.push({id:'upsell_'+Date.now(),name:upsellItem.name+' (-10%)',price:Math.round(upsellItem.price*0.9),qty:1,flavors:upsellItem.flavors,mg:upsellItem.mg});saveCart();updateCartPanel();showShopStatus('✅ Добавлено!');}closeUpsell();}
+
+function closeUpsell(){document.getElementById('upsellOverlay').classList.remove('show');upsellItem=null;}
+
+function removeFromCart(i){cart.splice(i,1);saveCart();updateCartPanel();renderCartItems();}
+
+function clearCart(){if(!confirm('Очистить корзину?'))return;cart=[];saveCart();updateCartPanel();renderCartItems();}
+
+function saveCart(){localStorage.setItem('cart',JSON.stringify(cart));}
+
+function updateCartPanel(){const p=document.getElementById('cartPanel');const n=cart.reduce((s,c)=>s+c.qty,0);const t=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('cartCountBadge').textContent=n;document.getElementById('cartInfo').textContent=n+' тов. · '+t+'₽';p.classList.toggle('show',n>0);}
+
+function openCartModal(){document.getElementById('cartModal').classList.add('show');renderCartItems();}
+function closeCartModal(){document.getElementById('cartModal').classList.remove('show');}
+
+function renderCartItems(){const el=document.getElementById('cartItemsList'),te=document.getElementById('cartTotal');if(cart.length===0){el.innerHTML='<p style="text-align:center;opacity:0.7;padding:15px">Корзина пуста</p>';te.innerHTML='Итого: 0₽';return;}let t=0;el.innerHTML=cart.map((c,i)=>{t+=c.price*c.qty;return`<div class="cart-item"><div><strong>${c.name}</strong><br><small>${c.flavors||''} | ${c.mg||''} | ${c.price}₽ × ${c.qty}</small></div><div style="display:flex;gap:4px;align-items:center"><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${i})">✕</button></div></div>`}).join('');te.innerHTML='Итого: '+t+'₽ <button onclick="clearCart()" style="margin-left:10px;padding:5px 12px;background:#f44336;color:white;border:none;border-radius:8px;cursor:pointer;">🗑️ Очистить</button>';}
+
+function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.quantity>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncAll();showShopStatus('✅ Заказ отправлен!');}
+
+// ============================================================
+// СТАТИСТИКА
+// ============================================================
+function showFullStats(){const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');const currentRevenue=Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0);const currentSold=Object.values(salesData).reduce((s,d)=>s+(d.count||0),0);saveDailyStats();const days=Object.keys(dailyStats).sort().reverse();if(days.length===0){alert('Нет данных за прошлые дни');return;}let html=`<div class="modal-content" style="max-width:700px;max-height:80vh;overflow-y:auto;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>📊 Полная статистика</h3><span style="cursor:pointer;font-size:1.5rem" onclick="this.closest('.modal-overlay').remove()">✕</span></div><div style="background:rgba(76,175,80,0.1);padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;"><strong>🟢 Сегодня:</strong> ${currentRevenue}₽ | ${currentSold} продаж</div>`;let weekNumber=1,weekRevenue=0,weekSold=0,weekDays=0,monthRevenue=0,monthSold=0,currentWeek='',weekStart='';days.forEach((day,index)=>{const stats=dailyStats[day];const date=new Date(day.split('.').reverse().join('-'));const weekOfYear=getWeekNumber(date);const weekKey=weekOfYear+'_'+date.getFullYear();if(currentWeek!==weekKey){if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber} (${weekStart} - ${day})</strong>: ${weekRevenue}₽ | ${weekSold} продаж</div>`;monthRevenue+=weekRevenue;monthSold+=weekSold;weekNumber++;}currentWeek=weekKey;weekRevenue=0;weekSold=0;weekDays=0;weekStart=day;}weekRevenue+=stats.revenue||0;weekSold+=stats.sold||0;weekDays++;monthRevenue+=stats.revenue||0;monthSold+=stats.sold||0;});if(weekDays>0){html+=`<div style="background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;margin:4px 0;font-size:0.85rem;"><strong>📅 Неделя ${weekNumber}:</strong> ${weekRevenue}₽ | ${weekSold} продаж</div>`;}html+=`<div style="background:rgba(255,215,0,0.1);padding:12px;border-radius:10px;margin:15px 0;text-align:center;font-size:1.1rem;"><strong>📅 ИТОГО ЗА МЕСЯЦ:</strong> ${monthRevenue}₽ | ${monthSold} продаж</div><h4 style="margin-top:15px;">📋 По дням:</h4>`;days.forEach(day=>{const stats=dailyStats[day];html+=`<div style="display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;"><span>${day}</span><span>${stats.revenue||0}₽ | ${stats.sold||0} прод.</span></div>`;});html+=`<button onclick="this.closest('.modal-overlay').remove()" style="width:100%;padding:10px;margin-top:15px;border-radius:10px;border:1px solid #ccc;background:var(--btn-bg);color:var(--text);cursor:pointer;">Закрыть</button></div>`;const modal=document.createElement('div');modal.className='modal-overlay show';modal.innerHTML=html;document.body.appendChild(modal);}
+
+function getWeekNumber(d){d=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));return Math.ceil((((d-yearStart)/86400000)+1)/7);}
+
+function saveDailyStats(){const today=new Date().toLocaleDateString('ru-RU');const dailyStats=JSON.parse(localStorage.getItem('dailyStats')||'{}');dailyStats[today]={revenue:Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0),sold:Object.values(salesData).reduce((s,d)=>s+(d.count||0),0),orders:salesHistory.length};const keys=Object.keys(dailyStats);if(keys.length>90){delete dailyStats[keys[0]];}localStorage.setItem('dailyStats',JSON.stringify(dailyStats));}
+
+function confirmSale(id){
+    const item = items.find(i => i.id == id);
+    if(!item) return;
+    
+    // Проверяем, есть ли вкусы с остатками
+    if (item.flavors && item.flavors.length > 0) {
+        // Ищем вкус с самым большим количеством
+        const sorted = [...item.flavors].sort((a, b) => b.quantity - a.quantity);
+        const flavor = sorted[0];
+        if (flavor && flavor.quantity > 0) {
+            flavor.quantity--;
+            if (flavor.quantity <= 0) {
+                item.flavors = item.flavors.filter(f => f.quantity > 0);
+            }
+        }
+    }
+    
+    if(pendingSales[id] && pendingSales[id] > 0) pendingSales[id]--;
+    if(!pendingSales[id] || pendingSales[id] < 0) pendingSales[id] = 0;
+    
+    if(!salesData[id]) salesData[id] = {count:0, revenue:0, name: item.name};
+    salesData[id].count++;
+    salesData[id].revenue += parseInt(item.price);
+    
+    // Сохраняем в историю с деталями
+    const flavorsText = item.flavors ? item.flavors.map(f => f.name + '(' + f.quantity + ')').join(', ') : 'Нет вкусов';
+    salesHistory.unshift({
+        date: new Date().toLocaleString('ru-RU'),
+        name: item.name,
+        price: parseInt(item.price),
+        flavors: flavorsText
+    });
+    
+    if(salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
+    
+    // Проверяем, есть ли вообще остатки
+    const totalStock = item.flavors ? item.flavors.reduce((sum, f) => sum + f.quantity, 0) : 0;
+    if(totalStock <= 0) {
+        items = items.filter(i => i.id != id);
+    }
+    
+    saveAllData();
+    renderShop();
+    buildCategories();
+    saveDailyStats();
+    autoSyncAll();
+    showShopStatus('✅ Продажа! +' + item.price + '₽');
+    logAction(currentCode || 'admin', 'подтвердил заказ', item.name + ' - ' + item.price + '₽');
+}
+
+function cancelSale(id){
+    if(!pendingSales[id]) return;
+    pendingSales[id]--;
+    if(pendingSales[id] < 0) pendingSales[id] = 0;
+    saveAllData();
+    renderShop();
+}
+
+// ============================================================
 // ИНИЦИАЛИЗАЦИЯ
 // ============================================================
 function autoSaveDaily(){
@@ -1262,16 +1796,20 @@ document.addEventListener('DOMContentLoaded', function(){
         document.querySelector('#pageGiveaway .login-bar button').onclick = gaLogout;
         document.getElementById('shopPass').style.display = 'none';
         document.getElementById('gaPass').style.display = 'none';
+        if(currentRole === 'admin'){
+            document.getElementById('adminTerminal').style.display = 'block';
+        }
     }
     
     setInterval(() => {if(items.length > 0) localStorage.setItem('autoBackup', JSON.stringify({items,salesData,salesHistory,pendingSales}));}, 3600000);
     setInterval(autoSaveDaily, 3600000);
 });
 
-console.log('🌸 Smoky Notes v3.0 - FULLY FIXED!');
+console.log('🌸 Smoky Notes v4.0 - FULLY FIXED!');
 console.log('✅ Все баги пофикшены!');
 console.log('🔑 Пароль админа: 150420');
 console.log('🔑 Секретное слово для загрузки: invisible');
+console.log('📈 Анализ закупок добавлен!');
 </script>
 </body>
 </html>
