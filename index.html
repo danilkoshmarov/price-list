@@ -9,7 +9,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <!-- FAVICON (иконка во вкладке и на телефоне) -->
+    <!-- FAVICON -->
     <link rel="icon" href="https://i.ibb.co/zVz51500/IMG-6067-2.webp" sizes="192x192" type="image/webp">
     <link rel="apple-touch-icon" href="https://i.ibb.co/zVz51500/IMG-6067-2.webp">
     
@@ -252,10 +252,6 @@
         .upsell-no{flex:1;padding:10px;background:var(--btn-bg);color:var(--text);border:none;border-radius:12px;cursor:pointer}
         .upsell-yes{flex:2;padding:10px;background:#4CAF50;color:white;border:none;border-radius:12px;cursor:pointer;font-weight:bold}
         
-        /* Стили для модалки заказа */
-        #orderModal .modal-content{max-width:400px;}
-        #orderModal label{font-weight:600;font-size:0.85rem;display:block;margin-bottom:4px;}
-        #orderItemInfo{background:var(--stat-bg);padding:12px;border-radius:10px;margin-bottom:15px;text-align:center;}
         .flavor-row{display:flex;gap:6px;margin-bottom:4px;align-items:center;}
         .flavor-row input{width:60px;padding:6px;border-radius:6px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);}
         
@@ -288,7 +284,6 @@
         <span id="shopRole"></span>
     </div>
     
-    <!-- Скрытая кнопка для загрузки сотрудников -->
     <div style="text-align:center;">
         <button id="forceLoadBtn" onclick="forceLoadStaff()">📤 Загрузить сотрудников</button>
     </div>
@@ -361,7 +356,7 @@
 <div class="modal-overlay" id="cartModal"><div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>🛒 Корзина</h3><span style="cursor:pointer;font-size:1.3rem" onclick="closeCartModal()">✕</span></div><div id="cartItemsList"></div><div class="cart-total" id="cartTotal">Итого: 0₽</div><input type="text" id="meetupPlace" placeholder="📍 Где встретиться?" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:6px"><input type="text" id="meetupTime" placeholder="🕐 Когда?" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-bottom:10px"><button class="buy-btn" onclick="checkout()" style="width:100%;background:linear-gradient(135deg,#4CAF50,#2E7D32)">💬 Оформить заказ</button></div></div>
 
 <!-- МОДАЛКА ДОБАВЛЕНИЯ ТОВАРА -->
-<div class="modal-overlay" id="shopModal"><div class="modal-content" style="max-width:550px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeShopModal()">✕</span></div><input type="hidden" id="editItemId"><div style="margin-bottom:12px"><label>📛 Название</label><input type="text" id="itemName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><div style="margin-bottom:12px"><label>📂 Категория</label><select id="itemCategory" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="flex:1"><label>⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><div style="flex:1"><label>📦 Кол-во</label><input type="number" id="itemQuantity" min="0" value="10" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div></div>
+<div class="modal-overlay" id="shopModal"><div class="modal-content" style="max-width:550px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px"><h3 id="shopModalTitle">✨ Добавить товар</h3><span style="cursor:pointer;font-size:1.5rem" onclick="closeShopModal()">✕</span></div><input type="hidden" id="editItemId"><div style="margin-bottom:12px"><label>📛 Название</label><input type="text" id="itemName" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><div style="margin-bottom:12px"><label>📂 Категория</label><select id="itemCategory" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"><option value="Жижи">💧 Жижи</option><option value="Одноразки">🚬 Одноразки</option><option value="Снюсы">👄 Снюсы</option><option value="Поды">💨 Поды</option></select></div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="flex:1"><label>⚡ МГ</label><input type="text" id="itemMg" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div></div>
 <div style="margin-bottom:12px;">
     <label>🍓 Вкусы и количество:</label>
     <div id="flavorsContainer"></div>
@@ -373,7 +368,7 @@
 </div>
 <div style="margin-bottom:12px"><label>💰 Цена (₽)</label><input type="number" id="itemPrice" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);margin-top:4px"></div><input type="file" id="itemImageInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)"><div id="imagePreview" onclick="document.getElementById('itemImageInput').click()" style="width:100%;height:180px;border:2px dashed var(--card-border);border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:15px;background-size:cover;background-position:center;color:var(--text);opacity:0.6;cursor:pointer;">📸 Нажмите для загрузки фото</div><div style="display:flex;gap:10px"><button onclick="closeShopModal()" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;">Отмена</button><button onclick="saveShopItem()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--stat-gradient);color:white;cursor:pointer;font-weight:700;">💾 Сохранить</button></div></div></div>
 
-<!-- МОДАЛКА ЗАКАЗА (НОВАЯ) -->
+<!-- МОДАЛКА ЗАКАЗА -->
 <div class="modal-overlay" id="orderModal">
     <div class="modal-content" style="max-width:400px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
@@ -419,7 +414,6 @@ let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=
 let gaDeadline=localStorage.getItem('ga_deadline')||'2026-12-31T23:59',gaBlocked=JSON.parse(localStorage.getItem('ga_blocked')||'[]');
 let gaRegOpen=localStorage.getItem('ga_regOpen')!=='false',gaFilter='pending';
 
-// Переменные для модалки заказа
 let currentOrderItem = null;
 let currentQuantity = 1;
 
@@ -544,12 +538,12 @@ function refreshShop(){showShopStatus('⏳ Обновляю...');fetch(NP_SHOP).
 function autoSyncAll(){if(currentRole!=='admin'&&currentRole!=='moder')return;const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),gaParticipants,gaWinner,gaHistory};navigator.sendBeacon(NP_SHOP,JSON.stringify(d));}
 
 // ============================================================
-// УПРАВЛЕНИЕ ВКУСАМИ В МОДАЛКЕ ТОВАРА
+// УПРАВЛЕНИЕ ВКУСАМИ
 // ============================================================
 function addFlavor(){
     const name = document.getElementById('newFlavorName').value.trim();
     const qty = parseInt(document.getElementById('newFlavorQuantity').value) || 0;
-    if (!name) return;
+    if (!name) { showShopStatus('❌ Введите название вкуса!'); return; }
     
     const container = document.getElementById('flavorsContainer');
     const existing = container.querySelector(`[data-flavor="${name}"]`);
@@ -702,13 +696,11 @@ function sendOrder() {
 
     window.open('https://t.me/' + tgUsername + '?text=' + encodeURIComponent(msg), '_blank');
 
-    // Уменьшаем количество
     flavor.quantity -= quantity;
     if (flavor.quantity <= 0) {
         currentOrderItem.flavors = currentOrderItem.flavors.filter(f => f.quantity > 0);
     }
 
-    // Сохраняем заказ в pendingSales
     if (!pendingSales[currentOrderItem.id]) pendingSales[currentOrderItem.id] = 0;
     pendingSales[currentOrderItem.id] += quantity;
 
@@ -981,12 +973,10 @@ function updateStats(){
     let totalSold = 0, totalRevenue = 0;
     for(let key in salesData){totalSold += salesData[key].count||0; totalRevenue += salesData[key].revenue||0;}
     
-    // Сегодня
     const today = new Date().toLocaleDateString('ru-RU');
     const todayOrders = salesHistory.filter(s => s.date && s.date.includes(today));
     const todayRevenue = todayOrders.reduce((sum, s) => sum + (s.price || 0), 0);
     
-    // Уникальные покупатели (если есть buyer в истории)
     const uniqueBuyers = new Set();
     salesHistory.forEach(s => { if (s.buyer) uniqueBuyers.add(s.buyer); });
     
@@ -1046,23 +1036,27 @@ function updateDemandAnalysis(){
 function renderShop(){
     const grid = document.getElementById('priceGrid');
     const filtered = getFilteredItems();
-    if(items.length === 0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">🌸 Товары не добавлены</div>';updateStats();return;}
-    if(filtered.length === 0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">📂 Ничего не найдено</div>';updateStats();return;}
+    if(!items || items.length === 0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">🌸 Товары не добавлены</div>';updateStats();return;}
+    if(filtered.length === 0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5;">📂 Ничего не найдено</div>';updateStats();return;}
     const showAdmin = (currentRole === 'admin' || currentRole === 'moder');
     grid.innerHTML = filtered.map(item => {
+        if (!item.flavors || item.flavors.length === 0) {
+            item.flavors = [{ name: 'Стандартный', quantity: 999 }];
+        }
         const sold = salesData[item.id] || {count:0, revenue:0};
         const pending = pendingSales[item.id] || 0;
         const hasPending = pending > 0;
-        const isOutOfStock = !item.flavors || item.flavors.every(f => f.quantity <= 0);
-        const flavorsText = item.flavors ? item.flavors.map(f => `${f.name} (${f.quantity} шт)`).join(', ') : 'Нет вкусов';
+        const isOutOfStock = item.flavors.every(f => f.quantity <= 0);
+        const flavorsText = item.flavors.map(f => `${f.name} (${f.quantity} шт)`).join(', ');
+        const totalStock = item.flavors.reduce((sum, f) => sum + f.quantity, 0);
         return `<div class="price-card" style="${isOutOfStock ? 'opacity:0.5;' : ''}">
             ${item.image && item.image !== 'https://via.placeholder.com/300' ? `<img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'">` : `<div style="width:100%;height:180px;background:linear-gradient(135deg,#f8e8ff,#e0d0f0);display:flex;align-items:center;justify-content:center;font-size:3rem;">🌸</div>`}
             <div class="card-content">
-                <div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div>
+                <div class="card-category">${catEmojis[item.category] || '📦'} ${item.category || ''}</div>
                 <h3 class="card-title">${item.name}</h3>
                 <div class="card-details">
                     <span class="card-badge mg">⚡ ${item.mg}</span>
-                    <span class="card-badge quantity">📦 ${item.flavors ? item.flavors.reduce((sum, f) => sum + f.quantity, 0) : 0} шт</span>
+                    <span class="card-badge quantity">📦 ${totalStock} шт</span>
                     ${isOutOfStock ? '<span class="card-badge" style="background:#f44336;">❌ Нет</span>' : ''}
                 </div>
                 <div class="card-flavors">🍓 ${flavorsText}</div>
@@ -1093,50 +1087,92 @@ function deleteShopItem(id){
 }
 
 function saveShopItem(){
+    console.log('🔥 saveShopItem вызвана!');
+    
     const editId = document.getElementById('editItemId').value;
     const name = document.getElementById('itemName').value.trim();
     const cat = document.getElementById('itemCategory').value;
     const mg = document.getElementById('itemMg').value.trim();
     const price = document.getElementById('itemPrice').value.trim();
     
-    const flavors = getFlavorsList();
+    // Получаем вкусы
+    const flavorRows = document.querySelectorAll('.flavor-row');
+    let flavors = [];
+    if (flavorRows.length === 0) {
+        flavors = [{ name: 'Стандартный', quantity: 999 }];
+        console.log('⚠️ Вкусов нет, создан стандартный');
+    } else {
+        flavorRows.forEach(row => {
+            const name = row.dataset.flavor;
+            const qtyInput = row.querySelector('.flavor-qty');
+            const qty = qtyInput ? parseInt(qtyInput.value) || 0 : 0;
+            if (qty > 0) {
+                flavors.push({ name, quantity: qty });
+            }
+        });
+        console.log('🍓 Собрано вкусов:', flavors.length);
+    }
     
-    if (!name || !price) { showShopStatus('❌ Заполните название и цену!'); return; }
-    if (flavors.length === 0) { showShopStatus('❌ Добавьте хотя бы один вкус!'); return; }
-    if (price < 0) { showShopStatus('❌ Цена не может быть отрицательной!'); return; }
+    if (!name || !price) {
+        showShopStatus('❌ Заполните название и цену!');
+        return;
+    }
+    if (flavors.length === 0) {
+        showShopStatus('❌ Добавьте хотя бы один вкус с количеством > 0!');
+        return;
+    }
+    if (price < 0) {
+        showShopStatus('❌ Цена не может быть отрицательной!');
+        return;
+    }
     
     const img = currentImage || (editId ? items.find(i => String(i.id) === String(editId))?.image : '') || 'https://via.placeholder.com/300';
     
-    if (editId) {
-        const idx = items.findIndex(i => String(i.id) === String(editId));
-        if (idx !== -1) {
-            items[idx].name = name;
-            items[idx].category = cat;
-            items[idx].mg = mg;
-            items[idx].price = price;
-            items[idx].image = img;
-            items[idx].flavors = flavors;
-        }
-    } else {
-        items.push({
-            id: Date.now(),
-            name,
-            category: cat,
-            mg,
-            price,
-            image: img,
-            flavors: flavors
-        });
-    }
+    console.log('📦 Сохраняем:', { name, cat, mg, price, flavors, editId });
     
-    saveAllData();
-    renderShop();
-    buildCategories();
-    updateStats();
-    closeShopModal();
-    showShopStatus('✅ Сохранено!');
-    currentImage = null;
-    autoSyncAll();
+    try {
+        if (editId) {
+            const idx = items.findIndex(i => String(i.id) === String(editId));
+            if (idx !== -1) {
+                items[idx].name = name;
+                items[idx].category = cat;
+                items[idx].mg = mg;
+                items[idx].price = price;
+                items[idx].image = img;
+                items[idx].flavors = flavors;
+                console.log('✏️ Товар обновлён');
+            } else {
+                console.log('❌ Товар с ID не найден');
+            }
+        } else {
+            const newItem = {
+                id: Date.now(),
+                name,
+                category: cat,
+                mg,
+                price,
+                image: img,
+                flavors: flavors
+            };
+            items.push(newItem);
+            console.log('✨ Новый товар создан:', newItem);
+        }
+        
+        saveAllData();
+        console.log('💾 Данные сохранены');
+        
+        renderShop();
+        buildCategories();
+        updateStats();
+        closeShopModal();
+        showShopStatus('✅ Сохранено! Товаров: ' + items.length);
+        currentImage = null;
+        autoSyncAll();
+        
+    } catch(e) {
+        console.error('❌ Ошибка:', e);
+        showShopStatus('❌ Ошибка: ' + e.message);
+    }
 }
 
 function openShopModal(editItem = null){
@@ -1152,7 +1188,6 @@ function openShopModal(editItem = null){
     preview.style.opacity = '0.6';
     preview.textContent = '📸 Нажмите для загрузки фото';
     
-    // Очищаем контейнер вкусов
     document.getElementById('flavorsContainer').innerHTML = '';
     
     if(editItem){
@@ -1168,7 +1203,6 @@ function openShopModal(editItem = null){
             preview.style.opacity = '1';
             preview.textContent = '';
         }
-        // Загружаем вкусы
         if (editItem.flavors && editItem.flavors.length > 0) {
             loadFlavors(editItem.flavors);
         }
@@ -1195,7 +1229,7 @@ function resetAllItems(){if(confirm('Удалить ВСЕ товары?')){item
 function showShopStatus(msg){const el=document.getElementById('shopStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2500);}
 
 // ============================================================
-// АНАЛИЗ ЗАКУПОК (ДЛЯ ВЛАДЕЛЬЦА)
+// АНАЛИЗ ЗАКУПОК
 // ============================================================
 function showStockAnalysis(){
     const data = analyzeStock();
@@ -1212,7 +1246,6 @@ function showStockAnalysis(){
         </div>
     `;
 
-    // 🔥 Срочно заказать
     if (data.critical && data.critical.length > 0) {
         html += `<h4 style="color:#f44336;margin-top:12px;">🔥 СРОЧНО ЗАКАЗАТЬ (закончится через 0-3 дня)</h4>`;
         data.critical.slice(0, 10).forEach(c => {
@@ -1222,7 +1255,6 @@ function showStockAnalysis(){
         });
     }
 
-    // ⚠️ Скоро закончится
     if (data.warning && data.warning.length > 0) {
         html += `<h4 style="color:#ff9800;margin-top:12px;">⚠️ СКОРО ЗАКОНЧИТСЯ (через 4-7 дней)</h4>`;
         data.warning.slice(0, 10).forEach(c => {
@@ -1232,7 +1264,6 @@ function showStockAnalysis(){
         });
     }
 
-    // ✅ Есть запас
     if (data.ok && data.ok.length > 0) {
         html += `<h4 style="color:#4CAF50;margin-top:12px;">✅ ЕСТЬ ЗАПАС (больше 7 дней)</h4>`;
         data.ok.slice(0, 5).forEach(c => {
@@ -1245,7 +1276,6 @@ function showStockAnalysis(){
         }
     }
 
-    // 📊 Топ продаж
     if (data.topSelling && data.topSelling.length > 0) {
         html += `<h4 style="margin-top:12px;">📊 ТОП-5 САМЫХ ПОПУЛЯРНЫХ</h4>`;
         const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
@@ -1257,7 +1287,6 @@ function showStockAnalysis(){
         });
     }
 
-    // 📋 Рекомендации
     if (data.recommendations && data.recommendations.length > 0) {
         html += `<h4 style="margin-top:12px;color:#FFD700;">📋 РЕКОМЕНДУЕМЫЙ СПИСОК ЗАКУПКИ</h4>`;
         data.recommendations.slice(0, 10).forEach(r => {
@@ -1267,7 +1296,6 @@ function showStockAnalysis(){
         });
     }
 
-    // Итоги за месяц
     if (data.monthRevenue !== undefined) {
         html += `<div style="margin-top:15px;padding:12px;background:rgba(255,255,255,0.05);border-radius:10px;display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;">
             <div><strong>💰 За месяц:</strong> ${data.monthRevenue}₽</div>
@@ -1304,7 +1332,6 @@ function analyzeStock() {
     const dayMs = 86400000;
     const monthAgo = now - 30 * dayMs;
 
-    // Считаем продажи за месяц
     const monthSales = salesHistory.filter(s => {
         if (!s.date) return false;
         const d = new Date(s.date).getTime();
@@ -1313,7 +1340,6 @@ function analyzeStock() {
     results.monthRevenue = monthSales.reduce((sum, s) => sum + (s.price || 0), 0);
     results.monthOrders = monthSales.length;
 
-    // Сравнение с прошлым месяцем
     const twoMonthsAgo = now - 60 * dayMs;
     const prevMonthSales = salesHistory.filter(s => {
         if (!s.date) return false;
@@ -1323,7 +1349,6 @@ function analyzeStock() {
     const prevMonthRevenue = prevMonthSales.reduce((sum, s) => sum + (s.price || 0), 0);
     results.growth = results.monthRevenue > prevMonthRevenue ? '📈 рост' : '📉 падение';
 
-    // Анализ каждого товара и вкуса
     items.forEach(item => {
         if (!item.flavors || item.flavors.length === 0) return;
 
@@ -1339,7 +1364,6 @@ function analyzeStock() {
                     speedPerDay = sales.count / daysDiff;
                 }
             } else if (sales.count === 1 && sales.firstSale) {
-                // Если только одна продажа, считаем что продано за 1 день
                 speedPerDay = 1;
             }
 
@@ -1368,7 +1392,6 @@ function analyzeStock() {
         });
     });
 
-    // Топ продаж (по всем вкусам)
     const allFlavors = [];
     items.forEach(item => {
         if (!item.flavors) return;
@@ -1385,9 +1408,8 @@ function analyzeStock() {
     });
     results.topSelling = allFlavors.sort((a, b) => b.sold - a.sold).slice(0, 10);
 
-    // Рекомендации к закупке
     results.critical.forEach(c => {
-        const recommendedQty = Math.ceil(c.speedPerDay * 14) + 5; // На 2 недели + запас
+        const recommendedQty = Math.ceil(c.speedPerDay * 14) + 5;
         results.recommendations.push({
             name: c.itemName + ' (' + c.flavorName + ')',
             qty: Math.max(recommendedQty, 5),
@@ -1395,7 +1417,6 @@ function analyzeStock() {
         });
     });
 
-    // Добавляем предупреждения в рекомендации
     results.warning.forEach(c => {
         const recommendedQty = Math.ceil(c.speedPerDay * 10) + 3;
         results.recommendations.push({
@@ -1405,14 +1426,13 @@ function analyzeStock() {
         });
     });
 
-    // Сортируем рекомендации по важности (сначала те, что закончатся быстрее)
     results.recommendations.sort((a, b) => b.qty - a.qty);
 
     return results;
 }
 
 // ============================================================
-// УПРАВЛЕНИЕ ПЕРСОНАЛОМ
+// УПРАВЛЕНИЕ ПЕРСОНАЛОМ (остальное)
 // ============================================================
 function getDeviceId(){let d=localStorage.getItem('deviceId');if(!d){d='dev_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('deviceId',d);}return d;}
 
@@ -1455,221 +1475,47 @@ function payoutStaff(code){const staff=JSON.parse(localStorage.getItem('shopStaf
 // ============================================================
 // РОЗЫГРЫШ
 // ============================================================
-function renderGa(){
-    const c = document.getElementById('gaContent');
-    
-    if(!currentRole){
-        const approvedCount = gaParticipants.filter(p => p.status === 'approved').length;
-        let html = `<div class="ga-card"><h3>🎰 Участвовать</h3>
-            <input class="ga-input" id="gaName" placeholder="Имя">
-            <input class="ga-input" id="gaTg" placeholder="@telegram">
-            <input class="ga-input" id="gaCode" placeholder="Код из канала">
-            <button class="ga-btn btn-cyan" onclick="gaParticipate()">🎯 Участвовать!</button>
-            <div id="gaMsg" style="text-align:center;margin-top:10px"></div>
-        </div>
-        <div class="ga-card"><h3>👥 Участники: ${approvedCount}</h3><div id="gaPublicList"></div></div>`;
-        renderGaPublicList();
-        if(gaWinner){
-            html += `<div class="ga-card winner-card"><h3>🏆 Победитель</h3><div class="winner-name">${gaWinner.name}</div><div>${gaWinner.tg}</div></div>`;
-        }
-        c.innerHTML = html;
-        return;
-    }
-    
-    const isAdmin = currentRole === 'admin';
-    const isModer = currentRole === 'moder';
-    const canManage = isAdmin || isModer;
-    
-    let html = '';
-    
-    if(canManage){
-        html += `<div class="ga-card"><h3>⚙️ Управление розыгрышем</h3>
-            <button class="ga-btn btn-gold" onclick="gaPickWinner()">🎰 Выбрать победителя</button>
-            <button class="ga-btn btn-magenta" onclick="gaToggleReg()">${gaRegOpen ? '🔒 Закрыть' : '🔓 Открыть'}</button>
-            <button class="ga-btn" style="background:#ff5722;" onclick="resetGiveaway()">🔄 Сбросить</button>
-            <button class="ga-btn" style="background:#f44336;" onclick="clearParticipants()">🗑️ Очистить участников</button>
-            <button class="ga-btn" style="background:#2196F3;" onclick="extendDeadline()">📅 Продлить (+7 дней)</button>
-        </div>`;
-    }
-    
-    if(isAdmin){
-        html += `<div class="ga-card"><h3>🚫 Блокировка</h3>
-            <input class="ga-input" id="gaBanInput" placeholder="@username">
-            <button class="ga-btn" style="background:#f44336;color:white" onclick="gaBanUser()">🚫 Заблокировать</button>
-            <div id="gaBlockedList"></div>
-        </div>
-        <div class="ga-card"><h3>📝 Настройки</h3>
-            <input class="ga-input" id="gaCodeInput" value="${gaSecretCode}">
-            <input class="ga-input" type="datetime-local" id="gaDeadlineInput" value="${gaDeadline}">
-            <button class="ga-btn btn-cyan" onclick="gaSaveSettings()">💾 Сохранить</button>
-        </div>`;
-    }
-    
-    html += `<div class="ga-card"><h3>👥 Модерация</h3>
-        <div class="tab-bar">
-            <button class="tab-btn ${gaFilter === 'pending' ? 'active' : ''}" onclick="gaSetFilter('pending')">⏳ Ждут</button>
-            <button class="tab-btn ${gaFilter === 'approved' ? 'active' : ''}" onclick="gaSetFilter('approved')">✅ Ок</button>
-            <button class="tab-btn ${gaFilter === 'rejected' ? 'active' : ''}" onclick="gaSetFilter('rejected')">❌ Нет</button>
-            <button class="tab-btn ${gaFilter === 'kicked' ? 'active' : ''}" onclick="gaSetFilter('kicked')">🚫 Выгнаны</button>
-            <button class="tab-btn ${gaFilter === 'all' ? 'active' : ''}" onclick="gaSetFilter('all')">Все</button>
-        </div>
-        <div id="gaAdminList"></div>
-    </div>`;
-    
-    if(gaWinner){
-        html += `<div class="ga-card winner-card"><h3>🏆 Победитель</h3><div class="winner-name">${gaWinner.name}</div><div>${gaWinner.tg}</div></div>`;
-    }
-    
-    html += `<div class="ga-card"><h3>📋 История</h3><div id="gaHistoryList"></div></div>`;
-    
-    c.innerHTML = html;
-    renderGaAdminList();
-    renderGaHistory();
-    if(isAdmin) renderGaBlockedList();
-}
+function renderGa(){const c=document.getElementById('gaContent');if(!currentRole){const approvedCount=gaParticipants.filter(p=>p.status==='approved').length;let html=`<div class="ga-card"><h3>🎰 Участвовать</h3><input class="ga-input" id="gaName" placeholder="Имя"><input class="ga-input" id="gaTg" placeholder="@telegram"><input class="ga-input" id="gaCode" placeholder="Код из канала"><button class="ga-btn btn-cyan" onclick="gaParticipate()">🎯 Участвовать!</button><div id="gaMsg" style="text-align:center;margin-top:10px"></div></div><div class="ga-card"><h3>👥 Участники: ${approvedCount}</h3><div id="gaPublicList"></div></div>`;renderGaPublicList();if(gaWinner){html+=`<div class="ga-card winner-card"><h3>🏆 Победитель</h3><div class="winner-name">${gaWinner.name}</div><div>${gaWinner.tg}</div></div>`;}c.innerHTML=html;return;}const isAdmin=currentRole==='admin';const isModer=currentRole==='moder';const canManage=isAdmin||isModer;let html='';if(canManage){html+=`<div class="ga-card"><h3>⚙️ Управление розыгрышем</h3><button class="ga-btn btn-gold" onclick="gaPickWinner()">🎰 Выбрать победителя</button><button class="ga-btn btn-magenta" onclick="gaToggleReg()">${gaRegOpen?'🔒 Закрыть':'🔓 Открыть'}</button><button class="ga-btn" style="background:#ff5722;" onclick="resetGiveaway()">🔄 Сбросить</button><button class="ga-btn" style="background:#f44336;" onclick="clearParticipants()">🗑️ Очистить участников</button><button class="ga-btn" style="background:#2196F3;" onclick="extendDeadline()">📅 Продлить (+7 дней)</button></div>`;}if(isAdmin){html+=`<div class="ga-card"><h3>🚫 Блокировка</h3><input class="ga-input" id="gaBanInput" placeholder="@username"><button class="ga-btn" style="background:#f44336;color:white" onclick="gaBanUser()">🚫 Заблокировать</button><div id="gaBlockedList"></div></div><div class="ga-card"><h3>📝 Настройки</h3><input class="ga-input" id="gaCodeInput" value="${gaSecretCode}"><input class="ga-input" type="datetime-local" id="gaDeadlineInput" value="${gaDeadline}"><button class="ga-btn btn-cyan" onclick="gaSaveSettings()">💾 Сохранить</button></div>`;}html+=`<div class="ga-card"><h3>👥 Модерация</h3><div class="tab-bar"><button class="tab-btn ${gaFilter==='pending'?'active':''}" onclick="gaSetFilter('pending')">⏳ Ждут</button><button class="tab-btn ${gaFilter==='approved'?'active':''}" onclick="gaSetFilter('approved')">✅ Ок</button><button class="tab-btn ${gaFilter==='rejected'?'active':''}" onclick="gaSetFilter('rejected')">❌ Нет</button><button class="tab-btn ${gaFilter==='kicked'?'active':''}" onclick="gaSetFilter('kicked')">🚫 Выгнаны</button><button class="tab-btn ${gaFilter==='all'?'active':''}" onclick="gaSetFilter('all')">Все</button></div><div id="gaAdminList"></div></div>`;if(gaWinner){html+=`<div class="ga-card winner-card"><h3>🏆 Победитель</h3><div class="winner-name">${gaWinner.name}</div><div>${gaWinner.tg}</div></div>`;}html+=`<div class="ga-card"><h3>📋 История</h3><div id="gaHistoryList"></div></div>`;c.innerHTML=html;renderGaAdminList();renderGaHistory();if(isAdmin)renderGaBlockedList();}
 
-function gaParticipate(){
-    const n = document.getElementById('gaName')?.value.trim();
-    const tg = document.getElementById('gaTg')?.value.trim();
-    const cd = document.getElementById('gaCode')?.value.trim();
-    const me = document.getElementById('gaMsg');
-    if(!n || !tg || !cd){me.textContent='❌ Заполните все поля';me.style.color='#f44336';return;}
-    if(!gaRegOpen){me.textContent='❌ Регистрация закрыта';me.style.color='#f44336';return;}
-    if(new Date() > new Date(gaDeadline)){me.textContent='❌ Дедлайн прошёл!';me.style.color='#f44336';return;}
-    if(cd.toUpperCase() !== gaSecretCode.toUpperCase()){me.textContent='❌ Неверный код';me.style.color='#f44336';return;}
-    let tc = tg.startsWith('@') ? tg : '@'+tg;
-    if(gaBlocked.find(b => b.toLowerCase() === tc.toLowerCase())){me.textContent='❌ Вы заблокированы';me.style.color='#f44336';return;}
-    if(gaParticipants.find(p => p.tg.toLowerCase() === tc.toLowerCase())){me.textContent='❌ Уже участвуете';me.style.color='#f44336';return;}
-    gaParticipants.push({name:n, tg:tc, time:new Date().toLocaleString('ru-RU'), status:'pending'});
-    localStorage.setItem('ga_participants', JSON.stringify(gaParticipants));
-    document.getElementById('gaName').value = '';
-    document.getElementById('gaTg').value = '';
-    document.getElementById('gaCode').value = '';
-    me.textContent='✅ Заявка отправлена!';me.style.color='#4CAF50';
-    renderGaPublicList();
-    autoSyncAll();
-}
+function gaParticipate(){const n=document.getElementById('gaName')?.value.trim(),tg=document.getElementById('gaTg')?.value.trim(),cd=document.getElementById('gaCode')?.value.trim(),me=document.getElementById('gaMsg');if(!n||!tg||!cd){me.textContent='❌ Заполните все поля';me.style.color='#f44336';return;}if(!gaRegOpen){me.textContent='❌ Регистрация закрыта';me.style.color='#f44336';return;}if(new Date()>new Date(gaDeadline)){me.textContent='❌ Дедлайн прошёл!';me.style.color='#f44336';return;}if(cd.toUpperCase()!==gaSecretCode.toUpperCase()){me.textContent='❌ Неверный код';me.style.color='#f44336';return;}let tc=tg.startsWith('@')?tg:'@'+tg;if(gaBlocked.find(b=>b.toLowerCase()===tc.toLowerCase())){me.textContent='❌ Вы заблокированы';me.style.color='#f44336';return;}if(gaParticipants.find(p=>p.tg.toLowerCase()===tc.toLowerCase())){me.textContent='❌ Уже участвуете';me.style.color='#f44336';return;}gaParticipants.push({name:n,tg:tc,time:new Date().toLocaleString('ru-RU'),status:'pending'});localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));document.getElementById('gaName').value='';document.getElementById('gaTg').value='';document.getElementById('gaCode').value='';me.textContent='✅ Заявка отправлена!';me.style.color='#4CAF50';renderGaPublicList();autoSyncAll();}
 
-function renderGaPublicList(){
-    const el = document.getElementById('gaPublicList');
-    if(!el) return;
-    const app = gaParticipants.filter(p => p.status === 'approved');
-    el.innerHTML = app.length === 0 ? '<p style="opacity:0.5;text-align:center">Пока никто не участвует</p>' : app.map(p => `<div class="ga-participant"><span>${p.name} <span style="opacity:0.5">${p.tg}</span></span><span style="color:#4CAF50">✓</span></div>`).join('');
-}
+function renderGaPublicList(){const el=document.getElementById('gaPublicList');if(!el)return;const app=gaParticipants.filter(p=>p.status==='approved');el.innerHTML=app.length===0?'<p style="opacity:0.5;text-align:center">Пока никто не участвует</p>':app.map(p=>`<div class="ga-participant"><span>${p.name} <span style="opacity:0.5">${p.tg}</span></span><span style="color:#4CAF50">✓</span></div>`).join('');}
 
-function renderGaAdminList(){
-    const el = document.getElementById('gaAdminList');
-    if(!el) return;
-    const f = gaFilter === 'all' ? gaParticipants : gaParticipants.filter(p => p.status === gaFilter);
-    el.innerHTML = f.length === 0 ? '<p style="opacity:0.5;text-align:center">Нет</p>' : f.map((p, i) => {
-        const idx = gaParticipants.indexOf(p);
-        let btns = '';
-        if(p.status === 'pending') btns = `<button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;margin:0 2px" onclick="gaApprove(${idx})">✓</button><button style="background:#f44336;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaReject(${idx})">✕</button>`;
-        else if(p.status === 'approved') btns = `<button style="background:#ff9800;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaKick(${idx})">🚫 Выгнать</button>`;
-        else if(p.status === 'rejected') btns = `<button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaApprove(${idx})">↩ Вернуть</button>`;
-        const statusEmoji = p.status === 'pending' ? '⏳' : p.status === 'approved' ? '✅' : p.status === 'rejected' ? '❌' : '🚫';
-        return `<div class="ga-participant"><span>${statusEmoji} ${p.name} <span style="opacity:0.5">${p.tg}</span></span><span>${btns}</span></div>`;
-    }).join('');
-}
+function renderGaAdminList(){const el=document.getElementById('gaAdminList');if(!el)return;const f=gaFilter==='all'?gaParticipants:gaParticipants.filter(p=>p.status===gaFilter);el.innerHTML=f.length===0?'<p style="opacity:0.5;text-align:center">Нет</p>':f.map((p,i)=>{const idx=gaParticipants.indexOf(p);let btns='';if(p.status==='pending')btns=`<button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;margin:0 2px" onclick="gaApprove(${idx})">✓</button><button style="background:#f44336;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaReject(${idx})">✕</button>`;else if(p.status==='approved')btns=`<button style="background:#ff9800;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaKick(${idx})">🚫 Выгнать</button>`;else if(p.status==='rejected')btns=`<button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaApprove(${idx})">↩ Вернуть</button>`;const statusEmoji=p.status==='pending'?'⏳':p.status==='approved'?'✅':p.status==='rejected'?'❌':'🚫';return`<div class="ga-participant"><span>${statusEmoji} ${p.name} <span style="opacity:0.5">${p.tg}</span></span><span>${btns}</span></div>`;}).join('');}
 
-function gaApprove(i){gaParticipants[i].status='approved';localStorage.setItem('ga_participants', JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
-function gaReject(i){gaParticipants[i].status='rejected';localStorage.setItem('ga_participants', JSON.stringify(gaParticipants));renderGaAdminList();autoSyncAll();}
-function gaKick(i){if(!confirm('Выгнать '+gaParticipants[i].name+'?'))return;gaParticipants[i].status='kicked';localStorage.setItem('ga_participants', JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
+function gaApprove(i){gaParticipants[i].status='approved';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
+function gaReject(i){gaParticipants[i].status='rejected';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();autoSyncAll();}
+function gaKick(i){if(!confirm('Выгнать '+gaParticipants[i].name+'?'))return;gaParticipants[i].status='kicked';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
 function gaSetFilter(f){gaFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderGaAdminList();}
 
-function gaPickWinner(){
-    if(new Date() > new Date(gaDeadline)){alert('❌ Дедлайн прошёл!');return;}
-    const app = gaParticipants.filter(p => p.status === 'approved');
-    if(app.length === 0){alert('Нет одобренных участников!');return;}
-    gaWinner = app[Math.floor(Math.random() * app.length)];
-    localStorage.setItem('ga_winner', JSON.stringify(gaWinner));
-    gaHistory.unshift({name:gaWinner.name, tg:gaWinner.tg, date:new Date().toLocaleString('ru-RU')});
-    localStorage.setItem('ga_history', JSON.stringify(gaHistory));
-    renderGa();
-    spawnConfetti();
-    autoSyncAll();
-}
+function gaPickWinner(){if(new Date()>new Date(gaDeadline)){alert('❌ Дедлайн прошёл!');return;}const app=gaParticipants.filter(p=>p.status==='approved');if(app.length===0){alert('Нет одобренных участников!');return;}gaWinner=app[Math.floor(Math.random()*app.length)];localStorage.setItem('ga_winner',JSON.stringify(gaWinner));gaHistory.unshift({name:gaWinner.name,tg:gaWinner.tg,date:new Date().toLocaleString('ru-RU')});localStorage.setItem('ga_history',JSON.stringify(gaHistory));renderGa();spawnConfetti();autoSyncAll();}
 
-function resetGiveaway(){
-    if(!confirm('🔄 Сбросить розыгрыш? (победитель и участники будут удалены)')) return;
-    gaWinner = null;
-    gaParticipants = [];
-    gaBlocked = [];
-    localStorage.setItem('ga_winner', 'null');
-    localStorage.setItem('ga_participants', '[]');
-    localStorage.setItem('ga_blocked', '[]');
-    renderGa();
-    showGaStatus('✅ Розыгрыш сброшен!');
-    autoSyncAll();
-}
+function resetGiveaway(){if(!confirm('🔄 Сбросить розыгрыш? (победитель и участники будут удалены)'))return;gaWinner=null;gaParticipants=[];gaBlocked=[];localStorage.setItem('ga_winner','null');localStorage.setItem('ga_participants','[]');localStorage.setItem('ga_blocked','[]');renderGa();showGaStatus('✅ Розыгрыш сброшен!');autoSyncAll();}
 
-function clearParticipants(){
-    if(!confirm('🗑️ Очистить всех участников? (безвозвратно)')) return;
-    gaParticipants = [];
-    localStorage.setItem('ga_participants', '[]');
-    renderGa();
-    showGaStatus('✅ Участники удалены!');
-    autoSyncAll();
-}
+function clearParticipants(){if(!confirm('🗑️ Очистить всех участников? (безвозвратно)'))return;gaParticipants=[];localStorage.setItem('ga_participants','[]');renderGa();showGaStatus('✅ Участники удалены!');autoSyncAll();}
 
-function extendDeadline(){
-    const d = new Date(gaDeadline);
-    d.setDate(d.getDate() + 7);
-    gaDeadline = d.toISOString().slice(0, 16);
-    localStorage.setItem('ga_deadline', gaDeadline);
-    renderGa();
-    showGaStatus('📅 Дедлайн продлён на 7 дней!');
-    autoSyncAll();
-}
+function extendDeadline(){const d=new Date(gaDeadline);d.setDate(d.getDate()+7);gaDeadline=d.toISOString().slice(0,16);localStorage.setItem('ga_deadline',gaDeadline);renderGa();showGaStatus('📅 Дедлайн продлён на 7 дней!');autoSyncAll();}
 
-function spawnConfetti(){
-    const e = ['🎉','🎊','✨','💎','🌟','🏆','🎯','💫','🔥','⚡'];
-    for(let i=0;i<40;i++){setTimeout(()=>{const el=document.createElement('span');el.style.cssText='position:fixed;pointer-events:none;z-index:999;font-size:1.5rem;animation:confettiFall 3s ease-in-out forwards;left:'+Math.random()*100+'%;top:-20px';el.textContent=e[Math.floor(Math.random()*e.length)];document.body.appendChild(el);setTimeout(()=>el.remove(),3000);},i*50);}
-}
+function spawnConfetti(){const e=['🎉','🎊','✨','💎','🌟','🏆','🎯','💫','🔥','⚡'];for(let i=0;i<40;i++){setTimeout(()=>{const el=document.createElement('span');el.style.cssText='position:fixed;pointer-events:none;z-index:999;font-size:1.5rem;animation:confettiFall 3s ease-in-out forwards;left:'+Math.random()*100+'%;top:-20px';el.textContent=e[Math.floor(Math.random()*e.length)];document.body.appendChild(el);setTimeout(()=>el.remove(),3000);},i*50);}}
 
-function gaBanUser(){
-    if(currentRole!=='admin')return;
-    let u = document.getElementById('gaBanInput')?.value.trim();
-    if(!u)return;
-    if(!u.startsWith('@')) u = '@'+u;
-    gaBlocked.push(u);
-    localStorage.setItem('ga_blocked', JSON.stringify(gaBlocked));
-    document.getElementById('gaBanInput').value = '';
-    renderGaBlockedList();
-    autoSyncAll();
-}
+function gaBanUser(){if(currentRole!=='admin')return;let u=document.getElementById('gaBanInput')?.value.trim();if(!u)return;if(!u.startsWith('@'))u='@'+u;gaBlocked.push(u);localStorage.setItem('ga_blocked',JSON.stringify(gaBlocked));document.getElementById('gaBanInput').value='';renderGaBlockedList();autoSyncAll();}
 
-function renderGaBlockedList(){
-    const el = document.getElementById('gaBlockedList');
-    if(!el)return;
-    el.innerHTML = gaBlocked.length === 0 ? '<p style="opacity:0.5">Пусто</p>' : gaBlocked.map((b,i) => `<div class="ga-participant"><span>${b}</span><button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaUnban(${i})">🔓</button></div>`).join('');
-}
+function renderGaBlockedList(){const el=document.getElementById('gaBlockedList');if(!el)return;el.innerHTML=gaBlocked.length===0?'<p style="opacity:0.5">Пусто</p>':gaBlocked.map((b,i)=>`<div class="ga-participant"><span>${b}</span><button style="background:#4CAF50;color:white;border:none;padding:4px 8px;border-radius:6px;cursor:pointer" onclick="gaUnban(${i})">🔓</button></div>`).join('');}
 
-function gaUnban(i){gaBlocked.splice(i,1);localStorage.setItem('ga_blocked', JSON.stringify(gaBlocked));renderGaBlockedList();autoSyncAll();}
+function gaUnban(i){gaBlocked.splice(i,1);localStorage.setItem('ga_blocked',JSON.stringify(gaBlocked));renderGaBlockedList();autoSyncAll();}
 
-function gaToggleReg(){gaRegOpen = !gaRegOpen;localStorage.setItem('ga_regOpen', gaRegOpen);renderGa();autoSyncAll();}
+function gaToggleReg(){gaRegOpen=!gaRegOpen;localStorage.setItem('ga_regOpen',gaRegOpen);renderGa();autoSyncAll();}
 
-function gaSaveSettings(){
-    gaSecretCode = document.getElementById('gaCodeInput')?.value.trim() || 'WIN2024';
-    gaDeadline = document.getElementById('gaDeadlineInput')?.value || '2026-12-31T23:59';
-    localStorage.setItem('ga_secretCode', gaSecretCode);
-    localStorage.setItem('ga_deadline', gaDeadline);
-    alert('✅ Сохранено!');
-    autoSyncAll();
-}
+function gaSaveSettings(){gaSecretCode=document.getElementById('gaCodeInput')?.value.trim()||'WIN2024';gaDeadline=document.getElementById('gaDeadlineInput')?.value||'2026-12-31T23:59';localStorage.setItem('ga_secretCode',gaSecretCode);localStorage.setItem('ga_deadline',gaDeadline);alert('✅ Сохранено!');autoSyncAll();}
 
-function renderGaHistory(){
-    const el = document.getElementById('gaHistoryList');
-    if(!el)return;
-    el.innerHTML = gaHistory.length === 0 ? '<p style="opacity:0.5">Пусто</p>' : gaHistory.map(h => `<div class="ga-participant"><span>${h.name} (${h.tg})</span><span style="opacity:0.5">${h.date}</span></div>`).join('');
-}
+function renderGaHistory(){const el=document.getElementById('gaHistoryList');if(!el)return;el.innerHTML=gaHistory.length===0?'<p style="opacity:0.5">Пусто</p>':gaHistory.map(h=>`<div class="ga-participant"><span>${h.name} (${h.tg})</span><span style="opacity:0.5">${h.date}</span></div>`).join('');}
 
 function showGaStatus(msg){const el=document.getElementById('gaStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2500);}
 
 // ============================================================
 // КОРЗИНА
 // ============================================================
-function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.quantity>0);if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
+function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.flavors && i.flavors.some(f=>f.quantity>0));if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
 
 function acceptUpsell(){if(upsellItem){cart.push({id:'upsell_'+Date.now(),name:upsellItem.name+' (-10%)',price:Math.round(upsellItem.price*0.9),qty:1,flavors:upsellItem.flavors,mg:upsellItem.mg});saveCart();updateCartPanel();showShopStatus('✅ Добавлено!');}closeUpsell();}
 
@@ -1688,7 +1534,7 @@ function closeCartModal(){document.getElementById('cartModal').classList.remove(
 
 function renderCartItems(){const el=document.getElementById('cartItemsList'),te=document.getElementById('cartTotal');if(cart.length===0){el.innerHTML='<p style="text-align:center;opacity:0.7;padding:15px">Корзина пуста</p>';te.innerHTML='Итого: 0₽';return;}let t=0;el.innerHTML=cart.map((c,i)=>{t+=c.price*c.qty;return`<div class="cart-item"><div><strong>${c.name}</strong><br><small>${c.flavors||''} | ${c.mg||''} | ${c.price}₽ × ${c.qty}</small></div><div style="display:flex;gap:4px;align-items:center"><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${i})">✕</button></div></div>`}).join('');te.innerHTML='Итого: '+t+'₽ <button onclick="clearCart()" style="margin-left:10px;padding:5px 12px;background:#f44336;color:white;border:none;border-radius:8px;cursor:pointer;">🗑️ Очистить</button>';}
 
-function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.quantity>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncAll();showShopStatus('✅ Заказ отправлен!');}
+function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.flavors){const totalStock=item.flavors.reduce((sum,f)=>sum+f.quantity,0);if(totalStock>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}}});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncAll();showShopStatus('✅ Заказ отправлен!');}
 
 // ============================================================
 // СТАТИСТИКА
@@ -1703,9 +1549,7 @@ function confirmSale(id){
     const item = items.find(i => i.id == id);
     if(!item) return;
     
-    // Проверяем, есть ли вкусы с остатками
     if (item.flavors && item.flavors.length > 0) {
-        // Ищем вкус с самым большим количеством
         const sorted = [...item.flavors].sort((a, b) => b.quantity - a.quantity);
         const flavor = sorted[0];
         if (flavor && flavor.quantity > 0) {
@@ -1723,7 +1567,6 @@ function confirmSale(id){
     salesData[id].count++;
     salesData[id].revenue += parseInt(item.price);
     
-    // Сохраняем в историю с деталями
     const flavorsText = item.flavors ? item.flavors.map(f => f.name + '(' + f.quantity + ')').join(', ') : 'Нет вкусов';
     salesHistory.unshift({
         date: new Date().toLocaleString('ru-RU'),
@@ -1734,7 +1577,6 @@ function confirmSale(id){
     
     if(salesHistory.length > 100) salesHistory = salesHistory.slice(0, 100);
     
-    // Проверяем, есть ли вообще остатки
     const totalStock = item.flavors ? item.flavors.reduce((sum, f) => sum + f.quantity, 0) : 0;
     if(totalStock <= 0) {
         items = items.filter(i => i.id != id);
