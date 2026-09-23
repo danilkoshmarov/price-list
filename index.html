@@ -70,9 +70,24 @@
         .quick-btn:hover{transform:translateY(-1px)}
         .quick-btn.danger{border-color:#f44336;color:#f44336}
         .quick-btn.success{border-color:#4CAF50;color:#4CAF50}
+        .quick-btn.orders-btn{border-color:#2196F3;color:#2196F3}
         
         .status-message{text-align:center;padding:8px;border-radius:10px;background:var(--stat-bg);display:none;margin-bottom:12px;font-size:0.85rem}.status-message.show{display:block}
         .search-input{width:100%;max-width:400px;padding:10px 16px;border-radius:25px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.85rem;outline:none;margin:0 auto 12px;display:block}
+        
+        /* Фильтры */
+        .filter-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px;align-items:center;}
+        .filter-mg{padding:4px 10px;border-radius:12px;border:2px solid transparent;background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.7rem;transition:all 0.2s;}
+        .filter-mg:hover{transform:translateY(-1px);border-color:var(--accent);}
+        .filter-mg.active{background:var(--accent);color:white;border-color:var(--accent);}
+        
+        .price-filter-input{padding:4px 10px;border-radius:12px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.7rem;width:60px;outline:none;transition:all 0.3s ease;}
+        .price-filter-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(233,30,99,0.1);}
+        .price-filter-btn{padding:4px 12px;border-radius:12px;border:none;cursor:pointer;font-size:0.7rem;font-weight:600;transition:all 0.3s ease;}
+        .price-filter-btn.apply{background:#4CAF50;color:white;}
+        .price-filter-btn.apply:hover{transform:translateY(-1px);box-shadow:0 2px 10px rgba(76,175,80,0.3);}
+        .price-filter-btn.reset{background:var(--btn-bg);color:var(--text);border:1px solid var(--card-border);}
+        .price-filter-btn.reset:hover{transform:translateY(-1px);background:var(--stat-bg);}
         
         .sort-bar{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
         .sort-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--card-border);background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.75rem;transition:all 0.2s}
@@ -80,8 +95,9 @@
         
         .categories-nav{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
         .cat-tab{padding:6px 14px;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.8rem;background:var(--btn-bg);color:var(--text);border:2px solid transparent;transition:all 0.2s}
+        .cat-tab:hover{transform:translateY(-1px);border-color:var(--accent);}
         .cat-tab.active{background:var(--accent);color:white;border-color:var(--accent)}
-        .cat-tab .count{background:#e91e63;color:white;padding:2px 6px;border-radius:12px;margin-left:4px;font-size:0.65rem}
+        .cat-tab .count{background:rgba(255,255,255,0.3);color:white;padding:2px 6px;border-radius:12px;margin-left:4px;font-size:0.65rem}
         
         .stats-panel{display:none;gap:10px;margin-bottom:15px;flex-wrap:wrap;justify-content:center}.stats-panel.show{display:flex}
         .stat-card{background:var(--stat-bg);border-radius:15px;padding:14px 18px;text-align:center;min-width:120px;flex:1;border:1px solid var(--card-border)}
@@ -109,6 +125,7 @@
         .card-badge.mg{background:#e91e63}.card-badge.quantity{background:#7b1fa2}
         .card-flavors{margin-bottom:6px;font-size:0.8rem;opacity:0.8}
         .card-price{font-size:1.2rem;font-weight:700;background:var(--stat-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+        .card-profit{font-size:0.75rem;opacity:0.7;margin-bottom:4px}
         .card-sales-info{display:none;background:rgba(255,182,193,0.15);border-radius:8px;padding:4px 8px;margin-bottom:6px;font-size:0.7rem}
         .card-sales-info.show{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:3px}
         .card-sales-info.pending{background:rgba(255,152,0,0.15)}
@@ -165,7 +182,26 @@
         .terminal-dot-red{background:#ff5f56}.terminal-dot-yellow{background:#ffbd2e}.terminal-dot-green{background:#27c93f}
         .terminal-command{color:#e91e63}.terminal-response{color:#4af626}
         
-        @media(max-width:768px){body{padding:8px}.header h1{font-size:1.6rem}.logo{width:50px;height:50px}.nav-tab{padding:10px 14px;font-size:0.8rem}.price-grid{grid-template-columns:1fr;gap:10px}.card-image{height:150px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:10px 12px}.stats-panel{flex-direction:column}.stat-card{min-width:auto;padding:10px 14px}.stat-value{font-size:1.2rem}.quick-btn{padding:6px 10px;font-size:0.7rem}.login-bar input{width:110px}.modal-content{width:95%;padding:15px}.chart-bars{height:80px}}
+        /* Панель заказов */
+        .orders-panel{display:none;margin-top:20px;padding:15px;background:var(--card);border-radius:16px;border:1px solid var(--card-border)}
+        .orders-panel.visible{display:block}
+        .order-item{border-left:4px solid #ff9800;padding:10px 14px;margin-bottom:8px;background:var(--stat-bg);border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+        .order-item .order-status{font-weight:bold}
+        .order-item .order-total{font-weight:bold}
+        .order-item .order-client{font-weight:bold}
+        .order-item .order-details{font-size:0.8rem;opacity:0.7}
+        .order-item .order-date{font-size:0.75rem;opacity:0.5}
+        .order-item select{padding:4px 8px;border-radius:6px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-size:0.75rem}
+        
+        .upsell-popup{background:var(--modal-bg);border-radius:18px;padding:20px;text-align:center;max-width:320px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+        .upsell-badge{display:inline-block;background:#4CAF50;color:white;padding:3px 10px;border-radius:10px;font-size:0.7rem;font-weight:bold}
+        .upsell-old-price{text-decoration:line-through;opacity:0.5;font-size:0.85rem}
+        .upsell-price{font-size:1.2rem;font-weight:bold;color:#e91e63}
+        .upsell-buttons{display:flex;gap:8px;margin-top:12px}
+        .upsell-no{flex:1;padding:10px;background:var(--btn-bg);color:var(--text);border:none;border-radius:12px;cursor:pointer}
+        .upsell-yes{flex:2;padding:10px;background:#4CAF50;color:white;border:none;border-radius:12px;cursor:pointer;font-weight:bold}
+        
+        @media(max-width:768px){body{padding:8px}.header h1{font-size:1.6rem}.logo{width:50px;height:50px}.nav-tab{padding:10px 14px;font-size:0.8rem}.price-grid{grid-template-columns:1fr;gap:10px}.card-image{height:150px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:10px 12px}.stats-panel{flex-direction:column}.stat-card{min-width:auto;padding:10px 14px}.stat-value{font-size:1.2rem}.quick-btn{padding:6px 10px;font-size:0.7rem}.login-bar input{width:110px}.modal-content{width:95%;padding:15px}.chart-bars{height:80px}.order-item{flex-direction:column;align-items:stretch}}
     </style>
 </head>
 <body>
@@ -187,7 +223,6 @@
     </div>
     <div class="login-bar"><input type="password" id="shopPass" placeholder="Пароль или код"><button onclick="shopLogin()">🔐 Войти</button><span id="shopRole"></span></div>
     
-    <!-- Кнопка Обновить для ВСЕХ -->
     <div style="text-align:center;margin-bottom:12px;">
         <button class="quick-btn" onclick="refreshShop()" style="font-size:0.85rem;padding:8px 20px;display:inline-block;">🔄 Обновить товары</button>
     </div>
@@ -198,6 +233,7 @@
         <button class="quick-btn admin-only" style="border-color:#FFD700;color:#FFD700" onclick="showFinanceTable()">💰 Доходы</button>
         <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showActionLogs()">📋 Логи</button>
         <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showFullStats()">📊 Статистика</button>
+        <button class="quick-btn admin-only orders-btn" id="ordersBtn" onclick="toggleOrdersPanel()">📋 Заказы</button>
         <button class="quick-btn success" onclick="uploadAllToNpoint()">📥 Выгрузить</button>
         <button class="quick-btn admin-only" onclick="loadAllFromNpoint()">📤 Загрузить</button>
         <button class="quick-btn" onclick="restoreBackup()">🔄 Бэкап</button>
@@ -208,7 +244,6 @@
     </div>
     <div class="status-message" id="shopStatus"></div>
     
-    <!-- Терминал для админа -->
     <div class="terminal-box" id="adminTerminal" style="display:none;">
         <div style="margin-bottom:10px;">
             <span class="terminal-dot terminal-dot-red"></span>
@@ -222,6 +257,22 @@
     </div>
     
     <input type="text" class="search-input" id="shopSearch" placeholder="🔍 Поиск товаров..." oninput="renderShop()">
+    
+    <!-- Фильтры -->
+    <div class="filter-bar" id="filterBar">
+        <div id="mgFilterContainer" style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:0.7rem;opacity:0.7;color:var(--text);">⚡ МГ:</span>
+        </div>
+        <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+            <span style="font-size:0.7rem;opacity:0.7;color:var(--text);">💰 Цена:</span>
+            <input type="number" id="priceMin" placeholder="от" class="price-filter-input" style="width:60px;">
+            <span style="font-size:0.7rem;color:var(--text);">—</span>
+            <input type="number" id="priceMax" placeholder="до" class="price-filter-input" style="width:60px;">
+            <button onclick="applyPriceFilter()" class="price-filter-btn apply">Применить</button>
+            <button onclick="resetFilters()" class="price-filter-btn reset">Сбросить</button>
+        </div>
+    </div>
+    
     <div class="sort-bar"><button class="sort-btn active" onclick="setSort('default')">📋 Обычно</button><button class="sort-btn" onclick="setSort('price-asc')">💰 Дешевле</button><button class="sort-btn" onclick="setSort('price-desc')">💎 Дороже</button><button class="sort-btn" onclick="setSort('popular')">🔥 Популярнее</button></div>
     <div class="categories-nav" id="categoriesNav"></div>
     <div class="stats-panel" id="statsPanel">
@@ -230,9 +281,28 @@
         <div class="stat-card"><div class="stat-value" id="totalSold">0</div><div class="stat-label">🛒 Продано</div></div>
         <div class="stat-card"><div class="stat-value" id="totalRevenue">0₽</div><div class="stat-label">💵 Прибыль</div></div>
         <div class="stat-card"><div class="stat-value" id="avgCheck">0₽</div><div class="stat-label">💰 Средний чек</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalCost">0₽</div><div class="stat-label">💸 Закупка</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalProfit">0₽</div><div class="stat-label">📈 Чистая прибыль</div></div>
+        <div class="stat-card"><div class="stat-value" id="marginValue">0%</div><div class="stat-label">📈 Маржинальность</div></div>
+        <div class="stat-card"><div class="stat-value" id="todayProfit">0₽</div><div class="stat-label">📆 Прибыль сегодня</div></div>
     </div>
     <div class="chart-container" id="chartContainer"><div class="chart-title">📊 Продажи за 7 дней</div><div class="chart-bars" id="chartBars"></div></div>
     <div class="demand-panel" id="demandPanel"></div>
+    
+    <!-- Панель заказов -->
+    <div class="orders-panel" id="ordersPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3>📋 Заказы (<span id="ordersCount">0</span>)</h3>
+            <div style="display:flex;gap:6px;">
+                <button onclick="renderOrdersPanel()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--card-border);background:var(--btn-bg);cursor:pointer;">🔄</button>
+                <button onclick="clearAllOrders()" style="padding:6px 12px;border-radius:8px;border:1px solid #f44336;color:#f44336;background:transparent;cursor:pointer;">🗑️ Очистить</button>
+            </div>
+        </div>
+        <div id="ordersList">
+            <p style="text-align:center;opacity:0.5;padding:20px;">Нет заказов</p>
+        </div>
+    </div>
+    
     <div class="price-grid" id="priceGrid"><div style="grid-column:1/-1;text-align:center;padding:30px;opacity:0.5;">🌸 Загрузка товаров...</div></div>
 </div>
 
@@ -254,69 +324,215 @@
 <div class="modal-overlay" id="historyModal"><div class="modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3>📋 История продаж</h3><span style="cursor:pointer;font-size:1.3rem" onclick="closeHistoryModal()">✕</span></div><div id="historyList"></div></div></div>
 
 <script>
-// ============================================================
-// ОСНОВНЫЕ ПЕРЕМЕННЫЕ
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 1. ОСНОВНЫЕ ПЕРЕМЕННЫЕ
+// ════════════════════════════════════════════════════════════
 const NP_SHOP='https://api.npoint.io/55674e9c91b4698843d7';
 let currentPage='shop',isDark=localStorage.getItem('darkTheme')==='true',tgUsername=localStorage.getItem('tgUsername')||'danil_cooldown';
 let currentRole=null,currentCode=null,shopRole=null,gaRole=null;
 let items=[],salesData={},salesHistory=[],pendingSales={},cart=JSON.parse(localStorage.getItem('cart')||'[]');
-let shopSort='default',shopCategory='all',upsellItem=null,currentImage=null;
+let shopSort='default',shopCategory=localStorage.getItem('shopCategory')||'all',upsellItem=null,currentImage=null;
 const categories=['Жижи','Одноразки','Снюсы','Поды'],catEmojis={'Жижи':'💧','Одноразки':'🚬','Снюсы':'👄','Поды':'💨'};
 let gaParticipants=JSON.parse(localStorage.getItem('ga_participants')||'[]'),gaWinner=JSON.parse(localStorage.getItem('ga_winner')||'null');
-let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=localStorage.getItem('ga_secretCode')||'WIN2024';
+let gaHistory=JSON.parse(localStorage.getItem('ga_history')||'[]'),gaSecretCode=localStorage.getItem('ga_secretCode')||'150420';
 let gaDeadline=localStorage.getItem('ga_deadline')||'2026-12-31T23:59',gaBlocked=JSON.parse(localStorage.getItem('ga_blocked')||'[]');
 let gaRegOpen=localStorage.getItem('ga_regOpen')!=='false',gaFilter='pending';
 
-// ============================================================
-// ФУНКЦИИ ИНТЕРФЕЙСА
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 2. ЗАКАЗЫ
+// ════════════════════════════════════════════════════════════
+let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+let mgFilterValue = 'all';
+let filterPriceMin = 0;
+let filterPriceMax = Infinity;
+
+function saveOrders() {
+    localStorage.setItem('orders', JSON.stringify(orders));
+    const countEl = document.getElementById('ordersCount');
+    if (countEl) countEl.textContent = orders.length;
+}
+
+function addOrder(client, itemsList, total, time, place, telegram, from) {
+    const order = {
+        id: Date.now(),
+        client: client || 'Неизвестный',
+        items: itemsList || [],
+        total: total || 0,
+        status: 'new',
+        date: new Date().toLocaleString('ru-RU'),
+        time: time || '',
+        place: place || '',
+        telegram: telegram || '',
+        from: from || 'корзина'
+    };
+    orders.unshift(order);
+    saveOrders();
+    renderOrdersPanel();
+    return order;
+}
+
+function updateOrderStatus(orderId, newStatus) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    order.status = newStatus;
+    saveOrders();
+    renderOrdersPanel();
+}
+
+function clearAllOrders() {
+    if (!confirm('🗑️ Удалить все заказы?')) return;
+    orders = [];
+    saveOrders();
+    renderOrdersPanel();
+    showShopStatus('✅ Все заказы удалены');
+}
+
+function renderOrdersPanel() {
+    const list = document.getElementById('ordersList');
+    if (!list) return;
+    const countEl = document.getElementById('ordersCount');
+    if (countEl) countEl.textContent = orders.length;
+    if (orders.length === 0) {
+        list.innerHTML = '<p style="text-align:center;opacity:0.5;padding:20px;">Нет заказов</p>';
+        return;
+    }
+    const statusColors = { 'new': '#ff9800', 'work': '#2196F3', 'done': '#4CAF50', 'cancelled': '#f44336' };
+    const statusNames = { 'new': '🟡 Новый', 'work': '🟢 В работе', 'done': '✅ Выполнен', 'cancelled': '❌ Отменён' };
+    let html = '';
+    orders.forEach(order => {
+        const statusColor = statusColors[order.status] || '#888';
+        const statusName = statusNames[order.status] || order.status;
+        html += `
+            <div class="order-item" style="border-left-color:${statusColor};">
+                <div style="flex:1;min-width:150px;">
+                    <div class="order-client">#${order.id} ${order.client}</div>
+                    <div class="order-details">
+                        ${order.items.map(i => `${i.name} × ${i.qty || 1}`).join(', ')}
+                        ${order.place ? '📍 ' + order.place : ''}
+                        ${order.time ? '🕐 ' + order.time : ''}
+                        ${order.from ? '📌 ' + order.from : ''}
+                    </div>
+                    <div class="order-date">${order.date}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <span class="order-status" style="color:${statusColor};">${statusName}</span>
+                    <span class="order-total">${order.total}₽</span>
+                    ${order.status !== 'done' && order.status !== 'cancelled' ? `
+                        <select onchange="updateOrderStatus(${order.id}, this.value)">
+                            <option value="new" ${order.status === 'new' ? 'selected' : ''}>🟡 Новый</option>
+                            <option value="work" ${order.status === 'work' ? 'selected' : ''}>🟢 В работе</option>
+                            <option value="done" ${order.status === 'done' ? 'selected' : ''}>✅ Выполнен</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>❌ Отменён</option>
+                        </select>
+                    ` : `
+                        <span style="font-size:0.7rem;opacity:0.5;">${order.status === 'done' ? '✅ Завершён' : '❌ Отменён'}</span>
+                    `}
+                </div>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+}
+
+function loadOrdersFromEndpoint() {
+    fetch(NP_SHOP).then(r => r.json()).then(d => {
+        if (d.orders && d.orders.length > 0) {
+            orders = d.orders;
+            localStorage.setItem('orders', JSON.stringify(orders));
+            renderOrdersPanel();
+            console.log('✅ Заказы загружены с эндпоинта:', orders.length);
+        }
+    }).catch(() => {});
+}
+
+function toggleOrdersPanel() {
+    const panel = document.getElementById('ordersPanel');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        renderOrdersPanel();
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+// 3. ФУНКЦИИ ИНТЕРФЕЙСА
+// ════════════════════════════════════════════════════════════
 function createParticles(){const c=document.getElementById('particles');c.innerHTML='';if(isDark){for(let i=0;i<15;i++){const p=document.createElement('div');p.className='particle snow';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*10+'s';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.width=p.style.height=(2+Math.random()*3)+'px';c.appendChild(p);}}else{for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle circle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*7+'s';p.style.animationDuration=(5+Math.random()*8)+'s';p.style.width=p.style.height=(5+Math.random()*8)+'px';c.appendChild(p);}}}
 
 function toggleTheme(){isDark=!isDark;document.body.classList.toggle('dark',isDark);document.getElementById('themeToggle').textContent=isDark?'🌙':'🌸';localStorage.setItem('darkTheme',isDark);createParticles();}
 
 function switchPage(page){currentPage=page;document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page'+page.charAt(0).toUpperCase()+page.slice(1)).classList.add('active');event.target.classList.add('active');shopRole=currentRole;gaRole=currentRole;if(page==='shop'){renderShop();if(currentRole)updateShopUI();}if(page==='giveaway'){renderGa();if(currentRole)updateGaUI();}}
 
-// ============================================================
-// СИНХРОНИЗАЦИЯ С СЕРВЕРОМ
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 4. СИНХРОНИЗАЦИЯ С СЕРВЕРОМ
+// ════════════════════════════════════════════════════════════
 function checkNpointConnection(){const dot=document.getElementById('connDot'),text=document.getElementById('connText'),status=document.getElementById('connectionStatus');if(currentRole!=='admin'){status.style.display='none';document.getElementById('adminTerminal').style.display='none';return;}status.style.display='flex';document.getElementById('adminTerminal').style.display='block';dot.style.background='#ff9800';text.textContent='...';const start=Date.now();fetch(NP_SHOP,{method:'HEAD'}).then(r=>{const ms=Date.now()-start;if(r.ok){if(ms<100){dot.style.background='#00ff88';text.style.color='#00ff88'}else if(ms<300){dot.style.background='#4CAF50';text.style.color='#4CAF50'}else if(ms<600){dot.style.background='#ff9800';text.style.color='#ff9800'}else{dot.style.background='#f44336';text.style.color='#f44336'}text.textContent=ms+'мс';document.getElementById('terminalNpoint').textContent='подключено ('+ms+'мс)';}else{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Ошибка';document.getElementById('terminalNpoint').textContent='ошибка';}}).catch(()=>{dot.style.background='#f44336';text.style.color='#f44336';text.textContent='Офлайн';document.getElementById('terminalNpoint').textContent='недоступно';});}
 setInterval(checkNpointConnection,5000);
 
-function uploadAllToNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Выгружаю...');const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]'),gaParticipants,gaWinner,gaHistory,gaSecretCode,gaDeadline,gaBlocked,gaRegOpen};fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.ok?showShopStatus('✅ Всё выгружено!'):showShopStatus('❌ Ошибка: '+r.status)).catch(()=>showShopStatus('❌ Нет связи'));}
+function uploadAllToNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Выгружаю...');const d={items,salesData,salesHistory,pendingSales,orders,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),approvedDevices:JSON.parse(localStorage.getItem('approvedDevices')||'[]'),pendingApprovals:JSON.parse(localStorage.getItem('pendingApprovals')||'[]'),actionLogs:JSON.parse(localStorage.getItem('actionLogs')||'[]'),gaParticipants,gaWinner,gaHistory,gaSecretCode,gaDeadline,gaBlocked,gaRegOpen};fetch(NP_SHOP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(r=>r.ok?showShopStatus('✅ Всё выгружено!'):showShopStatus('❌ Ошибка: '+r.status)).catch(()=>showShopStatus('❌ Нет связи'));}
 
-function loadAllFromNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Загружаю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{if(d.items)items=d.items;if(d.salesData)salesData=d.salesData;if(d.salesHistory)salesHistory=d.salesHistory;if(d.pendingSales)pendingSales=d.pendingSales;if(d.shopStaff)localStorage.setItem('shopStaff',JSON.stringify(d.shopStaff));if(d.approvedDevices)localStorage.setItem('approvedDevices',JSON.stringify(d.approvedDevices));if(d.pendingApprovals)localStorage.setItem('pendingApprovals',JSON.stringify(d.pendingApprovals));if(d.gaParticipants){gaParticipants=d.gaParticipants;localStorage.setItem('ga_participants',JSON.stringify(d.gaParticipants));}if(d.gaWinner){gaWinner=d.gaWinner;localStorage.setItem('ga_winner',JSON.stringify(d.gaWinner));}if(d.gaSecretCode){gaSecretCode=d.gaSecretCode;localStorage.setItem('ga_secretCode',d.gaSecretCode);}saveAllData();renderShop();buildCategories();updateStats();showShopStatus('✅ Загружено!');}).catch(()=>{showShopStatus('❌ Сервер не отвечает');});}
+function loadAllFromNpoint(){if(currentRole!=='admin')return;showShopStatus('⏳ Загружаю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{if(d.items)items=d.items;if(d.salesData)salesData=d.salesData;if(d.salesHistory)salesHistory=d.salesHistory;if(d.pendingSales)pendingSales=d.pendingSales;if(d.orders){orders=d.orders;localStorage.setItem('orders',JSON.stringify(orders));}if(d.shopStaff)localStorage.setItem('shopStaff',JSON.stringify(d.shopStaff));if(d.approvedDevices)localStorage.setItem('approvedDevices',JSON.stringify(d.approvedDevices));if(d.pendingApprovals)localStorage.setItem('pendingApprovals',JSON.stringify(d.pendingApprovals));if(d.gaParticipants){gaParticipants=d.gaParticipants;localStorage.setItem('ga_participants',JSON.stringify(d.gaParticipants));}if(d.gaWinner){gaWinner=d.gaWinner;localStorage.setItem('ga_winner',JSON.stringify(d.gaWinner));}if(d.gaSecretCode){gaSecretCode=d.gaSecretCode;localStorage.setItem('ga_secretCode',d.gaSecretCode);}saveAllData();renderShop();buildCategories();updateStats();renderOrdersPanel();showShopStatus('✅ Загружено!');}).catch(()=>{showShopStatus('❌ Сервер не отвечает');});}
 
-function refreshShop(){showShopStatus('⏳ Обновляю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{if(d.items)items=d.items;if(d.salesData)salesData=d.salesData;saveAllData();renderShop();buildCategories();updateStats();showShopStatus('✅ Обновлено!');}).catch(()=>{renderShop();buildCategories();updateStats();showShopStatus('⚠️ Показаны локальные данные');});}
+function refreshShop(){showShopStatus('⏳ Обновляю...');fetch(NP_SHOP).then(r=>r.json()).then(d=>{if(d.items)items=d.items;if(d.salesData)salesData=d.salesData;if(d.pendingSales)pendingSales=d.pendingSales;if(d.orders){orders=d.orders;localStorage.setItem('orders',JSON.stringify(orders));}saveAllData();renderShop();buildCategories();updateStats();renderOrdersPanel();showShopStatus('✅ Обновлено!');}).catch(()=>{renderShop();buildCategories();updateStats();renderOrdersPanel();showShopStatus('⚠️ Показаны локальные данные');});}
 
-function autoSyncAll(){if(currentRole!=='admin'&&currentRole!=='moder')return;const d={items,salesData,salesHistory,pendingSales,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),gaParticipants,gaWinner,gaHistory};navigator.sendBeacon(NP_SHOP,JSON.stringify(d));}
+function autoSyncAll(){if(currentRole!=='admin'&&currentRole!=='moder')return;const d={items,salesData,salesHistory,pendingSales,orders,shopStaff:JSON.parse(localStorage.getItem('shopStaff')||'[]'),gaParticipants,gaWinner,gaHistory};navigator.sendBeacon(NP_SHOP,JSON.stringify(d));}
 
-// ============================================================
-// КОРЗИНА
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 5. КОРЗИНА
+// ════════════════════════════════════════════════════════════
 function addToCart(item){const e=cart.find(c=>c.id===item.id);if(e)e.qty++;else cart.push({id:item.id,name:item.name,price:parseInt(item.price),qty:1,flavors:item.flavors,mg:item.mg});saveCart();updateCartPanel();showShopStatus('🛒 Добавлено!');const others=items.filter(i=>i.id!==item.id&&i.quantity>0);if(others.length>0){const r=others[Math.floor(Math.random()*others.length)];upsellItem={name:r.name,price:parseInt(r.price),id:r.id,flavors:r.flavors,mg:r.mg};document.getElementById('upsellName').textContent=r.name;document.getElementById('upsellOldPrice').textContent=r.price+'₽';document.getElementById('upsellNewPrice').textContent=Math.round(parseInt(r.price)*0.9)+'₽';document.getElementById('upsellOverlay').classList.add('show');}}
 
 function acceptUpsell(){if(upsellItem){cart.push({id:'upsell_'+Date.now(),name:upsellItem.name+' (-10%)',price:Math.round(upsellItem.price*0.9),qty:1,flavors:upsellItem.flavors,mg:upsellItem.mg});saveCart();updateCartPanel();showShopStatus('✅ Добавлено!');}closeUpsell();}
 
 function closeUpsell(){document.getElementById('upsellOverlay').classList.remove('show');upsellItem=null;}
 
-function removeFromCart(i){cart.splice(i,1);saveCart();updateCartPanel();openCartModal();}
+function removeFromCart(i){cart.splice(i,1);saveCart();updateCartPanel();renderCartItems();}
 
 function saveCart(){localStorage.setItem('cart',JSON.stringify(cart));}
 
 function updateCartPanel(){const p=document.getElementById('cartPanel');const n=cart.reduce((s,c)=>s+c.qty,0);const t=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('cartCountBadge').textContent=n;document.getElementById('cartInfo').textContent=n+' тов. · '+t+'₽';p.classList.toggle('show',n>0);}
 
 function openCartModal(){document.getElementById('cartModal').classList.add('show');renderCartItems();}
-
 function closeCartModal(){document.getElementById('cartModal').classList.remove('show');}
 
 function renderCartItems(){const el=document.getElementById('cartItemsList'),te=document.getElementById('cartTotal');if(cart.length===0){el.innerHTML='<p style="text-align:center;opacity:0.7;padding:15px">Корзина пуста</p>';te.textContent='Итого: 0₽';return;}let t=0;el.innerHTML=cart.map((c,i)=>{t+=c.price*c.qty;return`<div class="cart-item"><div><strong>${c.name}</strong><br><small>${c.flavors||''} | ${c.mg||''} | ${c.price}₽ × ${c.qty}</small></div><div style="display:flex;gap:4px;align-items:center"><span>${c.price*c.qty}₽</span><button class="cart-remove-btn" onclick="removeFromCart(${i})">✕</button></div></div>`}).join('');te.textContent='Итого: '+t+'₽';}
 
-function checkout(){if(cart.length===0)return;const place=document.getElementById('meetupPlace')?.value.trim()||'',time=document.getElementById('meetupTime')?.value.trim()||'';let msg='🛒 Новый заказ:\n\n',total=0;cart.forEach(c=>{const s=c.price*c.qty;msg+=`• ${c.name}\n  ${c.flavors||''} | ${c.mg||''}\n  ${c.qty} шт × ${c.price}₽ = ${s}₽\n\n`;total+=s;const item=items.find(i=>i.id==c.id);if(item&&item.quantity>0){if(!pendingSales[c.id])pendingSales[c.id]=0;pendingSales[c.id]+=c.qty;}});msg+=`💰 Итого: ${total}₽`;if(place||time)msg+=`\n\n📍 ${place}\n🕐 ${time}`;window.open('https://t.me/'+tgUsername+'?text='+encodeURIComponent(msg),'_blank');cart=[];saveCart();updateCartPanel();closeCartModal();saveAllData();renderShop();autoSyncAll();showShopStatus('✅ Заказ отправлен!');}
+function checkout(){
+    if(cart.length===0)return;
+    const place=document.getElementById('meetupPlace')?.value.trim()||'';
+    const time=document.getElementById('meetupTime')?.value.trim()||'';
+    
+    const itemsList = cart.map(c => ({ name: c.name, price: c.price, qty: c.qty, flavors: c.flavors || '', mg: c.mg || '' }));
+    const total = cart.reduce((sum, c) => sum + c.price * c.qty, 0);
+    const client = tgUsername || 'Неизвестный';
+    const telegram = tgUsername ? '@' + tgUsername : '';
+    
+    const order = addOrder(client, itemsList, total, time, place, telegram, 'корзина');
+    
+    let msg='🛒 НОВЫЙ ЗАКАЗ #' + order.id + '\n\n';
+    msg += `👤 Клиент: ${client}\n`;
+    itemsList.forEach(item => { msg += `• ${item.name} × ${item.qty} = ${item.price * item.qty}₽\n`; });
+    msg += `\n💰 Итого: ${total}₽`;
+    if(place) msg += `\n📍 ${place}`;
+    if(time) msg += `\n🕐 ${time}`;
+    if(telegram) msg += `\n📱 ${telegram}`;
+    
+    window.open('https://t.me/' + tgUsername + '?text=' + encodeURIComponent(msg), '_blank');
+    
+    cart = [];
+    saveCart();
+    updateCartPanel();
+    closeCartModal();
+    saveAllData();
+    renderShop();
+    autoSyncAll();
+    showShopStatus('✅ Заказ #' + order.id + ' создан!');
+}
 
-// ============================================================
-// АВТОРИЗАЦИЯ
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 6. АВТОРИЗАЦИЯ
+// ════════════════════════════════════════════════════════════
 function getDeviceId(){let d=localStorage.getItem('deviceId');if(!d){d='dev_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('deviceId',d);}return d;}
 
 function isDeviceApproved(code){return(JSON.parse(localStorage.getItem('approvedDevices')||'[]')).find(d=>d.deviceId===getDeviceId()&&d.code===code);}
@@ -339,9 +555,6 @@ function notifyAdmin(h){const n=JSON.parse(localStorage.getItem('adminNotificati
 
 function promoteToModer(code){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h)return;const nc='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();h.role='moder';h.code=nc;h.promotedAt=new Date().toLocaleString('ru-RU');h.promotedFrom='helper';delete h.moderatorCode;localStorage.setItem('shopStaff',JSON.stringify(s));let n=JSON.parse(localStorage.getItem('adminNotifications')||'[]');n=n.filter(x=>x.helperCode!==code);localStorage.setItem('adminNotifications',JSON.stringify(n));autoSyncAll();alert(`✅ ${h.username} повышен до модера!\nНовый код: ${nc}`);logAction('admin','повысил до модера',h.username);return nc;}
 
-// ============================================================
-// УПРАВЛЕНИЕ ПЕРСОНАЛОМ UI
-// ============================================================
 function addModerQuick(){const un=prompt('Введите @username для модератора:');if(!un||!un.trim())return;if(!confirm(`Создать модератора "${un}"?`))return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]'),code='MOD_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'moder',createdBy:'admin',createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));alert('✅ Модератор создан!\n\nИмя: '+un+'\nКод: '+code);logAction('admin','создал модератора',un);setTimeout(()=>{autoSyncAll();},2000);if(document.getElementById('staffTabContent'))showModersTab();}
 
 function addHelperToModer(modCode){const un=prompt('Введите @username для хелпера:');if(!un||!un.trim())return;const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const code='HLP_'+Math.random().toString(36).substr(2,8).toUpperCase();s.push({username:un.trim(),code,role:'helper',createdBy:'admin',moderatorCode:modCode,createdAt:new Date().toLocaleString('ru-RU'),blocked:false});localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncAll();alert('✅ Хелпер создан!\n\nИмя: '+un+'\nКод: '+code);if(document.getElementById('staffTabContent'))showModersTab();}
@@ -352,44 +565,231 @@ function showModersTab(){const staff=JSON.parse(localStorage.getItem('shopStaff'
 
 function showHelpersTab(){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]');const helpers=staff.filter(s=>s.role==='helper');const moders=staff.filter(s=>s.role==='moder');const el=document.getElementById('staffTabContent');if(!el)return;document.getElementById('tabHelpers').classList.add('active');document.getElementById('tabModers').classList.remove('active');if(helpers.length===0){el.innerHTML='<p style="text-align:center;opacity:0.5;padding:15px;">Нет хелперов</p>';return;}let html='';helpers.forEach(h=>{const r=h.rating||{points:0,level:'🌱 Новичок',ordersCount:0};const mod=moders.find(m=>m.code===h.moderatorCode);html+=`<div class="staff-card" style="border-left:3px solid ${h.blocked?'#f44336':'#2196F3'};${h.blocked?'opacity:0.6;':''}"><div style="display:flex;justify-content:space-between;align-items:center;"><div><strong>🤝 ${h.username}</strong>${h.blocked?' 🚫':' <span class="role-badge role-helper">'+r.level+'</span>'}<div class="code">${h.code}</div><div style="font-size:0.7rem;opacity:0.5;">Модер: ${mod?mod.username:'—'} | ⭐${r.points} баллов | 📦${r.ordersCount} зак.</div></div><div style="display:flex;gap:5px;"><button onclick="toggleBlockStaff('${h.code}')" style="padding:6px 10px;background:${h.blocked?'#4CAF50':'#ff9800'};color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">${h.blocked?'🔓':'🚫'}</button><button onclick="removeStaff('${h.code}')" style="padding:6px 10px;background:#f44336;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.75rem;">🗑️</button></div></div></div>`;});el.innerHTML=html;}
 
-// ============================================================
-// СИСТЕМА РЕЙТИНГА ХЕЛПЕРОВ
-// ============================================================
 function updateHelperRating(code,action,amount){const s=JSON.parse(localStorage.getItem('shopStaff')||'[]');const h=s.find(x=>x.code===code);if(!h||h.role!=='helper')return;if(!h.rating)h.rating={points:0,ordersCount:0,totalAmount:0,level:'🌱 Новичок',history:[],dailyConfirmed:0,dailyRevenue:0,dailyDate:new Date().toDateString()};if(!h.finance)h.finance={totalEarned:0,pendingPayout:0,paidOut:0};const today=new Date().toDateString();if(h.rating.dailyDate!==today){h.rating.dailyConfirmed=0;h.rating.dailyRevenue=0;h.rating.dailyDate=today}let pts=0,bonus='';if(action==='order_created'){h.rating.ordersCount++;h.rating.totalAmount+=amount}else if(action==='order_confirmed'){pts=5;if(amount>1000)pts+=3;h.rating.dailyConfirmed++;h.rating.dailyRevenue+=amount;if(h.rating.dailyConfirmed===2){pts+=5;bonus='🎯'}if(h.rating.dailyRevenue>=2000&&h.rating.dailyRevenue-amount<2000){pts+=10;bonus='💰'}if(h.moderatorCode){const mod=s.find(x=>x.code===h.moderatorCode);if(mod){if(!mod.finance)mod.finance={totalEarned:0,pendingPayout:0,paidOut:0,fromHelpers:0};const cut=Math.round(amount*0.1);mod.finance.fromHelpers=(mod.finance.fromHelpers||0)+cut;mod.finance.pendingPayout=(mod.finance.pendingPayout||0)+cut;localStorage.setItem('shopStaff',JSON.stringify(s));}}}else if(action==='order_cancelled'){pts=-1}h.rating.points+=pts;h.rating.history.unshift({action,points:pts,amount,bonus,time:new Date().toLocaleString('ru-RU')});if(h.rating.history.length>50)h.rating.history=h.rating.history.slice(0,50);const pnt=h.rating.points;if(pnt>=76){h.rating.level='👑 Легенда';notifyAdmin(h)}else if(pnt>=51)h.rating.level='⭐ Мастер';else if(pnt>=26)h.rating.level='🌳 Профи';else if(pnt>=11)h.rating.level='🌿 Опытный';else h.rating.level='🌱 Новичок';localStorage.setItem('shopStaff',JSON.stringify(s));autoSyncAll();}
 
-// ============================================================
-// ФИНАНСОВАЯ ТАБЛИЦА
-// ============================================================
 function showFinanceTable(){if(currentRole!=='admin')return;const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),helpers=staff.filter(s=>s.role==='helper'),moders=staff.filter(s=>s.role==='moder');const totalRevenue=Object.values(salesData).reduce((s,d)=>s+(d.revenue||0),0),totalPending=staff.reduce((s,u)=>s+(u.finance?.pendingPayout||0),0);let html=`<div class="modal-content" style="max-width:700px;font-size:0.8rem;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h3>💰 Финансы персонала</h3><span style="cursor:pointer;font-size:1.3rem" onclick="this.closest('.modal-overlay').remove()">✕</span></div><div style="display:flex;gap:8px;margin-bottom:12px;"><div style="flex:1;padding:10px;background:rgba(76,175,80,0.1);border-radius:8px;text-align:center;"><div style="font-size:0.7rem;opacity:0.7;">💰 Общая прибыль</div><div style="font-size:1.1rem;color:#4CAF50;">${totalRevenue}₽</div></div><div style="flex:1;padding:10px;background:rgba(255,152,0,0.1);border-radius:8px;text-align:center;"><div style="font-size:0.7rem;opacity:0.7;">💸 К выплате</div><div style="font-size:1.1rem;color:#ff9800;">${totalPending}₽</div></div></div><h4 style="margin:8px 0;color:#FFD700;">👑 Модеры</h4><table style="width:100%;border-collapse:collapse;"><tr style="background:rgba(255,255,255,0.05)"><th style="padding:6px;text-align:left;">Имя</th><th style="padding:6px;">Хелперов</th><th style="padding:6px;">К выплате</th><th style="padding:6px;">Выплачено</th><th style="padding:6px;"></th></tr>`;moders.forEach(m=>{const f=m.finance||{};html+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:6px;">👑 ${m.username}</td><td style="padding:6px;text-align:center;">${helpers.filter(h=>h.moderatorCode===m.code).length}</td><td style="padding:6px;text-align:center;color:#ff9800;">${f.pendingPayout||0}₽</td><td style="padding:6px;text-align:center;color:#4CAF50;">${f.paidOut||0}₽</td><td style="padding:6px;text-align:center;">${(f.pendingPayout||0)>0?`<button onclick="payoutStaff('${m.code}')" style="padding:4px 10px;background:#4CAF50;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.7rem;">💸</button>`:'✅'}</td></tr>`});html+=`</table><h4 style="margin:12px 0 8px;color:#2196F3;">🤝 Хелперы</h4><table style="width:100%;border-collapse:collapse;"><tr style="background:rgba(255,255,255,0.05)"><th style="padding:6px;text-align:left;">Имя</th><th style="padding:6px;">Модер</th><th style="padding:6px;">Баллы</th><th style="padding:6px;">Заказов</th><th style="padding:6px;">К выплате</th></tr>`;helpers.forEach(h=>{const f=h.finance||{};const r=h.rating||{points:0,level:'🌱 Новичок'};const mod=moders.find(m=>m.code===h.moderatorCode);html+=`<tr style="border-bottom:1px solid rgba(255,255,255,0.05)"><td style="padding:6px;">🤝 ${h.username} ${h.blocked?'🚫':''}</td><td style="padding:6px;text-align:center;">${mod?mod.username:'—'}</td><td style="padding:6px;text-align:center;">⭐${r.points||0}</td><td style="padding:6px;text-align:center;">📦${r.ordersCount||0}</td><td style="padding:6px;text-align:center;color:#ff9800;">${f.pendingPayout||0}₽</td></tr>`});html+=`</table></div>`;const modal=document.createElement('div');modal.className='modal-overlay show';modal.innerHTML=html;modal.onclick=function(e){if(e.target===modal)modal.remove();};document.body.appendChild(modal);}
 
 function payoutStaff(code){const staff=JSON.parse(localStorage.getItem('shopStaff')||'[]'),user=staff.find(s=>s.code===code);if(!user||!user.finance?.pendingPayout||user.finance.pendingPayout<=0){alert('Нет средств к выплате');return}const amount=user.finance.pendingPayout;if(!confirm(`Выплатить ${user.username} ${amount}₽?`))return;user.finance.paidOut=(user.finance.paidOut||0)+amount;user.finance.pendingPayout=0;localStorage.setItem('shopStaff',JSON.stringify(staff));autoSyncAll();logAction('admin','выплатил зарплату',`${user.username} - ${amount}₽`);alert(`✅ ${user.username} выплачено ${amount}₽`);showFinanceTable();}
 
-// ============================================================
-// МАГАЗИН
-// ============================================================
-function loadShopData(){const saved=localStorage.getItem('priceData');if(saved){try{const d=JSON.parse(saved);items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{}}catch(e){}}renderShop();buildCategories();updateStats();const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),30000);fetch(NP_SHOP,{signal:ctrl.signal}).then(r=>{clearTimeout(t);if(!r.ok)throw new Error('err');return r.json()}).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};localStorage.setItem('priceData',JSON.stringify(d));renderShop();buildCategories();updateStats()}).catch(()=>{clearTimeout(t)});}
+// ════════════════════════════════════════════════════════════
+// 7. МАГАЗИН
+// ════════════════════════════════════════════════════════════
+function calculateProfit(price) {
+    return Math.round(parseInt(price) / 2);
+}
 
-function saveAllData(){try{localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));}catch(e){localStorage.removeItem('actionLogs');localStorage.removeItem('dailyStats');try{localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));}catch(e2){showShopStatus('⚠️ Мало места!');}}}
+function renderMGButtons() {
+    const container = document.getElementById('mgFilterContainer');
+    if (!container) return;
+    const mgValues = new Set();
+    items.forEach(item => {
+        if (item.mg) {
+            mgValues.add(String(item.mg));
+        }
+    });
+    const sortedMG = Array.from(mgValues).sort((a, b) => parseInt(a) - parseInt(b));
+    let html = `<span style="font-size:0.7rem;opacity:0.7;color:var(--text);">⚡ МГ:</span>`;
+    html += `<button class="filter-mg active" data-mg="all" onclick="window.mgFilterClick('all', this)" style="padding:4px 10px;border-radius:12px;border:2px solid transparent;background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.7rem;transition:all 0.2s;">Все</button>`;
+    sortedMG.forEach(mg => {
+        html += `<button class="filter-mg" data-mg="${mg}" onclick="window.mgFilterClick('${mg}', this)" style="padding:4px 10px;border-radius:12px;border:2px solid transparent;background:var(--btn-bg);color:var(--text);cursor:pointer;font-size:0.7rem;transition:all 0.2s;">${mg}мг</button>`;
+    });
+    container.innerHTML = html;
+    if (mgFilterValue && mgFilterValue !== 'all') {
+        const activeBtn = container.querySelector(`.filter-mg[data-mg="${mgFilterValue}"]`);
+        if (activeBtn) {
+            document.querySelectorAll('.filter-mg').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'var(--btn-bg)';
+                b.style.color = 'var(--text)';
+                b.style.borderColor = 'transparent';
+            });
+            activeBtn.classList.add('active');
+            activeBtn.style.background = 'var(--accent)';
+            activeBtn.style.color = 'white';
+            activeBtn.style.borderColor = 'var(--accent)';
+        }
+    } else {
+        document.querySelectorAll('.filter-mg').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'var(--btn-bg)';
+            b.style.color = 'var(--text)';
+            b.style.borderColor = 'transparent';
+        });
+        const allBtn = container.querySelector('.filter-mg[data-mg="all"]');
+        if (allBtn) {
+            allBtn.classList.add('active');
+            allBtn.style.background = 'var(--accent)';
+            allBtn.style.color = 'white';
+            allBtn.style.borderColor = 'var(--accent)';
+        }
+    }
+}
+
+window.mgFilterClick = function(value, btn) {
+    mgFilterValue = value;
+    document.querySelectorAll('.filter-mg').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = 'var(--btn-bg)';
+        b.style.color = 'var(--text)';
+        b.style.borderColor = 'transparent';
+    });
+    if (btn) {
+        btn.classList.add('active');
+        btn.style.background = 'var(--accent)';
+        btn.style.color = 'white';
+        btn.style.borderColor = 'var(--accent)';
+    }
+    renderShop();
+};
+
+function applyPriceFilter() {
+    const min = parseInt(document.getElementById('priceMin').value);
+    const max = parseInt(document.getElementById('priceMax').value);
+    filterPriceMin = min || 0;
+    filterPriceMax = max || Infinity;
+    renderShop();
+}
+
+function resetFilters() {
+    mgFilterValue = 'all';
+    filterPriceMin = 0;
+    filterPriceMax = Infinity;
+    document.getElementById('priceMin').value = '';
+    document.getElementById('priceMax').value = '';
+    renderMGButtons();
+    renderShop();
+}
+
+function loadShopData(){const saved=localStorage.getItem('priceData');if(saved){try{const d=JSON.parse(saved);items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{}}catch(e){}}renderShop();buildCategories();updateStats();const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),30000);fetch(NP_SHOP,{signal:ctrl.signal}).then(r=>{clearTimeout(t);if(!r.ok)throw new Error('err');return r.json()}).then(d=>{items=d.items||[];salesData=d.salesData||{};salesHistory=d.salesHistory||[];pendingSales=d.pendingSales||{};if(d.orders){orders=d.orders;localStorage.setItem('orders',JSON.stringify(orders));}localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));renderShop();buildCategories();updateStats();renderOrdersPanel();}).catch(()=>{clearTimeout(t)});}
+
+function saveAllData(){try{localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));}catch(e){localStorage.removeItem('actionLogs');localStorage.removeItem('dailyStats');try{localStorage.setItem('priceData',JSON.stringify({items,salesData,salesHistory,pendingSales}));}catch(e2){showShopStatus('⚠️ Мало места!');}}saveOrders();}
 
 function restoreBackup(){const b=localStorage.getItem('autoBackup');if(b&&confirm('Восстановить бэкап?')){const d=JSON.parse(b);items=d.items;salesData=d.salesData;salesHistory=d.salesHistory;pendingSales=d.pendingSales;saveAllData();updateStats();renderShop();buildCategories();showShopStatus('✅ Восстановлено!')}else showShopStatus('❌ Бэкап не найден')}
 
-function getFilteredItems(){let f=shopCategory==='all'?items.slice():items.filter(i=>i.category===shopCategory);const q=(document.getElementById('shopSearch')?.value||'').trim().toLowerCase();if(q)f=f.filter(i=>i.name.toLowerCase().includes(q)||i.flavors.toLowerCase().includes(q));if(shopSort==='price-asc')f.sort((a,b)=>parseInt(a.price)-parseInt(b.price));else if(shopSort==='price-desc')f.sort((a,b)=>parseInt(b.price)-parseInt(a.price));else if(shopSort==='popular')f.sort((a,b)=>(salesData[b.id]?.count||0)-(salesData[a.id]?.count||0));return f}
+function getFilteredItems(){
+    let f = shopCategory === 'all' ? items.slice() : items.filter(i => i.category === shopCategory);
+    const q = (document.getElementById('shopSearch')?.value || '').trim().toLowerCase();
+    if (q) {
+        f = f.filter(i => i.name.toLowerCase().includes(q) || (i.flavors && i.flavors.toLowerCase().includes(q)));
+    }
+    if (mgFilterValue !== 'all') {
+        f = f.filter(i => String(i.mg) === String(mgFilterValue));
+    }
+    f = f.filter(i => {
+        const price = parseInt(i.price);
+        return price >= filterPriceMin && price <= filterPriceMax;
+    });
+    if (shopSort === 'price-asc') f.sort((a, b) => parseInt(a.price) - parseInt(b.price));
+    else if (shopSort === 'price-desc') f.sort((a, b) => parseInt(b.price) - parseInt(a.price));
+    else if (shopSort === 'popular') f.sort((a, b) => (salesData[b.id]?.count || 0) - (salesData[a.id]?.count || 0));
+    return f;
+}
 
 function setSort(m){shopSort=m;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderShop()}
 
-function buildCategories(){const n=document.getElementById('categoriesNav');let h='<div class="cat-tab active" data-cat="all" onclick="filterCategory(\'all\',this)">Все</div>';categories.forEach(c=>{const cnt=items.filter(i=>i.category===c).length;if(cnt>0)h+=`<div class="cat-tab" data-cat="${c}" onclick="filterCategory('${c}',this)">${catEmojis[c]||'📦'} ${c} <span class="count">${cnt}</span></div>`});n.innerHTML=h}
+function buildCategories(){
+    const n=document.getElementById('categoriesNav');
+    const savedCategory = localStorage.getItem('shopCategory') || 'all';
+    let h = '';
+    h += `<div class="cat-tab ${savedCategory === 'all' ? 'active' : ''}" data-cat="all" onclick="window.filterCategory('all', this)">Все <span class="count">${items.length}</span></div>`;
+    categories.forEach(c => {
+        const cnt = items.filter(i => i.category === c).length;
+        if (cnt > 0) {
+            h += `<div class="cat-tab ${savedCategory === c ? 'active' : ''}" data-cat="${c}" onclick="window.filterCategory('${c}', this)">${catEmojis[c] || '📦'} ${c} <span class="count">${cnt}</span></div>`;
+        }
+    });
+    n.innerHTML = h;
+    document.querySelectorAll('.cat-tab').forEach(tab => {
+        if (tab.dataset.cat === savedCategory || (savedCategory === 'all' && tab.dataset.cat === 'all')) {
+            tab.classList.add('active');
+            tab.style.background = 'var(--accent)';
+            tab.style.color = 'white';
+            tab.style.borderColor = 'var(--accent)';
+        } else {
+            tab.style.background = 'var(--btn-bg)';
+            tab.style.color = 'var(--text)';
+            tab.style.borderColor = 'transparent';
+        }
+    });
+}
 
-function filterCategory(cat,btn){shopCategory=cat;document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderShop()}
+window.filterCategory = function(cat, btn) {
+    shopCategory = cat;
+    localStorage.setItem('shopCategory', cat);
+    document.querySelectorAll('.cat-tab').forEach(t => {
+        t.classList.remove('active');
+        t.style.background = 'var(--btn-bg)';
+        t.style.color = 'var(--text)';
+        t.style.borderColor = 'transparent';
+    });
+    if (btn) {
+        btn.classList.add('active');
+        btn.style.background = 'var(--accent)';
+        btn.style.color = 'white';
+        btn.style.borderColor = 'var(--accent)';
+    }
+    renderShop();
+};
 
-function updateStats(){if(currentRole!=='admin'&&currentRole!=='moder')return;const ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);let st=0,sr=0;for(let key in salesData){st+=salesData[key].count||0;sr+=salesData[key].revenue||0;}document.getElementById('totalItems').textContent=ci.length;document.getElementById('totalValue').textContent=ci.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0)+'₽';document.getElementById('totalSold').textContent=st;document.getElementById('totalRevenue').textContent=sr+'₽';document.getElementById('avgCheck').textContent=(st>0?Math.round(sr/st):0)+'₽';renderChart();updateDemandAnalysis()}
+function updateStats(){if(currentRole!=='admin'&&currentRole!=='moder')return;const ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);let totalSold=0,totalRevenue=0;for(let key in salesData){totalSold+=salesData[key].count||0;totalRevenue+=salesData[key].revenue||0;}
+const totalCost=Math.round(totalRevenue/2);
+const totalProfit=totalRevenue-totalCost;
+const margin=totalRevenue>0?Math.round((totalProfit/totalRevenue)*100):0;
+const today=new Date().toLocaleDateString('ru-RU');
+const todayOrders=salesHistory.filter(s=>s.date&&s.date.includes(today));
+const todayRevenue=todayOrders.reduce((sum,s)=>sum+(s.price||0),0);
+const todayProfit=Math.round(todayRevenue/2);
+document.getElementById('totalItems').textContent=ci.length;
+const totalValue=ci.reduce((s,i)=>s+(parseInt(i.price)*(i.quantity||0)),0);
+document.getElementById('totalValue').textContent=totalValue+'₽';
+document.getElementById('totalSold').textContent=totalSold;
+document.getElementById('totalRevenue').textContent=totalRevenue+'₽';
+document.getElementById('avgCheck').textContent=(totalSold>0?Math.round(totalRevenue/totalSold):0)+'₽';
+document.getElementById('totalCost').textContent=totalCost+'₽';
+document.getElementById('totalProfit').textContent=totalProfit+'₽';
+document.getElementById('marginValue').textContent=margin+'%';
+document.getElementById('todayProfit').textContent=todayProfit+'₽';
+renderChart();updateDemandAnalysis();}
 
 function renderChart(){if(currentRole!=='admin'&&currentRole!=='moder')return;const c=document.getElementById('chartBars'),days=[],today=new Date();for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push({label:d.toLocaleDateString('ru-RU',{weekday:'short'}),date:d.toLocaleDateString('ru-RU'),total:0})}salesHistory.forEach(s=>{const sd=s.date.split(',')[0],day=days.find(d=>d.date===sd);if(day)day.total+=s.price});const mx=Math.max(...days.map(d=>d.total),1);c.innerHTML=days.map(d=>{const h=Math.max((d.total/mx)*130,4);return`<div class="chart-bar-wrapper"><div class="chart-bar-value">${d.total>0?d.total+'₽':''}</div><div class="chart-bar" style="height:${h}px"></div><div class="chart-bar-label">${d.label}</div></div>`}).join('')}
 
 function updateDemandAnalysis(){if(currentRole!=='admin'&&currentRole!=='moder')return;const p=document.getElementById('demandPanel'),ci=shopCategory==='all'?items:items.filter(i=>i.category===shopCategory);if(ci.length===0){p.innerHTML='';return}const ws=ci.map(i=>({name:i.name,sold:salesData[i.id]?.count||0})).filter(i=>i.sold>0),ns=ci.filter(i=>(salesData[i.id]?.count||0)===0);let h='';if(ws.length>0){const srt=ws.sort((a,b)=>b.sold-a.sold),tc=Math.max(1,Math.ceil(srt.length*0.3)),hd=srt.slice(0,tc),ld=srt.slice(-tc);if(hd.length>0)h+=`<div class="stat-card" style="border:1px solid #4CAF50"><div class="stat-label" style="color:#4CAF50">🔥 Высокий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${hd.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`;if(ld.length>0&&ld[0].sold>0)h+=`<div class="stat-card" style="border:1px solid #f44336"><div class="stat-label" style="color:#f44336">📉 Низкий спрос</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${ld.map(i=>'• '+i.name+' — '+i.sold+' шт.').join('<br>')}</div></div>`}if(ns.length>0)h+=`<div class="stat-card" style="border:1px solid #FF9800"><div class="stat-label" style="color:#FF9800">🆕 Без продаж</div><div style="font-size:0.85rem;margin-top:8px;text-align:left">${ns.slice(0,5).map(i=>'• '+i.name).join('<br>')}${ns.length>5?'<br>...и ещё '+(ns.length-5):''}</div></div>`;p.innerHTML=h||'<div class="stat-card" style="text-align:center">📊 Пока нет продаж</div>'}
 
-function renderShop(){buildCategories();const grid=document.getElementById('priceGrid'),filtered=getFilteredItems();if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">🌸 Товары не добавлены</div>';updateStats();return}if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">📂 Ничего не найдено</div>';updateStats();return}const showAdmin=(currentRole==='admin'||currentRole==='moder');grid.innerHTML=filtered.map(item=>{const sold=salesData[item.id]||{count:0,revenue:0},pending=pendingSales[item.id]||0,hasPending=pending>0;return`<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}${!showAdmin?`<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`:''}${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${currentRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`}).join('');updateStats()}
+function renderShop(){
+    buildCategories();
+    renderMGButtons();
+    const grid=document.getElementById('priceGrid');
+    const filtered=getFilteredItems();
+    if(items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">🌸 Товары не добавлены</div>';updateStats();return}
+    if(filtered.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;opacity:0.5">📂 Ничего не найдено</div>';updateStats();return}
+    const showAdmin=(currentRole==='admin'||currentRole==='moder');
+    grid.innerHTML=filtered.map(item=>{
+        const sold=salesData[item.id]||{count:0,revenue:0},pending=pendingSales[item.id]||0,hasPending=pending>0;
+        const profit=calculateProfit(item.price);
+        return`<div class="price-card"><img src="${item.image}" class="card-image" onerror="this.src='https://via.placeholder.com/300x220?text=Нет+фото'"><div class="card-content"><div class="card-category">${catEmojis[item.category]||'📦'} ${item.category||''}</div><h3 class="card-title">${item.name}</h3><div class="card-details"><span class="card-badge mg">⚡ ${item.mg}</span><span class="card-badge quantity">📦 ${item.quantity} шт</span></div><div class="card-flavors">🍓 ${item.flavors}</div><div class="card-price">${item.price} ₽</div>${showAdmin?`<div class="card-profit">💸 Закупка: ${profit}₽ | 📈 Прибыль: ${profit}₽</div><div class="card-sales-info show${hasPending?' pending':''}"><span>📊 ${sold.count}</span><span>💵 ${sold.revenue}₽</span>${hasPending?`<span style="color:#ff9800">🔔 ${pending}</span><button class="confirm-btn" onclick="confirmSale(${item.id})">✅</button><button class="cancel-btn" onclick="cancelSale(${item.id})">✕</button>`:''}</div>`:''}${!showAdmin?`<button class="buy-btn" onclick="buyShopItem(${item.id})">💬 Купить</button><button class="cart-btn" onclick='addToCart(${JSON.stringify(item)})'>🛒 В корзину</button>`:''}${showAdmin?`<div class="card-buttons show"><button class="edit-btn" onclick="editShopItem(${item.id})">✏️</button>${currentRole==='admin'?`<button class="delete-btn" onclick="deleteShopItem(${item.id})">🗑️</button>`:''}</div>`:''}</div></div>`}).join('');updateStats()}
 
-function buyShopItem(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;const msg=encodeURIComponent(`Здравствуйте! Хочу приобрести: ${item.name}, вкус: ${item.flavors}, ${item.mg} за ${item.price}₽`);window.open('https://t.me/'+tgUsername+'?text='+msg,'_blank');if(!pendingSales[id])pendingSales[id]=0;pendingSales[id]++;if(currentRole==='helper'&&currentCode)updateHelperRating(currentCode,'order_created',parseInt(item.price));saveAllData();renderShop();autoSyncAll();showShopStatus('🔔 Новый заказ!')}
+function buyShopItem(id){
+    const item=items.find(i=>i.id==id);
+    if(!item||item.quantity<=0)return;
+    
+    const itemsList = [{ name: item.name, price: parseInt(item.price), qty: 1, flavors: item.flavors || '', mg: item.mg || '' }];
+    const total = parseInt(item.price);
+    const client = tgUsername || 'Неизвестный';
+    const telegram = tgUsername ? '@' + tgUsername : '';
+    
+    const order = addOrder(client, itemsList, total, '', '', telegram, 'купить');
+    
+    const msg=encodeURIComponent(`🛒 НОВЫЙ ЗАКАЗ #${order.id}\n\n👤 Клиент: ${client}\n• ${item.name} × 1 = ${item.price}₽\n\n💰 Итого: ${total}₽${telegram ? '\n📱 ' + telegram : ''}`);
+    window.open('https://t.me/' + tgUsername + '?text=' + msg, '_blank');
+    
+    if(!pendingSales[id])pendingSales[id]=0;
+    pendingSales[id]++;
+    if(currentRole==='helper'&&currentCode)updateHelperRating(currentCode,'order_created',parseInt(item.price));
+    saveAllData();
+    renderShop();
+    autoSyncAll();
+    showShopStatus('✅ Заказ #' + order.id + ' создан!');
+}
 
 function confirmSale(id){const item=items.find(i=>i.id==id);if(!item||item.quantity<=0)return;item.quantity--;if(pendingSales[id]&&pendingSales[id]>0)pendingSales[id]--;if(!pendingSales[id]||pendingSales[id]<0)pendingSales[id]=0;if(!salesData[id])salesData[id]={count:0,revenue:0,name:item.name};salesData[id].count++;salesData[id].revenue+=parseInt(item.price);salesHistory.unshift({date:new Date().toLocaleString('ru-RU'),name:item.name,price:parseInt(item.price)});if(salesHistory.length>100)salesHistory=salesHistory.slice(0,100);if(item.quantity<=0){items=items.filter(i=>i.id!=id);}saveAllData();renderShop();buildCategories();saveDailyStats();autoSyncAll();showShopStatus('✅ Продажа! +'+item.price+'₽');logAction(currentCode||'admin','подтвердил заказ',item.name+' - '+item.price+'₽');}
 
@@ -419,21 +819,20 @@ function showShopHistory(){const m=document.getElementById('historyModal'),l=doc
 
 function closeHistoryModal(){document.getElementById('historyModal').classList.remove('show');}
 
-function exportCSV(){let csv='Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка\n';items.forEach(i=>{const s=salesData[i.id]||{count:0,revenue:0};csv+=`"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue}\n`});const b=new Blob(['\uFEFF'+csv],{type:'text/csv'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='price.csv';l.click();}
+function exportCSV(){let csv='Название;Категория;МГ;Вкусы;Кол-во;Цена;Продано;Выручка;Прибыль\n';items.forEach(i=>{const s=salesData[i.id]||{count:0,revenue:0};const profit=Math.round((s.revenue||0)/2);csv+=`"${i.name}";"${i.category||''}";"${i.mg}";"${i.flavors}";${i.quantity};${i.price};${s.count};${s.revenue};${profit}\n`});const b=new Blob(['\uFEFF'+csv],{type:'text/csv'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='price.csv';l.click();}
 
 function resetHistory(){if(confirm('Сбросить историю?')){salesData={};salesHistory=[];pendingSales={};saveAllData();renderShop();showShopStatus('🗑️ Сброшено');}}
 
 function resetAllItems(){if(confirm('Удалить ВСЕ товары?')){items=[];saveAllData();renderShop();buildCategories();showShopStatus('⚠️ Удалено');}}
 
-// ============================================================
-// РОЗЫГРЫШ
-// ============================================================
+// ════════════════════════════════════════════════════════════
+// 8. РОЗЫГРЫШ
+// ════════════════════════════════════════════════════════════
 function shopLogin(){
     const pass = document.getElementById('shopPass').value.trim();
     if(!pass){showShopStatus('❌ Введите код!');return;}
     
-    // Проверка админского пароля
-    if(pass === '150420' || pass === 'WIN2024'){
+    if(pass === '150420'){
         currentRole = 'admin';
         currentCode = null;
         shopRole = 'admin';
@@ -452,10 +851,10 @@ function shopLogin(){
         document.getElementById('shopPass').style.display = 'none';
         document.getElementById('gaPass').style.display = 'none';
         checkNpointConnection();
+        document.getElementById('adminTerminal').style.display = 'block';
         return;
     }
     
-    // Проверка сотрудников
     const staff = JSON.parse(localStorage.getItem('shopStaff') || '[]');
     const user = staff.find(x => x.code === pass);
     
@@ -487,7 +886,7 @@ function gaLogin(){
     const pass = document.getElementById('gaPass').value.trim();
     if(!pass){showGaStatus('❌ Введите код!');return;}
     
-    if(pass === '150420' || pass === 'WIN2024'){
+    if(pass === '150420'){
         currentRole = 'admin';
         currentCode = null;
         shopRole = 'admin';
@@ -544,6 +943,11 @@ function shopLogout(){
     localStorage.removeItem('currentRole');
     localStorage.removeItem('currentCode');
     
+    const ordersPanel = document.getElementById('ordersPanel');
+    if (ordersPanel) ordersPanel.style.display = 'none';
+    const ordersBtn = document.getElementById('ordersBtn');
+    if (ordersBtn) ordersBtn.style.display = 'none';
+    
     document.getElementById('shopActions').classList.remove('show');
     document.getElementById('statsPanel').classList.remove('show');
     document.getElementById('chartContainer').classList.remove('show');
@@ -574,17 +978,23 @@ function updateShopUI(){
     const stats = document.getElementById('statsPanel');
     const chart = document.getElementById('chartContainer');
     const demand = document.getElementById('demandPanel');
+    const ordersBtn = document.getElementById('ordersBtn');
+    const ordersPanel = document.getElementById('ordersPanel');
     
     if(currentRole === 'admin' || currentRole === 'moder'){
         actions.classList.add('show');
         stats.classList.add('show');
         chart.classList.add('show');
         demand.classList.add('show');
+        if(ordersBtn) ordersBtn.style.display = '';
+        if(ordersPanel) ordersPanel.style.display = 'block';
     } else {
         actions.classList.remove('show');
         stats.classList.remove('show');
         chart.classList.remove('show');
         demand.classList.remove('show');
+        if(ordersBtn) ordersBtn.style.display = 'none';
+        if(ordersPanel) ordersPanel.style.display = 'none';
     }
     
     document.querySelectorAll('.admin-only').forEach(el => {
@@ -594,12 +1004,16 @@ function updateShopUI(){
     if(currentRole === 'admin'){
         roleEl.innerHTML = '<span class="role-badge role-admin">👑 Админ</span>';
         checkNpointConnection();
+        document.getElementById('adminTerminal').style.display = 'block';
     } else if(currentRole === 'moder'){
         roleEl.innerHTML = '<span class="role-badge role-moder">👑 Модер</span>';
+        document.getElementById('adminTerminal').style.display = 'none';
     } else if(currentRole === 'helper'){
         roleEl.innerHTML = '<span class="role-badge role-helper">🤝 Хелпер</span>';
+        document.getElementById('adminTerminal').style.display = 'none';
     }
     
+    renderOrdersPanel();
     renderShop();
     buildCategories();
 }
@@ -636,7 +1050,7 @@ function renderGaBlockedList(){const el=document.getElementById('gaBlockedList')
 function gaUnban(i){gaBlocked.splice(i,1);localStorage.setItem('ga_blocked',JSON.stringify(gaBlocked));renderGaBlockedList();autoSyncAll();}
 
 function gaToggleReg(){gaRegOpen=!gaRegOpen;localStorage.setItem('ga_regOpen',gaRegOpen);renderGa();autoSyncAll();}
-function gaSaveSettings(){gaSecretCode=document.getElementById('gaCodeInput')?.value.trim()||'WIN2024';gaDeadline=document.getElementById('gaDeadlineInput')?.value||'2026-12-31T23:59';localStorage.setItem('ga_secretCode',gaSecretCode);localStorage.setItem('ga_deadline',gaDeadline);alert('✅ Сохранено!');autoSyncAll();}
+function gaSaveSettings(){gaSecretCode=document.getElementById('gaCodeInput')?.value.trim()||'150420';gaDeadline=document.getElementById('gaDeadlineInput')?.value||'2026-12-31T23:59';localStorage.setItem('ga_secretCode',gaSecretCode);localStorage.setItem('ga_deadline',gaDeadline);alert('✅ Сохранено!');autoSyncAll();}
 function renderGaHistory(){const el=document.getElementById('gaHistoryList');if(!el)return;el.innerHTML=gaHistory.length===0?'<p style="opacity:0.5">Пусто</p>':gaHistory.map(h=>`<div class="ga-participant"><span>${h.name} (${h.tg})</span><span style="opacity:0.5">${h.date}</span></div>`).join('');}
 function showGaStatus(msg){const el=document.getElementById('gaStatus');el.textContent=msg;el.className='status-message show';setTimeout(()=>el.classList.remove('show'),2000);}
 
@@ -644,7 +1058,7 @@ function autoSaveDaily(){const today=new Date().toLocaleDateString('ru-RU');cons
 
 window.addEventListener('scroll',function(){const btn=document.getElementById('scrollTopBtn');if(window.scrollY>400){btn.style.display='flex';}else{btn.style.display='none';}});
 
-document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙';}createParticles();loadShopData();updateCartPanel();checkNpointConnection();autoSaveDaily();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}));},3600000);setInterval(autoSaveDaily,3600000);});
+document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙';}createParticles();loadShopData();updateCartPanel();checkNpointConnection();autoSaveDaily();loadOrdersFromEndpoint();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}));},3600000);setInterval(autoSaveDaily,3600000);});
 </script>
 </body>
 </html>
