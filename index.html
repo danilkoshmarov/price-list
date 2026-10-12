@@ -340,7 +340,7 @@ purchases.forEach(p=>{
    duplicateRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+label+' указан '+count+' раза (лишних ссылок: '+(count-1)+')');
   }
   const matches=items.filter(i=>String(i?.id)===id);
-  if(matches.length===0)missingRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+' отсутствует в каталоге');
+  if(matches.length===0){const oldStat=salesData?.[id];const oldName=String(oldStat?.name||oldStat?.productName||'название не сохранено');missingRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+' отсутствует в каталоге | старое название: «'+oldName+'» | '+(Number(oldStat?.count)||0)+' шт / '+(Number(oldStat?.revenue)||0)+'₽');}
   if(matches.length>1)wrongPurchaseLinks.push('Закупка #'+(p.number??p.id)+': ID '+id+' соответствует нескольким карточкам');
   matches.forEach(item=>{
    if(item.purchaseId!=null&&String(item.purchaseId)!==String(p.id))wrongPurchaseLinks.push('Товар «'+item.name+'» (ID '+id+'): находится в закупке #'+(p.number??p.id)+', но purchaseId указывает на '+item.purchaseId);
@@ -357,6 +357,37 @@ items.forEach(item=>{
 const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+' | название: «'+String(salesData[id]?.name||salesData[id]?.productName||'не сохранено')+'» | '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽');
 const historyMissingItems=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h?.itemId!=null&&!items.some(i=>String(i?.id)===String(h.itemId))).map(h=>'История: '+String(h.name||'без названия')+', ID '+h.itemId))];
 const historyNoId=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null).map(h=>'Старая запись без itemId: '+String(h.name||'без названия')))];
+const normalizeDiagnosticName=value=>String(value??'').trim().toLocaleLowerCase('ru-RU').replace(/\\s+/g,' ');
+const currentItemsByName=new Map();
+items.forEach(item=>{
+ const name=normalizeDiagnosticName(item?.name);
+ if(!name)return;
+ if(!currentItemsByName.has(name))currentItemsByName.set(name,[]);
+ currentItemsByName.get(name).push(item);
+});
+const oldStatsForMatching=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0));
+const orphanUniqueMatches=[];
+const orphanAmbiguousMatches=[];
+const orphanNoMatches=[];
+oldStatsForMatching.forEach(id=>{
+ const stat=salesData[id]||{};
+ const name=String(stat.name||stat.productName||'').trim();
+ const statsText=(Number(stat.count)||0)+' шт / '+(Number(stat.revenue)||0)+'₽';
+ if(!name){
+  orphanNoMatches.push('ID '+id+' | название не сохранено | '+statsText);
+  return;
+ }
+ const matches=currentItemsByName.get(normalizeDiagnosticName(name))||[];
+ const historyCount=(Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null&&normalizeDiagnosticName(h.name)===normalizeDiagnosticName(name)).length;
+ const historyText=' | старых записей истории без ID с таким названием: '+historyCount;
+ if(matches.length===1){
+  orphanUniqueMatches.push('Старый ID '+id+' «'+name+'» ('+statsText+') → текущая карточка «'+matches[0].name+'» ID '+matches[0].id+historyText+' [кандидат, не подтверждён]');
+ }else if(matches.length>1){
+  orphanAmbiguousMatches.push('Старый ID '+id+' «'+name+'» ('+statsText+') → подходят карточки: '+matches.map(i=>'«'+i.name+'» ID '+i.id).join('; ')+historyText);
+ }else{
+  orphanNoMatches.push('ID '+id+' «'+name+'» | '+statsText+historyText+' | точного совпадения в каталоге нет');
+ }
+});
 const historyStatsDisagree=[];
 const historyCounts=new Map();
 (Array.isArray(salesHistory)?salesHistory:[]).forEach(h=>{if(h?.itemId!=null){const k=String(h.itemId);historyCounts.set(k,(historyCounts.get(k)||0)+1);}});
@@ -369,6 +400,9 @@ add('Ссылки на отсутствующие товары',missingRefs);
 add('Несогласованные привязки закупок',wrongPurchaseLinks);
 add('Карточки с неверной/неполной привязкой',itemMissingFromPurchase);
 add('Продажи без карточки товара',orphanSalesKeys);
+add('Старые продажи с одним точным совпадением названия (кандидаты, не автопривязка)',orphanUniqueMatches);
+add('Старые продажи с неоднозначным совпадением названия',orphanAmbiguousMatches);
+add('Старые продажи без точного совпадения названия',orphanNoMatches);
 add('История продаж с отсутствующим itemId в каталоге',historyMissingItems);
 add('Старые записи истории без itemId (нельзя точно связать с карточкой)',historyNoId);
 add('Подозрение на несоответствие истории статистике',historyStatsDisagree);
