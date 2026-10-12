@@ -155,6 +155,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .mass-info{background:rgba(0,0,0,0.1);padding:8px;border-radius:8px;margin:4px 0 12px 0;font-size:0.75rem;font-family:monospace;opacity:0.8}
 .mass-textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);font-family:monospace;font-size:0.85rem;margin-bottom:12px;resize:vertical}
 @media(max-width:768px){body{padding:8px}.header h1{font-size:1.6rem}.logo{width:50px;height:50px}.nav-tab{padding:10px 14px;font-size:0.8rem}.price-grid{grid-template-columns:1fr;gap:10px}.card-image{height:150px}.cart-panel{flex-wrap:wrap;justify-content:center;width:95%;padding:10px 12px}.stats-panel{flex-direction:column}.stat-card{min-width:auto;padding:10px 14px}.stat-value{font-size:1.2rem}.quick-btn{padding:6px 10px;font-size:0.7rem}.login-bar input{width:110px}.modal-content{width:95%;padding:15px}.chart-bars{height:80px}.order-item{flex-direction:column;align-items:stretch}}
+.site-version{margin:18px auto 6px;text-align:center;font-size:.72rem;opacity:.58;letter-spacing:.3px;padding:8px 12px;position:relative;z-index:10}
 </style>
 </head>
 <body>
@@ -514,5 +515,6 @@ window.addEventListener('scroll',function(){const btn=document.getElementById('s
 
 document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙';}createParticles();loadShopData();updateCartPanel();checkNpointConnection();autoSaveDaily();loadOrdersFromEndpoint();updatePurchaseSelect();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}));},3600000);setInterval(autoSaveDaily,3600000);setInterval(()=>{if(currentRole==='admin'||currentRole==='moder')loadOrdersFromEndpoint();},20000);});
 </script>
+<div class="site-version" id="siteVersion">Smoky Notes · v1.1 · обновлено 13.10.2026</div>
 </body>
 </html>
