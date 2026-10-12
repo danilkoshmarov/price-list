@@ -524,13 +524,14 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
   <button id="firebaseMigrateBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #e91e63;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Подготовить копию: publicCatalog + privateShop</button>
   <button id="firebaseReadCatalogBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #4caf50;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Тест чтения publicCatalog</button>
   <button id="firebaseVerifyCopiesBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #2196f3;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Проверить существующие копии (без записи)</button>
+  <button id="firebaseRestoreMissingBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #ff9800;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Резервная копия + добавить отсутствующие поля</button>
   <button id="firebaseSignOutBtn" type="button" style="padding:9px 14px;border:1px solid var(--card-border);border-radius:9px;background:var(--btn-bg);color:var(--text);cursor:pointer;display:none;">Выйти из Firebase</button>
   <div id="firebaseTestStatus" role="status" style="font-size:.8rem;margin-top:10px;overflow-wrap:anywhere;">Firebase ещё не проверен.</div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+import { getDatabase, ref, get, set, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
 const LEGACY_NPOINT_URL = "https://api.npoint.io/55674e9c91b4698843d7";
 const FIREBASE_PUBLIC_PATH = "publicCatalog";
@@ -554,6 +555,7 @@ const signInBtn = document.getElementById("firebaseSignInBtn");
 const migrateBtn = document.getElementById("firebaseMigrateBtn");
 const readCatalogBtn = document.getElementById("firebaseReadCatalogBtn");
 const verifyCopiesBtn = document.getElementById("firebaseVerifyCopiesBtn");
+const restoreMissingBtn = document.getElementById("firebaseRestoreMissingBtn");
 const signOutBtn = document.getElementById("firebaseSignOutBtn");
 function status(message, ok=false) {
   statusEl.textContent = message;
@@ -749,7 +751,92 @@ async function verifyExistingFirebaseCopies() {
     verifyCopiesBtn.disabled = !signedInUser;
   }
 }
+async function backupAndRestoreMissingFields() {
+  if (!signedInUser) { status("Сначала войди в Firebase."); return; }
+  restoreMissingBtn.disabled = true;
+  try {
+    status("Считываю текущие данные и готовлю локальную резервную копию. Пока ничего не изменяю…");
+    const legacyResponse = await fetch(LEGACY_NPOINT_URL, { cache: "no-store" });
+    if (!legacyResponse.ok) throw new Error("Npoint вернул HTTP " + legacyResponse.status);
+    const legacyData = await legacyResponse.json();
+    if (!validLegacyData(legacyData)) throw new Error("Данные Npoint не прошли проверку.");
+
+    const privateRef = ref(db, FIREBASE_PRIVATE_PATH);
+    const privateSnapshot = await get(privateRef);
+    if (!privateSnapshot.exists() || !privateSnapshot.val() || typeof privateSnapshot.val() !== "object" || Array.isArray(privateSnapshot.val())) {
+      throw new Error("privateShop отсутствует или имеет неожиданный формат. Восстановление отменено.");
+    }
+    const currentPrivate = privateSnapshot.val();
+    const allowedFields = ["orders", "gaWinner", "gaBlocked", "gaHistory", "shopStaff", "actionLogs", "gaParticipants", "approvedDevices", "pendingApprovals"];
+    const missingFields = allowedFields.filter(key =>
+      !Object.prototype.hasOwnProperty.call(currentPrivate, key) &&
+      Object.prototype.hasOwnProperty.call(legacyData, key)
+    );
+    if (!missingFields.length) {
+      status("✅ В privateShop нет отсутствующих полей из списка восстановления. Ничего не изменено.", true);
+      return;
+    }
+
+    const confirmText = "Будет скачана резервная копия текущего privateShop и текущих данных Npoint. Затем в Firebase будут добавлены ТОЛЬКО отсутствующие поля:\n\n" +
+      missingFields.map(key => "• " + key).join("\n") +
+      "\n\nСуществующие поля не будут перезаписаны. Рабочий сайт и Npoint не изменяются. Продолжить?";
+    if (!confirm(confirmText)) {
+      status("Восстановление отменено. Данные не изменены.");
+      return;
+    }
+
+    const backup = {
+      createdAt: new Date().toISOString(),
+      note: "Read-before-write backup for additive Firebase recovery. Contains shop data; keep private.",
+      firebasePrivateShop: currentPrivate,
+      currentNpoint: legacyData,
+      fieldsPlannedForRestore: missingFields
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = "smoky-notes-migration-backup-" + new Date().toISOString().replace(/[:.]/g, "-") + ".json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+
+    status("Резервная копия скачивается. Добавляю только отсутствующие поля…");
+    const transactionResult = await runTransaction(privateRef, current => {
+      if (!current || typeof current !== "object" || Array.isArray(current)) return;
+      let changed = false;
+      for (const key of allowedFields) {
+        if (!Object.prototype.hasOwnProperty.call(current, key) &&
+            Object.prototype.hasOwnProperty.call(legacyData, key)) {
+          current[key] = legacyData[key];
+          changed = true;
+        }
+      }
+      return changed ? current : undefined;
+    }, { applyLocally: false });
+
+    if (!transactionResult.committed) {
+      status("⚠️ Запись не выполнена: к моменту записи отсутствующих полей уже не осталось. Резервная копия скачана.");
+      return;
+    }
+    const finalPrivate = transactionResult.snapshot.val();
+    const restored = allowedFields.filter(key =>
+      !Object.prototype.hasOwnProperty.call(currentPrivate, key) &&
+      Object.prototype.hasOwnProperty.call(finalPrivate || {}, key)
+    );
+    status("✅ Готово. Резервная копия скачана; добавлены поля: " + (restored.join(", ") || "поля уже присутствовали") +
+      ". Существующие поля не перезаписывались. Npoint и рабочий сайт не изменены. Теперь запусти проверку копий.", true);
+  } catch (error) {
+    console.error("Additive Firebase recovery failed:", error);
+    status("❌ Восстановление остановлено: " + (error?.message || "неизвестная ошибка") +
+      ". Проверь, скачалась ли резервная копия; существующие поля не должны были перезаписываться.");
+  } finally {
+    restoreMissingBtn.disabled = !signedInUser;
+  }
+}
 readCatalogBtn.addEventListener("click", testFirebaseCatalogRead);
+restoreMissingBtn.addEventListener("click", backupAndRestoreMissingFields);
 verifyCopiesBtn.addEventListener("click", verifyExistingFirebaseCopies);
 
 migrateBtn.addEventListener("click", async () => {
@@ -773,6 +860,7 @@ signInBtn.addEventListener("click", async () => {
     migrateBtn.disabled = false;
     readCatalogBtn.disabled = false;
     verifyCopiesBtn.disabled = false;
+    restoreMissingBtn.disabled = false;
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
   } catch (error) {
@@ -790,6 +878,7 @@ signOutBtn.addEventListener("click", async () => {
   migrateBtn.disabled = true;
   readCatalogBtn.disabled = true;
   verifyCopiesBtn.disabled = true;
+  restoreMissingBtn.disabled = true;
   signInBtn.style.display = "inline-block";
   signOutBtn.style.display = "none";
   status("Вышел из Firebase.");
@@ -799,6 +888,7 @@ onAuthStateChanged(auth, user => {
   migrateBtn.disabled = !user;
   readCatalogBtn.disabled = !user;
   verifyCopiesBtn.disabled = !user;
+  restoreMissingBtn.disabled = !user;
   if (user) {
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
