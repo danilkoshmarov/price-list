@@ -357,7 +357,7 @@ items.forEach(item=>{
 const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+' | название: «'+String(salesData[id]?.name||salesData[id]?.productName||'не сохранено')+'» | '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽');
 const historyMissingItems=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h?.itemId!=null&&!items.some(i=>String(i?.id)===String(h.itemId))).map(h=>'История: '+String(h.name||'без названия')+', ID '+h.itemId))];
 const historyNoId=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null).map(h=>'Старая запись без itemId: '+String(h.name||'без названия')))];
-const normalizeDiagnosticName=value=>String(value??'').trim().toLocaleLowerCase('ru-RU').replace(/\s+/g,' ');
+const normalizeDiagnosticName=value=>String(value??'').normalize('NFKC').toLocaleLowerCase('ru-RU').replace(/[^\\p{L}\\p{N}]+/gu,'');
 const currentItemsByName=new Map();
 items.forEach(item=>{
  const name=normalizeDiagnosticName(item?.name);
@@ -400,9 +400,9 @@ add('Ссылки на отсутствующие товары',missingRefs);
 add('Несогласованные привязки закупок',wrongPurchaseLinks);
 add('Карточки с неверной/неполной привязкой',itemMissingFromPurchase);
 add('Продажи без карточки товара',orphanSalesKeys);
-add('Старые продажи с одним точным совпадением названия (кандидаты, не автопривязка)',orphanUniqueMatches);
-add('Старые продажи с неоднозначным совпадением названия',orphanAmbiguousMatches);
-add('Старые продажи без точного совпадения названия',orphanNoMatches);
+add('Старые продажи с одним совпадением после очистки эмодзи/знаков (кандидаты, не автопривязка)',orphanUniqueMatches);
+add('Старые продажи с неоднозначным совпадением после очистки эмодзи/знаков',orphanAmbiguousMatches);
+add('Старые продажи без совпадения после очистки эмодзи/знаков',orphanNoMatches);
 add('История продаж с отсутствующим itemId в каталоге',historyMissingItems);
 add('Старые записи истории без itemId (нельзя точно связать с карточкой)',historyNoId);
 add('Подозрение на несоответствие истории статистике',historyStatsDisagree);
