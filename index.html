@@ -568,6 +568,26 @@ function canonical(value) {
   if (value && typeof value === "object") return "{" + Object.keys(value).sort().map(k => JSON.stringify(k) + ":" + canonical(value[k])).join(",") + "}";
   return JSON.stringify(value);
 }
+
+// Allowlist public product fields; internal purchase references and any unknown
+// fields stay out of the publicly readable catalog.
+function toPublicCatalogItem(item) {
+  const publicItem = {};
+  for (const key of ["id", "name", "category", "mg", "price", "quantity", "image"]) {
+    if (Object.prototype.hasOwnProperty.call(item, key)) publicItem[key] = item[key];
+  }
+  if (Array.isArray(item.flavors)) {
+    publicItem.flavors = item.flavors.map(flavor => {
+      const safeFlavor = {};
+      if (flavor && Object.prototype.hasOwnProperty.call(flavor, "name")) safeFlavor.name = flavor.name;
+      if (flavor && Object.prototype.hasOwnProperty.call(flavor, "quantity")) safeFlavor.quantity = flavor.quantity;
+      return safeFlavor;
+    });
+  } else if (typeof item.flavors === "string") {
+    publicItem.flavors = item.flavors;
+  }
+  return publicItem;
+}
 let signedInUser = null;
 async function migrateLegacyData() {
   if (!signedInUser) { status("Сначала войди в Firebase."); return; }
@@ -588,7 +608,7 @@ async function migrateLegacyData() {
 
     // Public path contains only the product catalog. Sales, orders, staff, logs,
     // approvals and giveaway state remain in the owner-only private path.
-    const publicData = { items: legacyData.items };
+    const publicData = { items: legacyData.items.map(toPublicCatalogItem) };
     const updates = {};
     updates[FIREBASE_PUBLIC_PATH] = publicData;
     updates[FIREBASE_PRIVATE_PATH] = legacyData;
@@ -602,7 +622,7 @@ async function migrateLegacyData() {
         canonical(privateCheck.val()) !== canonical(legacyData)) {
       throw new Error("Проверка копии не совпала. Npoint оставлен нетронутым; проверь publicCatalog/privateShop в Firebase.");
     }
-    status("✅ Копии созданы и проверены: " + legacyData.items.length + " товаров в publicCatalog; все исходные данные сохранены в privateShop. Npoint не изменён, сайт пока продолжает работать через Npoint.", true);
+    status("✅ Копии созданы и проверены: " + legacyData.items.length + " товаров в publicCatalog (только публичные поля); все исходные данные сохранены в privateShop. Npoint не изменён, сайт пока продолжает работать через Npoint.", true);
   } catch (error) {
     console.error("Safe Firebase split-copy failed:", error);
     status("❌ Операция остановлена: " + (error?.message || "неизвестная ошибка"));
