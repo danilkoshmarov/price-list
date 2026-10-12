@@ -525,6 +525,7 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
   <button id="firebaseReadCatalogBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #4caf50;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Тест чтения publicCatalog</button>
   <button id="firebaseVerifyCopiesBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #2196f3;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Проверить существующие копии (без записи)</button>
   <button id="firebaseRestoreMissingBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #ff9800;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Резервная копия + добавить отсутствующие поля</button>
+  <button id="firebaseReplaceFromNpointBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #d32f2f;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Резервная копия + полный перенос Npoint → Firebase</button>
   <button id="firebaseSignOutBtn" type="button" style="padding:9px 14px;border:1px solid var(--card-border);border-radius:9px;background:var(--btn-bg);color:var(--text);cursor:pointer;display:none;">Выйти из Firebase</button>
   <div id="firebaseTestStatus" role="status" style="font-size:.8rem;margin-top:10px;overflow-wrap:anywhere;">Firebase ещё не проверен.</div>
 </div>
@@ -556,6 +557,7 @@ const migrateBtn = document.getElementById("firebaseMigrateBtn");
 const readCatalogBtn = document.getElementById("firebaseReadCatalogBtn");
 const verifyCopiesBtn = document.getElementById("firebaseVerifyCopiesBtn");
 const restoreMissingBtn = document.getElementById("firebaseRestoreMissingBtn");
+const replaceFromNpointBtn = document.getElementById("firebaseReplaceFromNpointBtn");
 const signOutBtn = document.getElementById("firebaseSignOutBtn");
 function status(message, ok=false) {
   statusEl.textContent = message;
@@ -751,9 +753,71 @@ async function verifyExistingFirebaseCopies() {
     verifyCopiesBtn.disabled = !signedInUser;
   }
 }
+async function replaceFirebaseFromNpoint() {
+  if (!signedInUser) { status("Сначала войди в Firebase."); return; }
+  replaceFromNpointBtn.disabled = true;
+  try {
+    status("Читаю Npoint и текущие данные Firebase для резервной копии…");
+    const legacyResponse = await fetch(LEGACY_NPOINT_URL, { cache: "no-store" });
+    if (!legacyResponse.ok) throw new Error("Npoint вернул HTTP " + legacyResponse.status);
+    const legacyData = await legacyResponse.json();
+    if (!validLegacyData(legacyData)) throw new Error("Данные Npoint пустые или не прошли проверку. Перенос отменён.");
+
+    const publicRef = ref(db, FIREBASE_PUBLIC_PATH);
+    const privateRef = ref(db, FIREBASE_PRIVATE_PATH);
+    const [publicSnapshot, privateSnapshot] = await Promise.all([get(publicRef), get(privateRef)]);
+    const currentPublic = publicSnapshot.exists() ? publicSnapshot.val() : null;
+    const currentPrivate = privateSnapshot.exists() ? privateSnapshot.val() : null;
+    const backup = {
+      createdAt: new Date().toISOString(),
+      source: LEGACY_NPOINT_URL,
+      firebaseProject: firebaseConfig.projectId,
+      note: "Private backup before full Npoint-to-Firebase replacement. Keep this file private.",
+      firebase: { publicCatalog: currentPublic, privateShop: currentPrivate },
+      npoint: legacyData
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = "smoky-notes-backup-before-firebase-migration-" + new Date().toISOString().replace(/[:.]/g, "-") + ".json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+
+    const publicData = { items: legacyData.items.map(toPublicCatalogItem) };
+    const confirmText = "Резервная копия JSON должна скачаться сейчас. Проверь, что файл появился в загрузках.\n\n" +
+      "Затем будут ПОЛНОСТЬЮ заменены ветки Firebase:\n" +
+      "• publicCatalog — безопасные публичные поля товаров (" + legacyData.items.length + " товаров)\n" +
+      "• privateShop — весь JSON Npoint, включая продажи, заказы, сотрудников, историю и настройки\n\n" +
+      "Источник Npoint не изменяется. Все текущие значения Firebase уже включены в скачанный бэкап.\n\n" +
+      "Продолжить полной заменой Firebase данными Npoint?";
+    if (!confirm(confirmText)) {
+      status("Перенос отменён. Firebase не изменён; резервная копия подготовлена.");
+      return;
+    }
+
+    status("Записываю полный JSON в Firebase…");
+    await Promise.all([set(publicRef, publicData), set(privateRef, legacyData)]);
+    const [publicCheck, privateCheck] = await Promise.all([get(publicRef), get(privateRef)]);
+    if (!publicCheck.exists() || !privateCheck.exists() ||
+        canonical(publicCheck.val()) !== canonical(publicData) ||
+        canonical(privateCheck.val()) !== canonical(legacyData)) {
+      throw new Error("Проверка после записи не совпала. Не запускай перенос повторно: открой Firebase и проверь обе ветки.");
+    }
+    status("✅ Полный перенос завершён и проверен: " + legacyData.items.length + " товаров; privateShop содержит весь исходный JSON Npoint. Резервная копия скачана. Npoint не изменён; рабочая синхронизация сайта пока всё ещё использует Npoint.", true);
+  } catch (error) {
+    console.error("Full Npoint-to-Firebase migration failed:", error);
+    status("❌ Перенос не подтверждён: " + (error?.message || "неизвестная ошибка") + ". Проверь Firebase перед повторным запуском.");
+  } finally {
+    replaceFromNpointBtn.disabled = !signedInUser;
+  }
+}
 async function backupAndRestoreMissingFields() {
   if (!signedInUser) { status("Сначала войди в Firebase."); return; }
   restoreMissingBtn.disabled = true;
+  replaceFromNpointBtn.disabled = true;
   try {
     status("Считываю текущие данные и готовлю локальную резервную копию. Пока ничего не изменяю…");
     const legacyResponse = await fetch(LEGACY_NPOINT_URL, { cache: "no-store" });
@@ -850,6 +914,7 @@ async function backupAndRestoreMissingFields() {
 }
 readCatalogBtn.addEventListener("click", testFirebaseCatalogRead);
 restoreMissingBtn.addEventListener("click", backupAndRestoreMissingFields);
+replaceFromNpointBtn.addEventListener("click", replaceFirebaseFromNpoint);
 verifyCopiesBtn.addEventListener("click", verifyExistingFirebaseCopies);
 
 migrateBtn.addEventListener("click", async () => {
@@ -902,6 +967,7 @@ onAuthStateChanged(auth, user => {
   readCatalogBtn.disabled = !user;
   verifyCopiesBtn.disabled = !user;
   restoreMissingBtn.disabled = !user;
+  replaceFromNpointBtn.disabled = !user;
   if (user) {
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
