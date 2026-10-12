@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getDatabase, ref, get, set, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
 const LEGACY_NPOINT_URL = "https://api.npoint.io/55674e9c91b4698843d7";
 const FIREBASE_PUBLIC_PATH = "publicCatalog";
@@ -802,29 +802,42 @@ async function backupAndRestoreMissingFields() {
     link.remove();
     setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
 
-    status("Резервная копия скачивается. Добавляю только отсутствующие поля…");
-    const transactionResult = await runTransaction(privateRef, current => {
-      if (!current || typeof current !== "object" || Array.isArray(current)) return;
-      let changed = false;
-      for (const key of allowedFields) {
-        if (!Object.prototype.hasOwnProperty.call(current, key) &&
-            Object.prototype.hasOwnProperty.call(legacyData, key)) {
-          current[key] = legacyData[key];
-          changed = true;
-        }
-      }
-      return changed ? current : undefined;
-    }, { applyLocally: false });
+    status("Резервная копия скачивается. Повторно проверяю privateShop перед записью…");
 
-    if (!transactionResult.committed) {
-      status("⚠️ Запись не выполнена: к моменту записи отсутствующих полей уже не осталось. Резервная копия скачана.");
+    // Re-read immediately before writing. Build a patch containing only keys
+    // that are still absent; update() preserves every other existing field.
+    const freshSnapshot = await get(privateRef);
+    const freshPrivate = freshSnapshot.val();
+    if (!freshSnapshot.exists() || !freshPrivate || typeof freshPrivate !== "object" || Array.isArray(freshPrivate)) {
+      throw new Error("privateShop изменился или имеет неожиданный формат. Запись отменена.");
+    }
+    const patch = {};
+    for (const key of allowedFields) {
+      if (!Object.prototype.hasOwnProperty.call(freshPrivate, key) &&
+          Object.prototype.hasOwnProperty.call(legacyData, key)) {
+        patch[key] = legacyData[key];
+      }
+    }
+    const patchKeys = Object.keys(patch);
+    if (!patchKeys.length) {
+      status("⚠️ Повторная проверка показала, что отсутствующих полей уже нет. Запись не выполнялась; резервная копия скачана.");
       return;
     }
-    const finalPrivate = transactionResult.snapshot.val();
-    const restored = allowedFields.filter(key =>
-      !Object.prototype.hasOwnProperty.call(currentPrivate, key) &&
-      Object.prototype.hasOwnProperty.call(finalPrivate || {}, key)
+    await update(privateRef, patch);
+
+    const finalSnapshot = await get(privateRef);
+    const finalPrivate = finalSnapshot.val();
+    const restored = patchKeys.filter(key =>
+      Object.prototype.hasOwnProperty.call(finalPrivate || {}, key) &&
+      canonical(finalPrivate[key]) === canonical(patch[key])
     );
+    if (restored.length !== patchKeys.length) {
+      const failed = patchKeys.filter(key => !restored.includes(key));
+      status("⚠️ Запись завершилась, но проверка не подтвердила все поля. Подтверждены: " +
+        (restored.join(", ") || "нет") + ". Не подтверждены: " + failed.join(", ") +
+        ". Ничего повторно не запускай — пришли этот результат.", false);
+      return;
+    }
     status("✅ Готово. Резервная копия скачана; добавлены поля: " + (restored.join(", ") || "поля уже присутствовали") +
       ". Существующие поля не перезаписывались. Npoint и рабочий сайт не изменены. Теперь запусти проверку копий.", true);
   } catch (error) {
