@@ -329,16 +329,16 @@ const duplicatePurchaseIds=[...new Set(purchaseIds.filter((id,i)=>purchaseIds.in
 const duplicateRefs=[];
 const missingRefs=[];
 const wrongPurchaseLinks=[];
-const seenPurchaseItemPairs=new Set();
 purchases.forEach(p=>{
- const seen=new Set();
- (Array.isArray(p?.items)?p.items:[]).forEach(rawId=>{
-  const id=String(rawId);
-  if(seen.has(id))duplicateRefs.push('Закупка #'+(p.number??p.id)+': товар ID '+id+' указан несколько раз');
-  seen.add(id);
-  const pair=String(p.id)+'::'+id;
-  if(seenPurchaseItemPairs.has(pair))duplicateRefs.push('Закупка #'+(p.number??p.id)+': повторная ссылка на ID '+id);
-  seenPurchaseItemPairs.add(pair);
+ const refs=Array.isArray(p?.items)?p.items:[];
+ const counts=new Map();
+ refs.forEach(rawId=>{const id=String(rawId);counts.set(id,(counts.get(id)||0)+1);});
+ counts.forEach((count,id)=>{
+  if(count>1){
+   const matches=items.filter(i=>String(i?.id)===id);
+   const label=matches[0]?.name?' «'+matches[0].name+'»':'';
+   duplicateRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+label+' указан '+count+' раза (лишних ссылок: '+(count-1)+')');
+  }
   const matches=items.filter(i=>String(i?.id)===id);
   if(matches.length===0)missingRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+' отсутствует в каталоге');
   if(matches.length>1)wrongPurchaseLinks.push('Закупка #'+(p.number??p.id)+': ID '+id+' соответствует нескольким карточкам');
@@ -354,7 +354,7 @@ items.forEach(item=>{
  if(!p){itemMissingFromPurchase.push('Товар «'+item.name+'» (ID '+item.id+'): указан purchaseId '+item.purchaseId+', но такой закупки нет');return;}
  if(!(Array.isArray(p.items)?p.items:[]).some(id=>String(id)===String(item.id)))itemMissingFromPurchase.push('Товар «'+item.name+'» (ID '+item.id+'): привязан к закупке #'+(p.number??p.id), 'но ID отсутствует в списке товаров этой закупки');
 });
-const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+': '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽, карточки нет');
+const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+' | название: «'+String(salesData[id]?.name||salesData[id]?.productName||'не сохранено')+'» | '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽');
 const historyMissingItems=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h?.itemId!=null&&!items.some(i=>String(i?.id)===String(h.itemId))).map(h=>'История: '+String(h.name||'без названия')+', ID '+h.itemId))];
 const historyNoId=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null).map(h=>'Старая запись без itemId: '+String(h.name||'без названия')))];
 const historyStatsDisagree=[];
