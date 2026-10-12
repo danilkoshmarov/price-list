@@ -581,6 +581,35 @@ function canonical(value) {
   return stable(normalized);
 }
 
+function findDiffPaths(a, b, path="$", out=[], limit=20) {
+  if (out.length >= limit || canonical(a) === canonical(b)) return out;
+  const aArray = Array.isArray(a), bArray = Array.isArray(b);
+  if (aArray !== bArray || (a === null) !== (b === null) ||
+      (typeof a !== typeof b) || !a || !b ||
+      (typeof a !== "object" && typeof b !== "object")) {
+    out.push(path);
+    return out;
+  }
+  if (aArray && bArray) {
+    if (a.length !== b.length) out.push(path + ".length");
+    const n = Math.min(a.length, b.length);
+    for (let i = 0; i < n && out.length < limit; i++) {
+      findDiffPaths(a[i], b[i], path + "[" + i + "]", out, limit);
+    }
+    return out;
+  }
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  for (const key of keys) {
+    if (out.length >= limit) break;
+    if (!Object.prototype.hasOwnProperty.call(a, key) || !Object.prototype.hasOwnProperty.call(b, key)) {
+      out.push(path + "." + key + " (поле отсутствует с одной стороны)");
+    } else {
+      findDiffPaths(a[key], b[key], path + "." + key, out, limit);
+    }
+  }
+  return out;
+}
+
 // Allowlist public product fields; internal purchase references and any unknown
 // fields stay out of the publicly readable catalog.
 function toPublicCatalogItem(item) {
@@ -697,10 +726,17 @@ async function verifyExistingFirebaseCopies() {
     if (publicMatches && privateMatches) {
       status("✅ Обе копии совпадают с текущим Npoint после нормализации JSON. Проверка только читала данные; ничего не изменено.", true);
     } else {
+      const privateDiffs = privateMatches ? [] : findDiffPaths(privateSnapshot.val(), legacyData, "privateShop");
+      const publicDiffs = publicMatches ? [] : findDiffPaths(publicSnapshot.val(), expectedPublic, "publicCatalog");
+      const diffSummary = [
+        ...publicDiffs.map(path => "publicCatalog: " + path),
+        ...privateDiffs.map(path => path)
+      ];
       status("⚠️ Проверка завершена без записи. publicCatalog: " +
         (publicMatches ? "совпадает" : "есть отличия") + "; privateShop: " +
         (privateMatches ? "совпадает" : "есть отличия") +
-        ". Это сравнение с текущим Npoint, поэтому изменения магазина после копирования тоже могут дать отличия.");
+        (diffSummary.length ? ". Отличающиеся пути (без показа значений): " + diffSummary.join("; ") : "") +
+        ". Сравнение идёт с текущим Npoint; изменения после копирования тоже могут давать отличия.");
     }
   } catch (error) {
     console.error("Firebase copy verification failed:", error);
