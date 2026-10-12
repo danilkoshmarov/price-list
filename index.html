@@ -185,6 +185,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 <button class="quick-btn admin-only" style="border-color:#9c27b0;color:#9c27b0" onclick="showFullStats()">📊 Статистика</button>
 <button class="quick-btn admin-only orders" id="ordersBtn" onclick="toggleOrdersPanel()">📋 Заказы</button>
 <button class="quick-btn admin-only purchase" id="purchasesBtn" onclick="showPurchases()">📦 Закупки</button>
+<button class="quick-btn admin-only" onclick="runPurchaseDiagnostics()" style="border-color:#00897b;color:#00897b">🔎 Проверка закупок</button>
 <button class="quick-btn admin-only mass" id="massAddBtn" onclick="openMassAddModal()">📋 Массово</button>
 <button class="quick-btn success" onclick="uploadAllToNpoint()">📥 Выгрузить</button>
 <button class="quick-btn admin-only" onclick="loadAllFromNpoint()">📤 Загрузить</button>
@@ -316,6 +317,72 @@ function openPurchaseModalFromItem(){openPurchaseModal();}
 
 function savePurchase(){const sum=document.getElementById('purchaseSum')?.value;const comment=document.getElementById('purchaseComment')?.value||'';if(!sum||sum<=0){alert('❌ Введи сумму!');return;}const p=createPurchase(sum,comment);document.querySelector('.modal-overlay.show')?.remove();showShopStatus('✅ Закупка #'+p.number+' создана!');if(document.getElementById('shopModal')?.classList.contains('show')){updatePurchaseSelect();const sel=document.getElementById('itemPurchase');if(sel)sel.value=p.id;}else{showPurchases();}}
 
+function runPurchaseDiagnostics(){
+if(currentRole!=='admin'){showShopStatus('❌ Проверка доступна только администратору.');return;}
+const lines=[];
+const add=(title,arr)=>{lines.push('\n'+title+' ('+arr.length+')');if(!arr.length){lines.push('  Не обнаружено');return;}arr.slice(0,30).forEach(x=>lines.push('  • '+x));if(arr.length>30)lines.push('  … и ещё '+(arr.length-30));};
+const itemIdCounts=new Map();
+items.forEach(i=>{const k=String(i?.id);itemIdCounts.set(k,(itemIdCounts.get(k)||0)+1);});
+const duplicateItemIds=[...itemIdCounts].filter(([k,n])=>n>1).map(([k,n])=>'ID '+k+' встречается в каталоге '+n+' раз');
+const purchaseIds=purchases.map(p=>String(p?.id));
+const duplicatePurchaseIds=[...new Set(purchaseIds.filter((id,i)=>purchaseIds.indexOf(id)!==i))].map(id=>'ID закупки '+id+' повторяется');
+const duplicateRefs=[];
+const missingRefs=[];
+const wrongPurchaseLinks=[];
+const seenPurchaseItemPairs=new Set();
+purchases.forEach(p=>{
+ const seen=new Set();
+ (Array.isArray(p?.items)?p.items:[]).forEach(rawId=>{
+  const id=String(rawId);
+  if(seen.has(id))duplicateRefs.push('Закупка #'+(p.number??p.id)+': товар ID '+id+' указан несколько раз');
+  seen.add(id);
+  const pair=String(p.id)+'::'+id;
+  if(seenPurchaseItemPairs.has(pair))duplicateRefs.push('Закупка #'+(p.number??p.id)+': повторная ссылка на ID '+id);
+  seenPurchaseItemPairs.add(pair);
+  const matches=items.filter(i=>String(i?.id)===id);
+  if(matches.length===0)missingRefs.push('Закупка #'+(p.number??p.id)+': ID '+id+' отсутствует в каталоге');
+  if(matches.length>1)wrongPurchaseLinks.push('Закупка #'+(p.number??p.id)+': ID '+id+' соответствует нескольким карточкам');
+  matches.forEach(item=>{
+   if(item.purchaseId!=null&&String(item.purchaseId)!==String(p.id))wrongPurchaseLinks.push('Товар «'+item.name+'» (ID '+id+'): находится в закупке #'+(p.number??p.id)+', но purchaseId указывает на '+item.purchaseId);
+  });
+ });
+});
+const itemMissingFromPurchase=[];
+items.forEach(item=>{
+ if(item.purchaseId==null||item.purchaseId==='')return;
+ const p=purchases.find(p=>String(p.id)===String(item.purchaseId));
+ if(!p){itemMissingFromPurchase.push('Товар «'+item.name+'» (ID '+item.id+'): указан purchaseId '+item.purchaseId+', но такой закупки нет');return;}
+ if(!(Array.isArray(p.items)?p.items:[]).some(id=>String(id)===String(item.id)))itemMissingFromPurchase.push('Товар «'+item.name+'» (ID '+item.id+'): привязан к закупке #'+(p.number??p.id), 'но ID отсутствует в списке товаров этой закупки');
+});
+const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+': '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽, карточки нет');
+const historyMissingItems=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h?.itemId!=null&&!items.some(i=>String(i?.id)===String(h.itemId))).map(h=>'История: '+String(h.name||'без названия')+', ID '+h.itemId))];
+const historyNoId=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null).map(h=>'Старая запись без itemId: '+String(h.name||'без названия')))];
+const historyStatsDisagree=[];
+const historyCounts=new Map();
+(Array.isArray(salesHistory)?salesHistory:[]).forEach(h=>{if(h?.itemId!=null){const k=String(h.itemId);historyCounts.set(k,(historyCounts.get(k)||0)+1);}});
+historyCounts.forEach((n,id)=>{const stat=salesData[id];if(stat&&Number(stat.count)<n)historyStatsDisagree.push('ID '+id+': в истории последних '+n+' записей, а в salesData указано '+(Number(stat.count)||0)+' продаж');});
+lines.push('🔎 ДИАГНОСТИКА ЗАКУПОК (только чтение)');
+lines.push('Товаров: '+items.length+' | Закупок: '+purchases.length+' | Ключей salesData: '+Object.keys(salesData||{}).length+' | Записей истории: '+(Array.isArray(salesHistory)?salesHistory.length:0));
+add('Дубли ID карточек',duplicateItemIds);
+add('Повторные товары в закупках',duplicateRefs);
+add('Ссылки на отсутствующие товары',missingRefs);
+add('Несогласованные привязки закупок',wrongPurchaseLinks);
+add('Карточки с неверной/неполной привязкой',itemMissingFromPurchase);
+add('Продажи без карточки товара',orphanSalesKeys);
+add('История продаж с отсутствующим itemId в каталоге',historyMissingItems);
+add('Старые записи истории без itemId (нельзя точно связать с карточкой)',historyNoId);
+add('Подозрение на несоответствие истории статистике',historyStatsDisagree);
+lines.push('\nВажно: история хранит максимум 100 последних продаж, поэтому отсутствие старых записей в истории не доказывает ошибку статистики. Проверка ничего не исправляет, не сохраняет и не синхронизирует.');
+const report=lines.join('\n');
+const modal=document.createElement('div');
+modal.className='modal-overlay show';
+modal.innerHTML='<div class="modal-content" style="max-width:650px;max-height:85vh;overflow:auto;"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;"><h3>🔎 Проверка закупок</h3><button type="button" onclick="this.closest(\'.modal-overlay\').remove()" style="font-size:1.4rem;border:0;background:transparent;color:var(--text);">✕</button></div><p style="font-size:.85rem;opacity:.8;">Режим только чтения. Данные не меняются.</p><pre id="purchaseDiagnosticReport" style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:.8rem;line-height:1.45;padding:10px;background:var(--stat-bg);border-radius:8px;"></pre><button type="button" onclick="copyPurchaseDiagnosticReport()" style="width:100%;padding:10px;margin-top:10px;border:0;border-radius:8px;background:#00897b;color:white;font-weight:700;">📋 Скопировать отчёт</button><button type="button" onclick="this.closest(\'.modal-overlay\').remove()" style="width:100%;padding:10px;margin-top:8px;border:1px solid var(--card-border);border-radius:8px;background:transparent;color:var(--text);">Закрыть</button></div>';
+document.body.appendChild(modal);
+document.getElementById('purchaseDiagnosticReport').textContent=report;
+modal.onclick=e=>{if(e.target===modal)modal.remove();};
+window.purchaseDiagnosticReport=report;
+}
+function copyPurchaseDiagnosticReport(){const report=window.purchaseDiagnosticReport||'';if(!report)return;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(report).then(()=>showShopStatus('✅ Отчёт скопирован')).catch(()=>prompt('Скопируй отчёт:',report));}else prompt('Скопируй отчёт:',report);}
 function showPurchaseDetails(purchaseId){const calc=calculatePurchaseProfit(purchaseId);if(!calc)return;const p=calc.purchase;let html=`<div class="modal-content" style="max-width:500px;max-height:80vh;overflow-y:auto;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;"><h3>📦 Закупка #${p.number}</h3><span style="cursor:pointer;font-size:1.5rem;" onclick="this.closest('.modal-overlay').remove()">✕</span></div><div style="background:var(--stat-bg);padding:12px;border-radius:10px;margin-bottom:12px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85rem;"><div>💰 Потрачено: <strong>${p.sum}₽</strong></div><div>💵 Продано: <strong>${calc.soldSum}₽</strong></div><div>📈 Прибыль: <strong style="color:#4CAF50;">${calc.profit}₽</strong></div><div>⏳ Осталось: <strong style="color:#ff9800;">${calc.remaining}₽</strong></div><div>📊 Отбито: <strong>${calc.percent}%</strong></div><div>🛒 Продано: <strong>${calc.soldCount} шт</strong></div></div></div><h4 style="margin-bottom:8px;">📦 Товары в закупке:</h4><div>`;if(p.items.length===0){html+=`<p style="opacity:0.5;text-align:center;padding:10px;">Нет товаров</p>`;}else{p.items.forEach(itemId=>{const item=items.find(i=>String(i.id)===String(itemId));if(!item)return;const sales=salesData[item.id]||{count:0,revenue:0};html+=`<div style="padding:9px 8px;border-bottom:1px solid var(--card-border);font-size:0.85rem;"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><strong>📦 ${escapeHTML(item.name)}</strong><span>${Number(sales.count)||0} шт | ${Number(sales.revenue)||0}₽</span></div><button type="button" onclick="rollbackPurchaseItemSale(this.dataset.purchaseId,this.dataset.itemId)" data-purchase-id="${escapeHTML(String(p.id))}" data-item-id="${escapeHTML(String(item.id))}" style="width:100%;margin-top:7px;padding:8px;border:0;border-radius:8px;background:#ff9800;color:white;font-weight:700;cursor:pointer;">↩️ Откатить 1 продажу</button></div>`;});}html+=`</div><button onclick="this.closest('.modal-overlay').remove()" style="width:100%;padding:10px;margin-top:15px;border-radius:10px;border:none;background:#2196F3;color:white;cursor:pointer;font-weight:700;">Закрыть</button></div>`;const modal=document.createElement('div');modal.className='modal-overlay show';modal.innerHTML=html;modal.onclick=function(e){if(e.target===modal)modal.remove();};document.body.appendChild(modal);}
 
 function rollbackPurchaseItemSale(purchaseId,itemId){if(currentRole!=='admin'){showShopStatus('❌ Откат доступен только администратору.');return;}const purchase=purchases.find(p=>String(p.id)===String(purchaseId));const item=items.find(i=>String(i.id)===String(itemId));if(!purchase||!item||!purchase.items.some(id=>String(id)===String(itemId))){showShopStatus('❌ Не удалось найти товар в этой закупке.');return;}const duplicateNames=items.filter(i=>String(i.name)===String(item.name));let historyIndex=-1;for(let i=0;i<salesHistory.length;i++){const sale=salesHistory[i];if(!sale||String(sale.name)!==String(item.name))continue;if(sale.itemId!=null){if(String(sale.itemId)!==String(item.id))continue;}else if(duplicateNames.length!==1){continue;}historyIndex=i;break;}if(historyIndex<0){alert('Не нашёл безопасно определяемую запись продажи для этого товара. Ничего не изменено. Если в истории старая запись без ID товара или она уже выпала из последних 100 продаж, откат вручную не выполняю, чтобы не испортить статистику.');return;}const sale=salesHistory[historyIndex];const salePrice=Number(sale.price);const key=String(item.id);const stats=salesData[key];if(!stats||Number(stats.count)<1||!Number.isFinite(salePrice)||salePrice<0||Number(stats.revenue)<salePrice){alert('Данные продажи не совпадают со статистикой. Ничего не изменено.');return;}const flavorName=String(sale.flavor||'');const flavor=Array.isArray(item.flavors)?item.flavors.find(f=>String(f.name)===flavorName):null;if(!flavor){alert('Не удалось однозначно найти цвет/вкус из записи продажи. Ничего не изменено.');return;}if(!confirm('Откатить одну продажу?\n\n'+item.name+' — '+flavor.name+'\nВернуть на склад: 1 шт.\nУменьшить выручку: '+salePrice+'₽\nПрибыль и статистика закупки пересчитаются.'))return;flavor.quantity=Math.max(0,Number(flavor.quantity)||0)+1;item.quantity=getTotalQuantity(item);stats.count=Math.max(0,Number(stats.count)-1);stats.revenue=Math.max(0,Number(stats.revenue)-salePrice);if(sale.orderId!=null){const order=orders.find(o=>String(o.id)===String(sale.orderId));const line=order&&Array.isArray(order.items)?order.items.find(l=>String(l.id)===String(item.id)&&String(l.flavor||'')===flavorName):null;if(line)line.stockAppliedQty=Math.max(0,(Number(line.stockAppliedQty)||0)-1);}salesHistory.splice(historyIndex,1);saveAllData();saveDailyStats();renderShop();buildCategories();updateStats();renderOrdersPanel();updatePurchaseSelect();autoSyncAll();logAction(currentCode||'admin','откатил продажу',item.name+' ('+flavor.name+') — '+salePrice+'₽, закупка #'+purchase.number);document.querySelectorAll('.modal-overlay.show').forEach(m=>m.remove());showPurchaseDetails(purchaseId);showShopStatus('↩️ Продажа откатана: '+item.name+' ('+flavor.name+'), +1 на склад.');}
