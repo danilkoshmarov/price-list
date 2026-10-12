@@ -357,7 +357,7 @@ items.forEach(item=>{
 const orphanSalesKeys=Object.keys(salesData||{}).filter(id=>!items.some(i=>String(i?.id)===String(id))&&((Number(salesData[id]?.count)||0)!==0||(Number(salesData[id]?.revenue)||0)!==0)).map(id=>'salesData ID '+id+' | название: «'+String(salesData[id]?.name||salesData[id]?.productName||'не сохранено')+'» | '+(Number(salesData[id]?.count)||0)+' шт / '+(Number(salesData[id]?.revenue)||0)+'₽');
 const historyMissingItems=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h?.itemId!=null&&!items.some(i=>String(i?.id)===String(h.itemId))).map(h=>'История: '+String(h.name||'без названия')+', ID '+h.itemId))];
 const historyNoId=[...new Set((Array.isArray(salesHistory)?salesHistory:[]).filter(h=>h&&h.itemId==null).map(h=>'Старая запись без itemId: '+String(h.name||'без названия')))];
-const normalizeDiagnosticName=value=>String(value??'').trim().toLocaleLowerCase('ru-RU').replace(/\\s+/g,' ');
+const normalizeDiagnosticName=value=>String(value??'').trim().toLocaleLowerCase('ru-RU').replace(/\s+/g,' ');
 const currentItemsByName=new Map();
 items.forEach(item=>{
  const name=normalizeDiagnosticName(item?.name);
