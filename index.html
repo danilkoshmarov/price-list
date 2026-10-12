@@ -514,5 +514,75 @@ window.addEventListener('scroll',function(){const btn=document.getElementById('s
 
 document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body.classList.add('dark');document.getElementById('themeToggle').textContent='🌙';}createParticles();loadShopData();updateCartPanel();checkNpointConnection();autoSaveDaily();loadOrdersFromEndpoint();updatePurchaseSelect();setInterval(()=>{if(items.length>0)localStorage.setItem('autoBackup',JSON.stringify({items,salesData,salesHistory,pendingSales}));},3600000);setInterval(autoSaveDaily,3600000);});
 </script>
+
+<div id="firebaseTestPanel" style="max-width:420px;margin:18px auto;padding:14px;border:1px solid var(--card-border);border-radius:14px;background:var(--card);position:relative;z-index:20;">
+  <h3 style="margin-bottom:8px;">🔐 Подключение хранилища (тест)</h3>
+  <p style="font-size:0.8rem;opacity:.75;margin-bottom:10px;">Проверка Firebase отдельно от текущей синхронизации магазина.</p>
+  <input id="firebaseEmail" type="email" autocomplete="username" placeholder="Email Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
+  <input id="firebasePassword" type="password" autocomplete="current-password" placeholder="Пароль Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
+  <button id="firebaseSignInBtn" type="button" style="padding:9px 14px;border:0;border-radius:9px;background:var(--stat-gradient);color:white;font-weight:700;cursor:pointer;">Войти и проверить базу</button>
+  <button id="firebaseSignOutBtn" type="button" style="padding:9px 14px;border:1px solid var(--card-border);border-radius:9px;background:var(--btn-bg);color:var(--text);cursor:pointer;display:none;">Выйти из Firebase</button>
+  <div id="firebaseTestStatus" role="status" style="font-size:.8rem;margin-top:10px;overflow-wrap:anywhere;">Firebase ещё не проверен.</div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCruAoWOz38Zqu40e4klMf_CfR9ppuX8KE",
+  authDomain: "test-14ff2.firebaseapp.com",
+  databaseURL: "https://test-14ff2-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "test-14ff2",
+  storageBucket: "test-14ff2.firebasestorage.app",
+  messagingSenderId: "984531397832",
+  appId: "1:984531397832:web:2b95907ab3654319dec9fd",
+  measurementId: "G-RQSJZ0QVY5"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const statusEl = document.getElementById("firebaseTestStatus");
+const signInBtn = document.getElementById("firebaseSignInBtn");
+const signOutBtn = document.getElementById("firebaseSignOutBtn");
+function status(message, ok=false) {
+  statusEl.textContent = message;
+  statusEl.style.color = ok ? "#2e9d62" : "var(--text)";
+}
+signInBtn.addEventListener("click", async () => {
+  const email = document.getElementById("firebaseEmail").value.trim();
+  const password = document.getElementById("firebasePassword").value;
+  if (!email || !password) { status("Введи email и пароль Firebase."); return; }
+  signInBtn.disabled = true;
+  status("Выполняю вход…");
+  try {
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    status("Вход выполнен. UID: " + credential.user.uid + ". Проверяю доступ к базе…", true);
+    await set(ref(db, "connectionTest"), { checkedAt: new Date().toISOString(), uid: credential.user.uid });
+    const snap = await get(ref(db, "connectionTest"));
+    if (!snap.exists() || snap.val().uid !== credential.user.uid) throw new Error("Тестовая запись не совпала.");
+    status("✅ Firebase Auth и чтение/запись базы работают. Тестовая запись: connectionTest.", true);
+    signInBtn.style.display = "none";
+    signOutBtn.style.display = "inline-block";
+  } catch (error) {
+    console.error("Firebase test failed:", error);
+    const code = error?.code || "";
+    if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") status("❌ Не удалось войти: проверь email и пароль Firebase.");
+    else if (code === "auth/too-many-requests") status("❌ Слишком много попыток. Подожди и попробуй позже.");
+    else if (code === "PERMISSION_DENIED" || /permission_denied|Permission denied/i.test(error?.message || "")) status("⚠️ Вход прошёл, но база закрыта правилами. Это ожидаемо, пока не разрешён доступ твоему UID.");
+    else status("⚠️ Ошибка Firebase: " + (code || error?.message || "неизвестная ошибка"));
+  } finally { signInBtn.disabled = false; }
+});
+signOutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+  signInBtn.style.display = "inline-block";
+  signOutBtn.style.display = "none";
+  status("Вышел из Firebase.");
+});
+onAuthStateChanged(auth, user => {
+  if (user) status("Аккаунт Firebase авторизован. Нажми «Войти и проверить базу», чтобы проверить чтение/запись.");
+});
+</script>
+
 </body>
 </html>
