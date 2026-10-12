@@ -492,7 +492,7 @@ function renderGaAdminList(){const el=document.getElementById('gaAdminList');if(
 function gaApprove(i){gaParticipants[i].status='approved';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
 function gaReject(i){gaParticipants[i].status='rejected';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();autoSyncAll();}
 function gaKick(i){if(!confirm('Выгнать?'))return;gaParticipants[i].status='kicked';localStorage.setItem('ga_participants',JSON.stringify(gaParticipants));renderGaAdminList();renderGaPublicList();autoSyncAll();}
-function gaSetFilter(f){gaFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');renderGaAdminList();}
+function gaSetFilter(f,btn){gaFilter=f;document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));const activeBtn=btn||document.querySelector('.tab-btn[onclick*="'+f+'"]');if(activeBtn)activeBtn.classList.add('active');renderGaAdminList();}
 
 function gaPickWinner(){const app=gaParticipants.filter(p=>p.status==='approved');if(app.length===0){alert('Нет одобренных!');return;}gaWinner=app[Math.floor(Math.random()*app.length)];localStorage.setItem('ga_winner',JSON.stringify(gaWinner));gaHistory.unshift({name:gaWinner.name,tg:gaWinner.tg,date:new Date().toLocaleString('ru-RU')});localStorage.setItem('ga_history',JSON.stringify(gaHistory));renderGa();spawnConfetti();autoSyncAll();}
 
