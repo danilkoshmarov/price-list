@@ -705,6 +705,7 @@ signOutBtn.addEventListener("click", async () => {
 onAuthStateChanged(auth, user => {
   signedInUser = user || null;
   migrateBtn.disabled = !user;
+  readCatalogBtn.disabled = !user;
   if (user) {
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
