@@ -521,6 +521,7 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
   <input id="firebaseEmail" type="email" autocomplete="username" placeholder="Email Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
   <input id="firebasePassword" type="password" autocomplete="current-password" placeholder="Пароль Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
   <button id="firebaseSignInBtn" type="button" style="padding:9px 14px;border:0;border-radius:9px;background:var(--stat-gradient);color:white;font-weight:700;cursor:pointer;">Войти и проверить базу</button>
+  <button id="firebaseMigrateBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #e91e63;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Перенести Npoint → Firebase (только в пустую ветку)</button>
   <button id="firebaseSignOutBtn" type="button" style="padding:9px 14px;border:1px solid var(--card-border);border-radius:9px;background:var(--btn-bg);color:var(--text);cursor:pointer;display:none;">Выйти из Firebase</button>
   <div id="firebaseTestStatus" role="status" style="font-size:.8rem;margin-top:10px;overflow-wrap:anywhere;">Firebase ещё не проверен.</div>
 </div>
@@ -528,6 +529,9 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+const LEGACY_NPOINT_URL = "https://api.npoint.io/55674e9c91b4698843d7";
+const FIREBASE_SHOP_PATH = "shopData";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCruAoWOz38Zqu40e4klMf_CfR9ppuX8KE",
@@ -544,11 +548,56 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const statusEl = document.getElementById("firebaseTestStatus");
 const signInBtn = document.getElementById("firebaseSignInBtn");
+const migrateBtn = document.getElementById("firebaseMigrateBtn");
 const signOutBtn = document.getElementById("firebaseSignOutBtn");
 function status(message, ok=false) {
   statusEl.textContent = message;
   statusEl.style.color = ok ? "#2e9d62" : "var(--text)";
 }
+function validLegacyData(d) {
+  return !!d && typeof d === "object" && !Array.isArray(d) &&
+    Array.isArray(d.items) && d.items.length > 0 &&
+    d.items.every(i => i && typeof i === "object" && i.id !== undefined) &&
+    !!d.salesData && typeof d.salesData === "object" && !Array.isArray(d.salesData) &&
+    Array.isArray(d.salesHistory) &&
+    !!d.pendingSales && typeof d.pendingSales === "object" && !Array.isArray(d.pendingSales);
+}
+function canonical(value) {
+  if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
+  if (value && typeof value === "object") return "{" + Object.keys(value).sort().map(k => JSON.stringify(k) + ":" + canonical(value[k])).join(",") + "}";
+  return JSON.stringify(value);
+}
+let signedInUser = null;
+async function migrateLegacyData() {
+  if (!signedInUser) { status("Сначала войди в Firebase."); return; }
+  migrateBtn.disabled = true;
+  try {
+    status("Проверяю старый Npoint и целевую ветку Firebase…");
+    const legacyResponse = await fetch(LEGACY_NPOINT_URL, { cache: "no-store" });
+    if (!legacyResponse.ok) throw new Error("Npoint вернул HTTP " + legacyResponse.status);
+    const legacyData = await legacyResponse.json();
+    if (!validLegacyData(legacyData)) throw new Error("Данные Npoint пустые или не прошли проверку. Перенос отменён.");
+    const targetRef = ref(db, FIREBASE_SHOP_PATH);
+    const existing = await get(targetRef);
+    if (existing.exists()) throw new Error("В Firebase уже есть shopData. Ничего не перезаписано.");
+    status("Источник проверен: " + legacyData.items.length + " товаров. Записываю копию в Firebase…");
+    await set(targetRef, legacyData);
+    const verification = await get(targetRef);
+    if (!verification.exists() || canonical(verification.val()) !== canonical(legacyData)) {
+      throw new Error("Проверка копии не совпала. Старый Npoint оставлен нетронутым; проверь ветку shopData в Firebase.");
+    }
+    status("✅ Перенос-копия завершён и проверен: " + legacyData.items.length + " товаров. Npoint не изменён; сайт пока продолжает работать через Npoint.", true);
+  } catch (error) {
+    console.error("Safe Firebase migration failed:", error);
+    status("❌ Перенос остановлен: " + (error?.message || "неизвестная ошибка"));
+  } finally {
+    migrateBtn.disabled = !signedInUser;
+  }
+}
+migrateBtn.addEventListener("click", async () => {
+  if (!confirm("Создать копию данных Npoint в Firebase /shopData? Перенос разрешён только если /shopData пуст. Npoint не изменяется.")) return;
+  await migrateLegacyData();
+});
 signInBtn.addEventListener("click", async () => {
   const email = document.getElementById("firebaseEmail").value.trim();
   const password = document.getElementById("firebasePassword").value;
@@ -562,6 +611,8 @@ signInBtn.addEventListener("click", async () => {
     const snap = await get(ref(db, "connectionTest"));
     if (!snap.exists() || snap.val().uid !== credential.user.uid) throw new Error("Тестовая запись не совпала.");
     status("✅ Firebase Auth и чтение/запись базы работают. Тестовая запись: connectionTest.", true);
+    signedInUser = credential.user;
+    migrateBtn.disabled = false;
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
   } catch (error) {
@@ -575,12 +626,23 @@ signInBtn.addEventListener("click", async () => {
 });
 signOutBtn.addEventListener("click", async () => {
   await signOut(auth);
+  signedInUser = null;
+  migrateBtn.disabled = true;
   signInBtn.style.display = "inline-block";
   signOutBtn.style.display = "none";
   status("Вышел из Firebase.");
 });
 onAuthStateChanged(auth, user => {
-  if (user) status("Аккаунт Firebase авторизован. Нажми «Войти и проверить базу», чтобы проверить чтение/запись.");
+  signedInUser = user || null;
+  migrateBtn.disabled = !user;
+  if (user) {
+    signInBtn.style.display = "none";
+    signOutBtn.style.display = "inline-block";
+    status("Аккаунт Firebase авторизован. Можно проверить подключение и вручную создать копию Npoint.");
+  } else {
+    signInBtn.style.display = "inline-block";
+    signOutBtn.style.display = "none";
+  }
 });
 </script>
 
