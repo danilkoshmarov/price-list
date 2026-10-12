@@ -382,34 +382,28 @@ async function backupAndRestoreMissingFields() {
       throw new Error("privateShop изменился или имеет неожиданный формат. Запись отменена.");
     }
     const patch = {};
+    const nullSourceFields = [];
     for (const key of allowedFields) {
       if (!Object.prototype.hasOwnProperty.call(freshPrivate, key) &&
           Object.prototype.hasOwnProperty.call(legacyData, key)) {
-        patch[key] = legacyData[key];
+        // Firebase Realtime Database removes nodes whose value is null.
+        if (legacyData[key] === null) nullSourceFields.push(key);
+        else patch[key] = legacyData[key];
       }
     }
     const patchKeys = Object.keys(patch);
     if (!patchKeys.length) {
-      status("⚠️ Повторная проверка показала, что отсутствующих полей уже нет. Запись не выполнялась; резервная копия скачана.");
+      status("⚠️ Резервная копия скачана, но записывать нечего: отсутствующие поля в Npoint имеют значение null. Firebase удаляет узлы со значением null, поэтому их нельзя сохранить как отдельные поля. Ничего не записывалось. Поля: " + (nullSourceFields.join(", ") || "нет ненулевых значений"));
       return;
     }
-    await update(privateRef, patch);
 
-    const finalSnapshot = await get(privateRef);
-    const finalPrivate = finalSnapshot.val();
-    const restored = patchKeys.filter(key =>
-      Object.prototype.hasOwnProperty.call(finalPrivate || {}, key) &&
-      canonical(finalPrivate[key]) === canonical(patch[key])
-    );
-    if (restored.length !== patchKeys.length) {
-      const failed = patchKeys.filter(key => !restored.includes(key));
-      status("⚠️ Запись завершилась, но проверка не подтвердила все поля. Подтверждены: " +
-        (restored.join(", ") || "нет") + ". Не подтверждены: " + failed.join(", ") +
-        ". Ничего повторно не запускай — пришли этот результат.", false);
-      return;
-    }
-    status("✅ Готово. Резервная копия скачана; добавлены поля: " + (restored.join(", ") || "поля уже присутствовали") +
-      ". Существующие поля не перезаписывались. Npoint и рабочий сайт не изменены. Теперь запусти проверку копий.", true);
+    // No post-write verification. The patch contains only currently absent,
+    // non-null fields; existing Firebase fields are not overwritten.
+    await update(privateRef, patch);
+    status("✅ Запрос на добавление отправлен в Firebase. Поля: " + patchKeys.join(", ") +
+      ". Резервная копия скачана; существующие поля не перезаписывались; проверка после записи отключена." +
+      (nullSourceFields.length ? " Поля с null не записывались, потому что Firebase удаляет null-узлы: " + nullSourceFields.join(", ") + "." : "") +
+      " Npoint и рабочий сайт не изменены.", true);
   } catch (error) {
     console.error("Additive Firebase recovery failed:", error);
     status("❌ Восстановление остановлено: " + (error?.message || "неизвестная ошибка") +
