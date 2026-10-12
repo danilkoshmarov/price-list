@@ -521,17 +521,18 @@ document.addEventListener('DOMContentLoaded',function(){if(isDark){document.body
   <input id="firebaseEmail" type="email" autocomplete="username" placeholder="Email Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
   <input id="firebasePassword" type="password" autocomplete="current-password" placeholder="Пароль Firebase" style="width:100%;padding:10px;margin-bottom:7px;border-radius:8px;border:1px solid var(--card-border);background:var(--input-bg);color:var(--text);">
   <button id="firebaseSignInBtn" type="button" style="padding:9px 14px;border:0;border-radius:9px;background:var(--stat-gradient);color:white;font-weight:700;cursor:pointer;">Войти и проверить базу</button>
-  <button id="firebaseMigrateBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #e91e63;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Перенести Npoint → Firebase (только в пустую ветку)</button>
+  <button id="firebaseMigrateBtn" type="button" style="padding:9px 14px;margin-top:8px;border:1px solid #e91e63;border-radius:9px;background:var(--btn-bg);color:var(--text);font-weight:700;cursor:pointer;" disabled>Подготовить копию: publicCatalog + privateShop</button>
   <button id="firebaseSignOutBtn" type="button" style="padding:9px 14px;border:1px solid var(--card-border);border-radius:9px;background:var(--btn-bg);color:var(--text);cursor:pointer;display:none;">Выйти из Firebase</button>
   <div id="firebaseTestStatus" role="status" style="font-size:.8rem;margin-top:10px;overflow-wrap:anywhere;">Firebase ещё не проверен.</div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 
 const LEGACY_NPOINT_URL = "https://api.npoint.io/55674e9c91b4698843d7";
-const FIREBASE_SHOP_PATH = "shopData";
+const FIREBASE_PUBLIC_PATH = "publicCatalog";
+const FIREBASE_PRIVATE_PATH = "privateShop";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCruAoWOz38Zqu40e4klMf_CfR9ppuX8KE",
@@ -572,30 +573,45 @@ async function migrateLegacyData() {
   if (!signedInUser) { status("Сначала войди в Firebase."); return; }
   migrateBtn.disabled = true;
   try {
-    status("Проверяю старый Npoint и целевую ветку Firebase…");
+    status("Проверяю Npoint и обе целевые ветки Firebase…");
     const legacyResponse = await fetch(LEGACY_NPOINT_URL, { cache: "no-store" });
     if (!legacyResponse.ok) throw new Error("Npoint вернул HTTP " + legacyResponse.status);
     const legacyData = await legacyResponse.json();
     if (!validLegacyData(legacyData)) throw new Error("Данные Npoint пустые или не прошли проверку. Перенос отменён.");
-    const targetRef = ref(db, FIREBASE_SHOP_PATH);
-    const existing = await get(targetRef);
-    if (existing.exists()) throw new Error("В Firebase уже есть shopData. Ничего не перезаписано.");
-    status("Источник проверен: " + legacyData.items.length + " товаров. Записываю копию в Firebase…");
-    await set(targetRef, legacyData);
-    const verification = await get(targetRef);
-    if (!verification.exists() || canonical(verification.val()) !== canonical(legacyData)) {
-      throw new Error("Проверка копии не совпала. Старый Npoint оставлен нетронутым; проверь ветку shopData в Firebase.");
+
+    const publicRef = ref(db, FIREBASE_PUBLIC_PATH);
+    const privateRef = ref(db, FIREBASE_PRIVATE_PATH);
+    const [publicExisting, privateExisting] = await Promise.all([get(publicRef), get(privateRef)]);
+    if (publicExisting.exists() || privateExisting.exists()) {
+      throw new Error("publicCatalog или privateShop уже существует. Ничего не перезаписано.");
     }
-    status("✅ Перенос-копия завершён и проверен: " + legacyData.items.length + " товаров. Npoint не изменён; сайт пока продолжает работать через Npoint.", true);
+
+    // Public path contains only the product catalog. Sales, orders, staff, logs,
+    // approvals and giveaway state remain in the owner-only private path.
+    const publicData = { items: legacyData.items };
+    const updates = {};
+    updates[FIREBASE_PUBLIC_PATH] = publicData;
+    updates[FIREBASE_PRIVATE_PATH] = legacyData;
+
+    status("Источник проверен: " + legacyData.items.length + " товаров. Создаю две отдельные копии…");
+    await update(ref(db), updates);
+
+    const [publicCheck, privateCheck] = await Promise.all([get(publicRef), get(privateRef)]);
+    if (!publicCheck.exists() || !privateCheck.exists() ||
+        canonical(publicCheck.val()) !== canonical(publicData) ||
+        canonical(privateCheck.val()) !== canonical(legacyData)) {
+      throw new Error("Проверка копии не совпала. Npoint оставлен нетронутым; проверь publicCatalog/privateShop в Firebase.");
+    }
+    status("✅ Копии созданы и проверены: " + legacyData.items.length + " товаров в publicCatalog; все исходные данные сохранены в privateShop. Npoint не изменён, сайт пока продолжает работать через Npoint.", true);
   } catch (error) {
-    console.error("Safe Firebase migration failed:", error);
-    status("❌ Перенос остановлен: " + (error?.message || "неизвестная ошибка"));
+    console.error("Safe Firebase split-copy failed:", error);
+    status("❌ Операция остановлена: " + (error?.message || "неизвестная ошибка"));
   } finally {
     migrateBtn.disabled = !signedInUser;
   }
 }
 migrateBtn.addEventListener("click", async () => {
-  if (!confirm("Создать копию данных Npoint в Firebase /shopData? Перенос разрешён только если /shopData пуст. Npoint не изменяется.")) return;
+  if (!confirm("Создать копии из Npoint в Firebase? /publicCatalog получит только товары, а /privateShop — все исходные данные. Если любая целевая ветка уже существует, операция остановится без перезаписи. Npoint и рабочий сайт не изменяются.")) return;
   await migrateLegacyData();
 });
 signInBtn.addEventListener("click", async () => {
@@ -638,7 +654,7 @@ onAuthStateChanged(auth, user => {
   if (user) {
     signInBtn.style.display = "none";
     signOutBtn.style.display = "inline-block";
-    status("Аккаунт Firebase авторизован. Можно проверить подключение и вручную создать копию Npoint.");
+    status("Аккаунт Firebase авторизован. Можно проверить подключение и подготовить раздельную копию Npoint.");
   } else {
     signInBtn.style.display = "inline-block";
     signOutBtn.style.display = "none";
