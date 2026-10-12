@@ -302,7 +302,10 @@ async function replaceFirebaseFromNpoint() {
     }
 
     status("Записываю полный JSON в Firebase…");
-    await Promise.all([set(publicRef, publicData), set(privateRef, legacyData)]);
+    await update(ref(db), {
+      [FIREBASE_PUBLIC_PATH]: publicData,
+      [FIREBASE_PRIVATE_PATH]: legacyData
+    });
     const [publicCheck, privateCheck] = await Promise.all([get(publicRef), get(privateRef)]);
     if (!publicCheck.exists() || !privateCheck.exists() ||
         canonical(publicCheck.val()) !== canonical(publicData) ||
