@@ -601,8 +601,11 @@ function findDiffPaths(a, b, path="$", out=[], limit=20) {
   const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
   for (const key of keys) {
     if (out.length >= limit) break;
-    if (!Object.prototype.hasOwnProperty.call(a, key) || !Object.prototype.hasOwnProperty.call(b, key)) {
-      out.push(path + "." + key + " (поле отсутствует с одной стороны)");
+    const inA = Object.prototype.hasOwnProperty.call(a, key);
+    const inB = Object.prototype.hasOwnProperty.call(b, key);
+    if (!inA || !inB) {
+      const side = inA ? "есть в Firebase, отсутствует в текущем Npoint" : "есть в текущем Npoint, отсутствует в Firebase";
+      out.push(path + "." + key + " (" + side + ")");
     } else {
       findDiffPaths(a[key], b[key], path + "." + key, out, limit);
     }
