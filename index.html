@@ -163,7 +163,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 <div class="particles" id="particles"></div>
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Переключить светлую и тёмную тему">🌸</button>
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-<button class="telegram-fab" onclick="window.open('https://t.me/danil_cooldown','_blank')">💬</button>
+<button class="telegram-fab" onclick="window.open('https://t.me/danil_panacea','_blank')">💬</button>
 
 <div class="container">
 <div class="nav-bar"><button class="nav-tab active" onclick="switchPage('shop')">🛒 Магазин</button><button class="nav-tab" onclick="switchPage('giveaway')">🎰 Розыгрыш</button></div>
@@ -256,7 +256,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 <script>
 const NP_SHOP='https://api.npoint.io/55674e9c91b4698843d7';
-let currentPage='shop',isDark=localStorage.getItem('darkTheme')==='true',tgUsername=localStorage.getItem('tgUsername')||'danil_cooldown';
+let currentPage='shop',isDark=localStorage.getItem('darkTheme')==='true',tgUsername=localStorage.getItem('tgUsername')||'danil_panacea';
+if(tgUsername==='danil_panacea'){tgUsername='danil_panacea';localStorage.setItem('tgUsername',tgUsername);}
 let currentRole=null,currentCode=null,shopRole=null,gaRole=null;
 let items=[],salesData={},salesHistory=[],pendingSales={},cart=JSON.parse(localStorage.getItem('cart')||'[]');
 let autoSyncQueue=Promise.resolve();
